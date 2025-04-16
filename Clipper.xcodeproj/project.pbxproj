@@ -6,8 +6,14 @@
 	objectVersion = 77;
 	objects = {
 
+/* Begin PBXBuildFile section */
+		E564C6BE2DA762A800CC28BD /* MainTabPage in Frameworks */ = {isa = PBXBuildFile; productRef = E564C6BD2DA762A800CC28BD /* MainTabPage */; };
+/* End PBXBuildFile section */
+
 /* Begin PBXFileReference section */
 		E56432762D5E53B200180963 /* Clipper.app */ = {isa = PBXFileReference; explicitFileType = wrapper.application; includeInIndex = 0; path = Clipper.app; sourceTree = BUILT_PRODUCTS_DIR; };
+		E56432912D5E545A00180963 /* ClipperCore */ = {isa = PBXFileReference; lastKnownFileType = wrapper; path = ClipperCore; sourceTree = "<group>"; };
+		E564C6BC2DA75A9400CC28BD /* Features */ = {isa = PBXFileReference; lastKnownFileType = wrapper; path = Features; sourceTree = "<group>"; };
 /* End PBXFileReference section */
 
 /* Begin PBXFileSystemSynchronizedRootGroup section */
@@ -23,6 +29,7 @@
 			isa = PBXFrameworksBuildPhase;
 			buildActionMask = 2147483647;
 			files = (
+				E564C6BE2DA762A800CC28BD /* MainTabPage in Frameworks */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
@@ -32,7 +39,10 @@
 		E564326D2D5E53B200180963 = {
 			isa = PBXGroup;
 			children = (
+				E564C6BC2DA75A9400CC28BD /* Features */,
+				E56432912D5E545A00180963 /* ClipperCore */,
 				E56432782D5E53B200180963 /* Clipper */,
+				E56432922D5E5DAF00180963 /* Frameworks */,
 				E56432772D5E53B200180963 /* Products */,
 			);
 			sourceTree = "<group>";
@@ -43,6 +53,13 @@
 				E56432762D5E53B200180963 /* Clipper.app */,
 			);
 			name = Products;
+			sourceTree = "<group>";
+		};
+		E56432922D5E5DAF00180963 /* Frameworks */ = {
+			isa = PBXGroup;
+			children = (
+			);
+			name = Frameworks;
 			sourceTree = "<group>";
 		};
 /* End PBXGroup section */
@@ -65,6 +82,7 @@
 			);
 			name = Clipper;
 			packageProductDependencies = (
+				E564C6BD2DA762A800CC28BD /* MainTabPage */,
 			);
 			productName = Clipper;
 			productReference = E56432762D5E53B200180963 /* Clipper.app */;
@@ -324,6 +342,13 @@
 			defaultConfigurationName = Release;
 		};
 /* End XCConfigurationList section */
+
+/* Begin XCSwiftPackageProductDependency section */
+		E564C6BD2DA762A800CC28BD /* MainTabPage */ = {
+			isa = XCSwiftPackageProductDependency;
+			productName = MainTabPage;
+		};
+/* End XCSwiftPackageProductDependency section */
 	};
 	rootObject = E564326E2D5E53B200180963 /* Project object */;
 }
