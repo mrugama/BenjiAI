@@ -1,24 +1,14 @@
 import ClipperCoreKit
 import MarkdownUI
+import SharedUIKit
 import SwiftUI
-
-#if canImport(UIKit)
-import UIKit
-
-extension View {
-    func hideKeyboard() {
-        UIApplication.shared.sendAction(#selector(UIResponder.resignFirstResponder),
-                                        to: nil, from: nil, for: nil)
-    }
-}
-#endif
 
 struct HomePage: View {
     @Environment(\.deviceStat) private var deviceStat
     @Environment(\.clipperAssistant) private var clipperAssistant
+    @Environment(\.hideKeyboard) private var hideKeyboard
     
     @State private var userPrompt: String = ""
-    @State private var formattedOutput: LocalizedStringKey = ""
     
     var body: some View {
         NavigationStack {

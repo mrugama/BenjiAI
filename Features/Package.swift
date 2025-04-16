@@ -21,12 +21,14 @@ let package = Package(
                 "HomePage",
                 "SettingsPage",
                 "OnboardUI",
+                "SharedUIKit",
                 .product(name: "ClipperCoreKit", package: "ClipperCore")
             ]
         ),
         .target(
             name: "HomePage",
             dependencies: [
+                "SharedUIKit",
                 .product(name: "ClipperCoreKit", package: "ClipperCore"),
                 .product(name: "MarkdownUI", package: "swift-markdown-ui")
             ]
@@ -43,5 +45,6 @@ let package = Package(
                 .product(name: "ClipperCoreKit", package: "ClipperCore")
             ]
         ),
+        .target(name: "SharedUIKit"),
     ]
 )
