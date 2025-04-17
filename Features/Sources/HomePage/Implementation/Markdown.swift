@@ -3,6 +3,7 @@ import MarkdownUI
 
 struct MarkdownA: View {
     var output = """
+    ## This is a title
     You can tell a `Markdown` view to load images using a 3rd party library
     by configuring an `ImageProvider`. This example uses
     [**SDWebImage/SDWebImageSwiftUI**](https://github.com/SDWebImage/SDWebImageSwiftUI)
@@ -24,11 +25,12 @@ struct MarkdownA: View {
     ```
     """
     var body: some View {
-        Markdown {
-            output
+        ScrollView {
+            Markdown {
+                output
+            }
+            .padding()            
         }
-        .markdownTheme(.gitHub)
-        .padding()
     }
 }
 

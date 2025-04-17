@@ -1,6 +1,7 @@
 import SwiftUI
 
 struct OnboardUI: View {
+    @Binding var isFirstLaunch: Bool
     var body: some View {
         ScrollView {
             VStack(spacing: 30) {
@@ -22,7 +23,7 @@ struct OnboardUI: View {
                     .foregroundStyle(Color.gray)
                 
                 Button {
-                    //TODO
+                    isFirstLaunch = false
                 } label: {
                     Text("Get Started")
                         .font(.headline)
@@ -95,5 +96,5 @@ struct OnboardUI: View {
 }
 
 #Preview {
-    OnboardUI()
+    OnboardUI(isFirstLaunch: .constant(false))
 }

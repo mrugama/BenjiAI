@@ -9,6 +9,7 @@ struct HomePage: View {
     @Environment(\.hideKeyboard) private var hideKeyboard
     
     @State private var userPrompt: String = ""
+    @State private var showMemoryUsage: Bool = false
     
     var body: some View {
         NavigationStack {
@@ -30,12 +31,15 @@ struct HomePage: View {
                 .padding()
                 .toolbar {
                     ToolbarItem(placement: .automatic) {
-                        memoryUsageLabel
+                        memoryUsageButton
                     }
                     ToolbarItem(placement: .primaryAction) {
                         copyOutputButton
                     }
                 }
+            }
+            .sheet(isPresented: $showMemoryUsage) {
+                MemoryUsageView()
             }
         }
     }
@@ -81,25 +85,15 @@ struct HomePage: View {
             }
         }
         .padding()
-        .help(clipperAssistant.llm == nil ? "Please select a LLM model first." : "")
     }
     
-    var memoryUsageLabel: some View {
-        Label(
-            "Memory Usage: \(deviceStat.gpuUsage.activeMemory.formatted(.byteCount(style: .memory)))",
-            systemImage: "info.circle.fill"
-        )
-        .labelStyle(.titleAndIcon)
-        .padding(.horizontal)
-        .help(
-            Text(
-                """
-                Active Memory: \(deviceStat.gpuUsage.activeMemory.formatted(.byteCount(style: .memory)))/\(DeviceStat.ClipperGPU.memoryLimit.formatted(.byteCount(style: .memory)))
-                Cache Memory: \(deviceStat.gpuUsage.cacheMemory.formatted(.byteCount(style: .memory)))/\(DeviceStat.ClipperGPU.cacheLimit.formatted(.byteCount(style: .memory)))
-                Peak Memory: \(deviceStat.gpuUsage.peakMemory.formatted(.byteCount(style: .memory)))
-                """
-            )
-        )
+    var memoryUsageButton: some View {
+        Button {
+            showMemoryUsage.toggle()
+        } label: {
+            Image(systemName: "chart.bar.xaxis.ascending.badge.clock")
+        }
+        .disabled(clipperAssistant.llm == nil)
     }
 
     var copyOutputButton: some View {
