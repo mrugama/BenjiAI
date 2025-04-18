@@ -4,6 +4,8 @@ import ClipperCoreKit
 struct SettingsPage: View {
     @State private var showMenu: Bool = false
     @Environment(\.clipperAssistant) private var clipperAssistant
+    @AppStorage("ClipperModel") private var llm: String?
+    
     var body: some View {
         NavigationStack {
             VStack {
@@ -66,6 +68,7 @@ struct SettingsPage: View {
                 
                 Button("Download LLM") {
                     Task {
+                        llm = clipperAssistant.llm?.id
                         try await clipperAssistant.load()
                     }
                 }

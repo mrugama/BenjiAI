@@ -11,6 +11,7 @@ let package = Package(
             name: "ClipperCoreKit",
             targets: ["ClipperCoreKit"]
         ),
+        .library(name: "ToolSpecsManager", targets: ["ToolSpecsManager"])
     ],
     dependencies: [
         .package(url: "https://github.com/ml-explore/mlx-swift-examples.git",

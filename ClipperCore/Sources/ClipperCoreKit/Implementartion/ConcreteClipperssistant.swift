@@ -62,9 +62,24 @@ final class ConcreteClipperAssistant: ClipperAssistant, @unchecked Sendable {
             running = true
             output = ""
             guard let loadedLLM else { output = "No llm loaded"; return }
+            let availableTools: [[String: Any]] = [
+                [
+                    "type": "function",
+                    "function": [
+                        "name": "getTodayDate",
+                        "description": "Get the current date and time",
+                        "parameters": [
+                            "type": "object",
+                            "properties": [:],
+                            "required": [],
+                        ]
+                    ]
+                ]
+            ]
             
             let userInput = UserInput(
                 prompt: prompt,
+                tools: availableTools,
                 additionalContext: [
                     "Markdown": "true",
                     "markdownTheme": "gitHub",

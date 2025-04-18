@@ -18,7 +18,7 @@ final class ToolSpecManagerImpl: ToolSpecManager, @unchecked Sendable {
         [
             "type": .string("function"),
             "function": .object([
-                "name": .string("search_duckduckgo"),
+                "name": .string("searchDuckduckgo"),
                 "description": .string("Search DuckDuckGo for information on a topic"),
                 "parameters": .object([
                     "type": .string("object"),
