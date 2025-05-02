@@ -12,13 +12,14 @@ struct PromptUI: View {
             Image(systemName: "apple.intelligence")
                 .foregroundStyle(.primary)
 
-            TextField("How can I help you?", text: $promptText, onEditingChanged: { editing in
+            TextField(
+                "How can I help you?",
+                text: $promptText,
+                onEditingChanged: { editing in
                 withAnimation(.easeInOut(duration: 0.3)) {
                     isEditing = editing
                 }
             })
-            .lineLimit(4)
-            .frame(minHeight: 18)
             .onSubmit(onSubmit)
         }
         .padding()

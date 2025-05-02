@@ -5,6 +5,7 @@ struct SettingsPage: View {
     @State private var showMenu: Bool = false
     @Environment(\.clipperAssistant) private var clipperAssistant
     @AppStorage("ClipperModel") private var llm: String?
+    @State private var showDowndloadButton: Bool = false
     
     var body: some View {
         NavigationStack {
@@ -39,47 +40,58 @@ struct SettingsPage: View {
                                 Text(clipperAssistant.modelInfo.model)
                                 Text("name")
                                     .font(.footnote)
+                                    .foregroundStyle(.secondary)
                             }
                             VStack(alignment: .leading) {
                                 Text(clipperAssistant.modelInfo.weights)
                                 Text("Weights")
                                     .font(.footnote)
+                                    .foregroundStyle(.secondary)
                             }
                             VStack(alignment: .leading) {
                                 Text(clipperAssistant.modelInfo.numParams)
                                 Text("Params")
                                     .font(.footnote)
+                                    .foregroundStyle(.secondary)
                             }
-                            VStack(alignment: .leading) {
-                                Text(clipperAssistant.stat)
-                                Text("Tokens per seconds")
-                                    .font(.footnote)
+                            if !clipperAssistant.stat.isEmpty {
+                                VStack(alignment: .leading) {
+                                    Text(clipperAssistant.stat)
+                                    Text("Tokens per seconds")
+                                        .font(.footnote)
+                                        .foregroundStyle(.secondary)
+                                }
                             }
                         }
                     }
                 }
                 .navigationTitle("Settings")
                 .sheet(isPresented: $showMenu) {
-                    SettingsSheet()
+                    SettingsSheet(showDownloadButton: $showDowndloadButton)
                         .presentationCornerRadius(32)
                         .presentationDetents([.medium])
                         .presentationBackground(.thinMaterial)
                 }
                 
-                Button("Download LLM") {
-                    Task {
-                        llm = clipperAssistant.llm?.id
-                        try await clipperAssistant.load()
+                if showDowndloadButton {
+                    Button("Download LLM") {
+                        Task {
+                            llm = clipperAssistant.llm?.id
+                            try await clipperAssistant.load()
+                        }
                     }
+                    .buttonStyle(GrowingButton())
+                    .padding(16)
+                    .disabled(clipperAssistant.llm == nil)
                 }
-                .buttonStyle(GrowingButton())
-                .padding(16)
-                .disabled(clipperAssistant.llm == nil)
+            }
+        }
+        .task {
+            if clipperAssistant.loadedLLM == nil  {
+                showDowndloadButton = true
+            } else if let loadedLLM = clipperAssistant.loadedLLM, let selectedLLM = clipperAssistant.llm, await loadedLLM.configuration.name != selectedLLM.id {
+                showDowndloadButton = true
             }
         }
     }
-}
-
-#Preview(traits: .sizeThatFitsLayout) {
-    SettingsPage()
 }

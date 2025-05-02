@@ -50,7 +50,7 @@ struct AnswerUI: View {
                 }
             }
         }
-        .frame(maxWidth: .infinity, maxHeight: 400)
+        .frame(maxWidth: .infinity)
         .padding()
     }
 }
@@ -61,6 +61,7 @@ struct AnswerUI: View {
         ## Hey there
         
         Hey! How can I help you today?
+        We have a lot of text to explain many ideas in the world.
         """
     )
 }

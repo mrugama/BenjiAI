@@ -7,11 +7,11 @@
 	objects = {
 
 /* Begin PBXBuildFile section */
-		E564C6BE2DA762A800CC28BD /* MainTabPage in Frameworks */ = {isa = PBXBuildFile; productRef = E564C6BD2DA762A800CC28BD /* MainTabPage */; };
+		E519C2C42DC3C53E00693DA3 /* HomePage in Frameworks */ = {isa = PBXBuildFile; productRef = E519C2C32DC3C53E00693DA3 /* HomePage */; };
 /* End PBXBuildFile section */
 
 /* Begin PBXFileReference section */
-		E56432762D5E53B200180963 /* Clipper.app */ = {isa = PBXFileReference; explicitFileType = wrapper.application; includeInIndex = 0; path = Clipper.app; sourceTree = BUILT_PRODUCTS_DIR; };
+		E56432762D5E53B200180963 /* BenjiAI.app */ = {isa = PBXFileReference; explicitFileType = wrapper.application; includeInIndex = 0; path = BenjiAI.app; sourceTree = BUILT_PRODUCTS_DIR; };
 		E56432912D5E545A00180963 /* ClipperCore */ = {isa = PBXFileReference; lastKnownFileType = wrapper; path = ClipperCore; sourceTree = "<group>"; };
 		E564C6BC2DA75A9400CC28BD /* Features */ = {isa = PBXFileReference; lastKnownFileType = wrapper; path = Features; sourceTree = "<group>"; };
 /* End PBXFileReference section */
@@ -29,7 +29,7 @@
 			isa = PBXFrameworksBuildPhase;
 			buildActionMask = 2147483647;
 			files = (
-				E564C6BE2DA762A800CC28BD /* MainTabPage in Frameworks */,
+				E519C2C42DC3C53E00693DA3 /* HomePage in Frameworks */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
@@ -50,7 +50,7 @@
 		E56432772D5E53B200180963 /* Products */ = {
 			isa = PBXGroup;
 			children = (
-				E56432762D5E53B200180963 /* Clipper.app */,
+				E56432762D5E53B200180963 /* BenjiAI.app */,
 			);
 			name = Products;
 			sourceTree = "<group>";
@@ -65,9 +65,9 @@
 /* End PBXGroup section */
 
 /* Begin PBXNativeTarget section */
-		E56432752D5E53B200180963 /* Clipper */ = {
+		E56432752D5E53B200180963 /* BenjiAI */ = {
 			isa = PBXNativeTarget;
-			buildConfigurationList = E56432842D5E53B400180963 /* Build configuration list for PBXNativeTarget "Clipper" */;
+			buildConfigurationList = E56432842D5E53B400180963 /* Build configuration list for PBXNativeTarget "BenjiAI" */;
 			buildPhases = (
 				E56432722D5E53B200180963 /* Sources */,
 				E56432732D5E53B200180963 /* Frameworks */,
@@ -80,12 +80,12 @@
 			fileSystemSynchronizedGroups = (
 				E56432782D5E53B200180963 /* Clipper */,
 			);
-			name = Clipper;
+			name = BenjiAI;
 			packageProductDependencies = (
-				E564C6BD2DA762A800CC28BD /* MainTabPage */,
+				E519C2C32DC3C53E00693DA3 /* HomePage */,
 			);
 			productName = Clipper;
-			productReference = E56432762D5E53B200180963 /* Clipper.app */;
+			productReference = E56432762D5E53B200180963 /* BenjiAI.app */;
 			productType = "com.apple.product-type.application";
 		};
 /* End PBXNativeTarget section */
@@ -96,14 +96,14 @@
 			attributes = {
 				BuildIndependentTargetsInParallel = 1;
 				LastSwiftUpdateCheck = 1620;
-				LastUpgradeCheck = 1620;
+				LastUpgradeCheck = 1630;
 				TargetAttributes = {
 					E56432752D5E53B200180963 = {
 						CreatedOnToolsVersion = 16.2;
 					};
 				};
 			};
-			buildConfigurationList = E56432712D5E53B200180963 /* Build configuration list for PBXProject "Clipper" */;
+			buildConfigurationList = E56432712D5E53B200180963 /* Build configuration list for PBXProject "BenjiAI" */;
 			developmentRegion = en;
 			hasScannedForEncodings = 0;
 			knownRegions = (
@@ -117,7 +117,7 @@
 			projectDirPath = "";
 			projectRoot = "";
 			targets = (
-				E56432752D5E53B200180963 /* Clipper */,
+				E56432752D5E53B200180963 /* BenjiAI */,
 			);
 		};
 /* End PBXProject section */
@@ -178,6 +178,7 @@
 				CLANG_WARN__DUPLICATE_METHOD_MATCH = YES;
 				COPY_PHASE_STRIP = NO;
 				DEBUG_INFORMATION_FORMAT = dwarf;
+				DEVELOPMENT_TEAM = 8E32BHD578;
 				ENABLE_STRICT_OBJC_MSGSEND = YES;
 				ENABLE_TESTABILITY = YES;
 				ENABLE_USER_SCRIPT_SANDBOXING = YES;
@@ -241,6 +242,7 @@
 				CLANG_WARN__DUPLICATE_METHOD_MATCH = YES;
 				COPY_PHASE_STRIP = NO;
 				DEBUG_INFORMATION_FORMAT = "dwarf-with-dsym";
+				DEVELOPMENT_TEAM = 8E32BHD578;
 				ENABLE_NS_ASSERTIONS = NO;
 				ENABLE_STRICT_OBJC_MSGSEND = YES;
 				ENABLE_USER_SCRIPT_SANDBOXING = YES;
@@ -268,22 +270,23 @@
 				ASSETCATALOG_COMPILER_APPICON_NAME = AppIcon;
 				ASSETCATALOG_COMPILER_GLOBAL_ACCENT_COLOR_NAME = AccentColor;
 				CODE_SIGN_STYLE = Automatic;
-				CURRENT_PROJECT_VERSION = 1;
+				CURRENT_PROJECT_VERSION = 4;
 				DEVELOPMENT_ASSET_PATHS = "\"Clipper/Preview Content\"";
-				DEVELOPMENT_TEAM = 8E32BHD578;
 				ENABLE_PREVIEWS = YES;
 				GENERATE_INFOPLIST_FILE = YES;
+				INFOPLIST_KEY_CFBundleDisplayName = BenjiAI;
+				INFOPLIST_KEY_LSApplicationCategoryType = "public.app-category.entertainment";
 				INFOPLIST_KEY_UIApplicationSceneManifest_Generation = YES;
 				INFOPLIST_KEY_UIApplicationSupportsIndirectInputEvents = YES;
 				INFOPLIST_KEY_UILaunchScreen_Generation = YES;
-				INFOPLIST_KEY_UISupportedInterfaceOrientations_iPad = "UIInterfaceOrientationPortrait UIInterfaceOrientationPortraitUpsideDown UIInterfaceOrientationLandscapeLeft UIInterfaceOrientationLandscapeRight";
-				INFOPLIST_KEY_UISupportedInterfaceOrientations_iPhone = "UIInterfaceOrientationPortrait UIInterfaceOrientationLandscapeLeft UIInterfaceOrientationLandscapeRight";
+				INFOPLIST_KEY_UISupportedInterfaceOrientations = UIInterfaceOrientationPortrait;
+				INFOPLIST_KEY_UISupportedInterfaceOrientations_iPad = "UIInterfaceOrientationLandscapeLeft UIInterfaceOrientationLandscapeRight UIInterfaceOrientationPortrait UIInterfaceOrientationPortraitUpsideDown";
 				LD_RUNPATH_SEARCH_PATHS = (
 					"$(inherited)",
 					"@executable_path/Frameworks",
 				);
-				MARKETING_VERSION = 1.0;
-				PRODUCT_BUNDLE_IDENTIFIER = com.techonte.sample.Clipper;
+				MARKETING_VERSION = 1.0.1;
+				PRODUCT_BUNDLE_IDENTIFIER = com.techonte.benjiAI;
 				PRODUCT_NAME = "$(TARGET_NAME)";
 				SWIFT_EMIT_LOC_STRINGS = YES;
 				SWIFT_VERSION = 5.0;
@@ -297,22 +300,23 @@
 				ASSETCATALOG_COMPILER_APPICON_NAME = AppIcon;
 				ASSETCATALOG_COMPILER_GLOBAL_ACCENT_COLOR_NAME = AccentColor;
 				CODE_SIGN_STYLE = Automatic;
-				CURRENT_PROJECT_VERSION = 1;
+				CURRENT_PROJECT_VERSION = 4;
 				DEVELOPMENT_ASSET_PATHS = "\"Clipper/Preview Content\"";
-				DEVELOPMENT_TEAM = 8E32BHD578;
 				ENABLE_PREVIEWS = YES;
 				GENERATE_INFOPLIST_FILE = YES;
+				INFOPLIST_KEY_CFBundleDisplayName = BenjiAI;
+				INFOPLIST_KEY_LSApplicationCategoryType = "public.app-category.entertainment";
 				INFOPLIST_KEY_UIApplicationSceneManifest_Generation = YES;
 				INFOPLIST_KEY_UIApplicationSupportsIndirectInputEvents = YES;
 				INFOPLIST_KEY_UILaunchScreen_Generation = YES;
-				INFOPLIST_KEY_UISupportedInterfaceOrientations_iPad = "UIInterfaceOrientationPortrait UIInterfaceOrientationPortraitUpsideDown UIInterfaceOrientationLandscapeLeft UIInterfaceOrientationLandscapeRight";
-				INFOPLIST_KEY_UISupportedInterfaceOrientations_iPhone = "UIInterfaceOrientationPortrait UIInterfaceOrientationLandscapeLeft UIInterfaceOrientationLandscapeRight";
+				INFOPLIST_KEY_UISupportedInterfaceOrientations = UIInterfaceOrientationPortrait;
+				INFOPLIST_KEY_UISupportedInterfaceOrientations_iPad = "UIInterfaceOrientationLandscapeLeft UIInterfaceOrientationLandscapeRight UIInterfaceOrientationPortrait UIInterfaceOrientationPortraitUpsideDown";
 				LD_RUNPATH_SEARCH_PATHS = (
 					"$(inherited)",
 					"@executable_path/Frameworks",
 				);
-				MARKETING_VERSION = 1.0;
-				PRODUCT_BUNDLE_IDENTIFIER = com.techonte.sample.Clipper;
+				MARKETING_VERSION = 1.0.1;
+				PRODUCT_BUNDLE_IDENTIFIER = com.techonte.benjiAI;
 				PRODUCT_NAME = "$(TARGET_NAME)";
 				SWIFT_EMIT_LOC_STRINGS = YES;
 				SWIFT_VERSION = 5.0;
@@ -323,7 +327,7 @@
 /* End XCBuildConfiguration section */
 
 /* Begin XCConfigurationList section */
-		E56432712D5E53B200180963 /* Build configuration list for PBXProject "Clipper" */ = {
+		E56432712D5E53B200180963 /* Build configuration list for PBXProject "BenjiAI" */ = {
 			isa = XCConfigurationList;
 			buildConfigurations = (
 				E56432822D5E53B400180963 /* Debug */,
@@ -332,7 +336,7 @@
 			defaultConfigurationIsVisible = 0;
 			defaultConfigurationName = Release;
 		};
-		E56432842D5E53B400180963 /* Build configuration list for PBXNativeTarget "Clipper" */ = {
+		E56432842D5E53B400180963 /* Build configuration list for PBXNativeTarget "BenjiAI" */ = {
 			isa = XCConfigurationList;
 			buildConfigurations = (
 				E56432852D5E53B400180963 /* Debug */,
@@ -344,9 +348,9 @@
 /* End XCConfigurationList section */
 
 /* Begin XCSwiftPackageProductDependency section */
-		E564C6BD2DA762A800CC28BD /* MainTabPage */ = {
+		E519C2C32DC3C53E00693DA3 /* HomePage */ = {
 			isa = XCSwiftPackageProductDependency;
-			productName = MainTabPage;
+			productName = HomePage;
 		};
 /* End XCSwiftPackageProductDependency section */
 	};

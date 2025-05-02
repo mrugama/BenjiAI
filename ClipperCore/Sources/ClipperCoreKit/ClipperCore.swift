@@ -11,7 +11,6 @@ where Self: Sendable, Self: Identifiable {
 
 public protocol ClipperAssistant
 where Self: Sendable, Self: Observable {
-//    typealias OnProgress = @Sendable (String) -> Void
     typealias CAModel = ModelContainer
     
     var modelInfo: (model: String, weights: String, numParams: String) { get }

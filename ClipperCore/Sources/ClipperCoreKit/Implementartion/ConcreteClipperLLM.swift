@@ -8,7 +8,7 @@ struct ConcreteClipperLLM: ClipperLLM {
     var description: String
 }
 
-let llama = LLMRegistry.codeLlama13b4bit
+let models = LLMRegistry.llama3_8B_4bit
 
 let modelList: [ConcreteClipperLLM] = [
     .init(

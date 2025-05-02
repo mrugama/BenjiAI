@@ -5,7 +5,7 @@ struct OnboardUI: View {
     var body: some View {
         ScrollView {
             VStack(spacing: 30) {
-                Text("Why Clipper?")
+                Text("Why Benji?")
                     .font(.largeTitle)
                     .fontWeight(.heavy)
                     .foregroundStyle(Color.indigo)

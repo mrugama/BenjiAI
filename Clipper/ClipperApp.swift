@@ -1,11 +1,11 @@
 import SwiftUI
-import MainTabPage
+import HomePage
 
 @main
 struct ClipperApp: App {
     var body: some Scene {
         WindowGroup {
-            MainTabPageService.pageView
+            HomePageService.pageView
         }
     }
 }

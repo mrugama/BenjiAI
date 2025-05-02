@@ -1,46 +1,78 @@
 import ClipperCoreKit
+import OnboardUI
+import LoadingUI
 import MarkdownUI
 import SharedUIKit
 import SwiftUI
+import SettingsPage
 
 struct HomePage: View {
     @Environment(\.deviceStat) private var deviceStat
     @Environment(\.clipperAssistant) private var clipperAssistant
     @Environment(\.hideKeyboard) private var hideKeyboard
+    @AppStorage("isFirstLaunch") var isFirstLaunch: Bool = true
+    @AppStorage("ClipperModel") private var llm: String?
     
     @State private var userPrompt: String = ""
     @State private var showMemoryUsage: Bool = false
+    @State private var showSettings: Bool = false
     
     var body: some View {
-        NavigationStack {
-            ZStack {
-                Color.clear
-                    .contentShape(Rectangle())
-                    .onTapGesture {
-                        hideKeyboard()
+        if isFirstLaunch {
+            OnboardUIPageService.pageView($isFirstLaunch)
+        } else if let _ = clipperAssistant.loadedLLM {
+            NavigationStack {
+                ZStack {
+                    Color.clear
+                        .contentShape(Rectangle())
+                        .onTapGesture {
+                            hideKeyboard()
+                        }
+                    VStack(alignment: .leading) {
+                        if clipperAssistant.running {
+                            ProgressView()
+                                .frame(maxHeight: 20)
+                            Spacer()
+                        }
+                        modelOutputView
+                        PromptUI(promptText: $userPrompt) {
+                            generate()
+                        }
                     }
-                VStack(alignment: .leading) {
-                    if clipperAssistant.running {
-                        ProgressView()
-                            .frame(maxHeight: 20)
-                        Spacer()
+                    .padding()
+                    .toolbar {
+                        ToolbarItem(placement: .topBarLeading) {
+                            copyOutputButton
+                        }
+                        ToolbarItem(placement: .topBarTrailing) {
+                            memoryUsageButton
+                        }
+                        ToolbarItem(placement: .topBarTrailing) {
+                            settingsButton
+                        }
                     }
-                    modelOutputView
-                    submitButton
                 }
-                .padding()
-                .toolbar {
-                    ToolbarItem(placement: .automatic) {
-                        memoryUsageButton
-                    }
-                    ToolbarItem(placement: .primaryAction) {
-                        copyOutputButton
-                    }
+                .sheet(isPresented: $showMemoryUsage) {
+                    MemoryUsageView()
                 }
+                .sheet(isPresented: $showSettings) {
+                    SettingsPageService.pageView
+                }
+                .toolbarBackgroundVisibility(.visible, for: .navigationBar)
+                .toolbarBackground(Color.darkPastelRed, for: .navigationBar)
+                .navigationTitle("Benji")
+                .navigationBarTitleDisplayMode(.inline)
             }
-            .sheet(isPresented: $showMemoryUsage) {
-                MemoryUsageView()
-            }
+        } else {
+            LoadingUIService.pageView
+                .task {
+                    if let llmID = llm, let llm = clipperAssistant.llms.filter({$0.id == llmID}).first {
+                        clipperAssistant.selectedModel(llm)
+                    } else if let llm = clipperAssistant.llms.filter({ $0.id == "mlx-community/Qwen2.5-1.5B-Instruct-4bit"}).first {
+                        clipperAssistant.selectedModel(llm)
+                    }
+                    try? await clipperAssistant.load()
+                }
         }
     }
     
@@ -54,7 +86,7 @@ struct HomePage: View {
                     sp.scrollTo("bottom")
                 }
                 
-                EmptyView()
+                Spacer()
                     .frame(width: 1, height: 1)
                     .id("bottom")
             }
@@ -64,29 +96,6 @@ struct HomePage: View {
         }
     }
     
-    var submitButton: some View {
-        HStack(spacing: 10) {
-            PromptUI(promptText: $userPrompt) {
-                generate()
-            }
-            
-            Button {
-                if clipperAssistant.llm == nil {
-                    return
-                }
-                if clipperAssistant.running {
-                    cancel()
-                } else {
-                    generate()
-                }
-            } label: {
-                Image(systemName: clipperAssistant.running ? "brain" : "arrow.up.square.fill")
-                    .font(.largeTitle)
-            }
-        }
-        .padding()
-    }
-    
     var memoryUsageButton: some View {
         Button {
             showMemoryUsage.toggle()
@@ -94,6 +103,14 @@ struct HomePage: View {
             Image(systemName: "chart.bar.xaxis.ascending.badge.clock")
         }
         .disabled(clipperAssistant.llm == nil)
+    }
+    
+    var settingsButton: some View {
+        Button {
+            showSettings.toggle()
+        } label: {
+            Image(systemName: "gear")
+        }
     }
 
     var copyOutputButton: some View {

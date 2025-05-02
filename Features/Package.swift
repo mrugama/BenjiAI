@@ -7,8 +7,8 @@ let package = Package(
     platforms: [.iOS(.v18), .macOS(.v14)],
     products: [
         .library(
-            name: "MainTabPage",
-            targets: ["MainTabPage"])
+            name: "HomePage",
+            targets: ["HomePage"])
     ],
     dependencies: [
         .package(path: "../ClipperCore"),
@@ -16,25 +16,18 @@ let package = Package(
     ],
     targets: [
         .target(
-            name: "MainTabPage",
-            dependencies: [
-                "HomePage",
-                "SettingsPage",
-                "OnboardUI",
-                "SharedUIKit",
-                "LoadingUI",
-                .product(name: "ClipperCoreKit", package: "ClipperCore")
-            ]
-        ),
-        .target(
             name: "HomePage",
             dependencies: [
                 "SharedUIKit",
                 "ToolSpecPage",
+                "SettingsPage",
+                "OnboardUI",
+                "LoadingUI",
                 .product(name: "ClipperCoreKit", package: "ClipperCore"),
                 .product(name: "MarkdownUI", package: "swift-markdown-ui")
             ]
         ),
+        .target(name: "PlaygroundUI", dependencies: ["SharedUIKit"]),
         .target(
             name: "SettingsPage",
             dependencies: [

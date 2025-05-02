@@ -29,6 +29,12 @@ let package = Package(
             dependencies: [
                 .product(name: "MLXLLM", package: "mlx-swift-examples"),
             ]
-        )
+        ),
+        .target(
+            name: "DynamicContent",
+            dependencies: [
+                "ToolSpecsManager",
+            ]
+        ),
     ]
 )

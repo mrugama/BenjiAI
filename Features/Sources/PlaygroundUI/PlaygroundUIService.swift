@@ -1,8 +1,8 @@
 import SwiftUI
 
 @MainActor
-public struct MainTabPageService: Sendable {
+public struct PlaygroundUIService: Sendable {
     public static var pageView: some View {
-        MainTabPage()
+        PlaygroundUI()
     }
 }

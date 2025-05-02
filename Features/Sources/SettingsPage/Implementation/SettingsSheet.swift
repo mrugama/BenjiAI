@@ -4,6 +4,7 @@ import ClipperCoreKit
 struct SettingsSheet: View {
     @Environment(\.dismiss) var dismiss
     @Environment(\.clipperAssistant) private var clipperAssistant
+    @Binding var showDownloadButton: Bool
     
     var body: some View {
         List {
@@ -25,8 +26,13 @@ struct SettingsSheet: View {
     }
     
     func llmSelected(_ llm: any ClipperLLM) {
-        clipperAssistant.selectedModel(llm)
-        dismiss()
+        Task {
+            clipperAssistant.selectedModel(llm)
+            if await clipperAssistant.loadedLLM?.configuration.name != llm.id {
+                showDownloadButton = true
+            }
+            dismiss()            
+        }
     }
 }
 
