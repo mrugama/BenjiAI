@@ -17,18 +17,18 @@ where Self: Sendable, Self: Observable {
     var output: String { get }
     var stat: String { get }
     var llms: [any ClipperLLM] { get }
-    var llm: ((any ClipperLLM))? { get }
+    var llm: String? { get }
     var loadedLLM: CAModel? { get }
     var running: Bool { get }
     var isLoading: Bool { get }
     var loadingProgress: (model: String, progress: Double) { get }
     var generationTask: Task<Void, Error>? { get }
     
-    func load() async throws
+    func load()
     
-    func generate(prompt: String) async
+    func generate(prompt: String)
     
-    func selectedModel(_ llm: any ClipperLLM)
+    func selectedModel(_ id: String)
 }
 
 public protocol DeviceStat

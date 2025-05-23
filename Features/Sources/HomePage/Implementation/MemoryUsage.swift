@@ -8,15 +8,9 @@ struct MemoryUsageView: View {
     
     var body: some View {
         List {
-            if let modelConfig = clipperAssistant.llm {
-                Section("Model") {
-                    Text(modelConfig.name)
-                        .font(.headline)
-                    Text(modelConfig.description)
-                        .font(.subheadline)
-                        .foregroundStyle(.secondary)
-                }
-                
+            Section("Model") {
+                Text(clipperAssistant.modelInfo.model)
+                    .font(.headline)
             }
             Section("Memory") {
                 Markdown(
@@ -28,6 +22,7 @@ struct MemoryUsageView: View {
                 """
                 )
             }
-        }.navigationBarTitle("Memory Usage")
+        }
+        .navigationBarTitle("Memory Usage")
     }
 }

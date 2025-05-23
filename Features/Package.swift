@@ -31,6 +31,7 @@ let package = Package(
         .target(
             name: "SettingsPage",
             dependencies: [
+                "SharedUIKit",
                 .product(name: "ClipperCoreKit", package: "ClipperCore")
             ]
         ),

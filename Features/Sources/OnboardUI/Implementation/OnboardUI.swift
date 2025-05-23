@@ -3,12 +3,13 @@ import SwiftUI
 struct OnboardUI: View {
     @Binding var isFirstLaunch: Bool
     var body: some View {
-        ScrollView {
-            VStack(spacing: 30) {
-                Text("Why Benji?")
+        ScrollView(.vertical, showsIndicators: false) {
+            VStack(alignment: .leading, spacing: 30) {
+                Text("Why Benji AI?")
                     .font(.largeTitle)
                     .fontWeight(.heavy)
                     .foregroundStyle(Color.indigo)
+                    .padding(.top)
                 
                 privacyView
                 
@@ -20,20 +21,24 @@ struct OnboardUI: View {
                 
                 Text("On device AI, anytime, anywhere.")
                     .font(.footnote)
+                    .frame(maxWidth: .infinity)
                     .foregroundStyle(Color.gray)
                 
                 Button {
-                    isFirstLaunch = false
+                    withAnimation {
+                        isFirstLaunch = false
+                    }
                 } label: {
                     Text("Get Started")
                         .font(.headline)
+                        .frame(maxWidth: .infinity)
                         .foregroundColor(.white)
                         .padding()
-                        .background(Color.indigo)
                 }
-
+                .buttonStyle(.borderedProminent)
+                .tint(.indigo)
             }
-            .padding()
+            .frame(maxWidth: .infinity, maxHeight: .infinity)
             .padding([.leading, .trailing], 50)
         }
     }
@@ -41,7 +46,8 @@ struct OnboardUI: View {
     private var privacyView: some View {
         HStack(spacing: 18) {
             Image(systemName: "figure.child.and.lock.fill")
-                .font(.largeTitle)
+                .resizable()
+                .frame(width: 50, height: 50)
                 .foregroundStyle(Color.indigo)
             VStack(alignment: .leading) {
                 Text("Privacy First")
@@ -55,7 +61,8 @@ struct OnboardUI: View {
     private var yourAIView: some View {
         HStack(spacing: 18) {
             Image(systemName: "apple.intelligence")
-                .font(.largeTitle)
+                .resizable()
+                .frame(width: 50, height: 50)
                 .foregroundStyle(Color.indigo)
             VStack(alignment: .leading) {
                 Text("Choose Your AI")
@@ -69,7 +76,8 @@ struct OnboardUI: View {
     private var customizeYourAIView: some View {
         HStack(spacing: 18) {
             Image(systemName: "pencil.and.scribble")
-                .font(.largeTitle)
+                .resizable()
+                .frame(width: 50, height: 50)
                 .foregroundStyle(Color.indigo)
             VStack(alignment: .leading) {
                 Text("Make It Yours")
@@ -83,7 +91,8 @@ struct OnboardUI: View {
     private var trainYourModelView: some View {
         HStack(spacing: 18) {
             Image(systemName: "figure.strengthtraining.traditional.circle")
-                .font(.largeTitle)
+                .resizable()
+                .frame(width: 50, height: 50)
                 .foregroundStyle(Color.indigo)
             VStack(alignment: .leading) {
                 Text("Train on Your Terms")

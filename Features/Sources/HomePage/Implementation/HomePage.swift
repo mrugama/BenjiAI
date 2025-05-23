@@ -11,73 +11,113 @@ struct HomePage: View {
     @Environment(\.clipperAssistant) private var clipperAssistant
     @Environment(\.hideKeyboard) private var hideKeyboard
     @AppStorage("isFirstLaunch") var isFirstLaunch: Bool = true
-    @AppStorage("ClipperModel") private var llm: String?
+    @AppStorage("ClipperModel") private var savedLlmId: String = "mlx-community/Qwen2.5-1.5B-Instruct-4bit"
     
+    @State private var pageState: PageState
     @State private var userPrompt: String = ""
     @State private var showMemoryUsage: Bool = false
-    @State private var showSettings: Bool = false
+    
+    init() {
+        // Initialize pageState based on first launch status
+        let isFirst = UserDefaults.standard.object(forKey: "isFirstLaunch") == nil || UserDefaults.standard.bool(forKey: "isFirstLaunch")
+        _pageState = State(initialValue: isFirst ? .welcome : .main)
+    }
     
     var body: some View {
-        if isFirstLaunch {
-            OnboardUIPageService.pageView($isFirstLaunch)
-        } else if let _ = clipperAssistant.loadedLLM {
-            NavigationStack {
-                ZStack {
-                    Color.clear
-                        .contentShape(Rectangle())
-                        .onTapGesture {
-                            hideKeyboard()
-                        }
-                    VStack(alignment: .leading) {
-                        if clipperAssistant.running {
-                            ProgressView()
-                                .frame(maxHeight: 20)
-                            Spacer()
-                        }
-                        modelOutputView
-                        PromptUI(promptText: $userPrompt) {
-                            generate()
-                        }
-                    }
-                    .padding()
-                    .toolbar {
-                        ToolbarItem(placement: .topBarLeading) {
-                            copyOutputButton
-                        }
-                        ToolbarItem(placement: .topBarTrailing) {
-                            memoryUsageButton
-                        }
-                        ToolbarItem(placement: .topBarTrailing) {
-                            settingsButton
-                        }
+        currentPageView
+            .preferredColorScheme(.dark)
+            .task(id: clipperAssistant.isLoading) {
+                // Handle loading completion
+                if !clipperAssistant.isLoading && pageState == .loading {
+                    withAnimation(.easeInOut(duration: 0.5)) {
+                        pageState = .main
                     }
                 }
-                .sheet(isPresented: $showMemoryUsage) {
-                    MemoryUsageView()
-                }
-                .sheet(isPresented: $showSettings) {
-                    SettingsPageService.pageView
-                }
-                .toolbarBackgroundVisibility(.visible, for: .navigationBar)
-                .toolbarBackground(Color.darkPastelRed, for: .navigationBar)
-                .navigationTitle("Benji")
-                .navigationBarTitleDisplayMode(.inline)
             }
-        } else {
-            LoadingUIService.pageView
-                .task {
-                    if let llmID = llm, let llm = clipperAssistant.llms.filter({$0.id == llmID}).first {
-                        clipperAssistant.selectedModel(llm)
-                    } else if let llm = clipperAssistant.llms.filter({ $0.id == "mlx-community/Qwen2.5-1.5B-Instruct-4bit"}).first {
-                        clipperAssistant.selectedModel(llm)
-                    }
-                    try? await clipperAssistant.load()
+            .onAppear {
+                // Load LLM if not first launch and not already loaded
+                if !isFirstLaunch && clipperAssistant.loadedLLM == nil {
+                    loadLLM()
                 }
+            }
+    }
+    
+    @ViewBuilder
+    private var currentPageView: some View {
+        switch pageState {
+        case .welcome:
+            OnboardUIPageService.pageView($isFirstLaunch)
+                .onChange(of: isFirstLaunch) { _, newValue in
+                    if !newValue {
+                        // Animate transition from welcome to loading
+                        withAnimation(.easeInOut(duration: 0.5)) {
+                            pageState = .loading
+                        }
+                        // Start loading LLM
+                        DispatchQueue.main.asyncAfter(deadline: .now() + 0.3) {
+                            loadLLM()
+                        }
+                    }
+                }
+        case .main:
+            mainView
+        case .settings:
+            SettingsPageService.pageView($pageState)
+        case .loading:
+            ZStack {
+                Color.black
+                    .ignoresSafeArea(.all)
+                LoadingUIService.pageView
+            }
+            .interactiveDismissDisabled()
+        }
+    }
+    
+    private var mainView: some View {
+        NavigationStack {
+            ZStack {
+                Color.black
+                    .contentShape(Rectangle())
+                    .onTapGesture {
+                        hideKeyboard()
+                    }
+                VStack(alignment: .leading) {
+                    if clipperAssistant.running {
+                        ProgressView("Generating...")
+                            .frame(maxHeight: 20)
+                        Spacer()
+                    }
+                    modelOutputView
+                    PromptUI(promptText: $userPrompt) {
+                        generate()
+                    }
+                }
+                .padding()
+                .toolbar {
+                    ToolbarItem(placement: .topBarLeading) {
+                        copyOutputButton
+                    }
+                    ToolbarItem(placement: .topBarTrailing) {
+                        memoryUsageButton
+                    }
+                    ToolbarItem(placement: .topBarTrailing) {
+                        settingsButton
+                    }
+                }
+            }
+            .sheet(isPresented: $showMemoryUsage) {
+                MemoryUsageView()
+                    .preferredColorScheme(.dark)
+            }
+            .toolbarBackgroundVisibility(.visible, for: .navigationBar)
+            .toolbarBackground(Color(uiColor: .systemGray6), for: .navigationBar)
+            .navigationTitle("Benji AI")
+            .navigationBarTitleDisplayMode(.inline)
         }
     }
     
     var modelOutputView: some View {
-        ScrollView(.vertical) {
+        ScrollView(.vertical, showsIndicators: false) {
             ScrollViewReader { sp in
                 Group {
                     AnswerUI(response: clipperAssistant.output)
@@ -101,15 +141,19 @@ struct HomePage: View {
             showMemoryUsage.toggle()
         } label: {
             Image(systemName: "chart.bar.xaxis.ascending.badge.clock")
+                .foregroundColor(.white)
         }
         .disabled(clipperAssistant.llm == nil)
     }
     
     var settingsButton: some View {
         Button {
-            showSettings.toggle()
+            withAnimation(.easeInOut(duration: 0.3)) {
+                pageState = .settings
+            }
         } label: {
             Image(systemName: "gear")
+                .foregroundColor(.white)
         }
     }
 
@@ -120,16 +164,21 @@ struct HomePage: View {
             }
         } label: {
             Label("Copy Output", systemImage: "doc.on.doc.fill")
+                .foregroundColor(.white)
         }
         .disabled(clipperAssistant.output == "")
         .labelStyle(.titleAndIcon)
     }
     
+    private func loadLLM() {
+        clipperAssistant.selectedModel(savedLlmId)
+        clipperAssistant.load()
+    }
+    
     private func generate() {
-        Task {
-            await clipperAssistant.generate(prompt: userPrompt)
-            userPrompt = ""
-        }
+        guard !userPrompt.trimmingCharacters(in: .whitespacesAndNewlines).isEmpty else { return }
+        clipperAssistant.generate(prompt: userPrompt)
+        userPrompt = ""
     }
     
     private func cancel() {
@@ -146,6 +195,6 @@ struct HomePage: View {
     }
 }
 
-#Preview(traits: .sizeThatFitsLayout) {
-    HomePage()
-}
+//#Preview(traits: .sizeThatFitsLayout) {
+//    HomePage(isFirstLaunch: false)
+//}

@@ -13,10 +13,17 @@ struct LLMLoadingView: View {
             VStack(spacing: 32) {
                 Spacer()
 
-                Text(clipper.llm?.name ?? "Clipper")
-                    .font(.system(size: 34, weight: .bold, design: .rounded))
-                    .foregroundStyle(.white)
-                    .shadow(radius: 10)
+                if let selectedLLM = clipper.llms.filter({ $0.id == clipper.llm}).first {
+                    Text(selectedLLM.name)
+                        .font(.system(size: 34, weight: .bold, design: .rounded))
+                        .foregroundStyle(.white)
+                        .shadow(radius: 10)
+                } else {
+                    Text("Benji AI")
+                        .font(.system(size: 34, weight: .bold, design: .rounded))
+                        .foregroundStyle(.white)
+                        .shadow(radius: 10)
+                }
 
                 VStack(spacing: 12) {
                     ProgressView(value: clipper.loadingProgress.progress)

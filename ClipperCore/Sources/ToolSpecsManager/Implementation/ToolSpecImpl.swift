@@ -33,6 +33,7 @@ final class ToolSpecManagerImpl: ToolSpecManager, @unchecked Sendable {
             ])
         ]
     ]
+    var selectedTools: [[String: ToolSpecValue]] = []
     
     var availableTools: [String: [String: ToolSpecValue]] {
         Dictionary(uniqueKeysWithValues: tools.compactMap { tool in
@@ -42,6 +43,31 @@ final class ToolSpecManagerImpl: ToolSpecManager, @unchecked Sendable {
             }
             return (name, tool)
         })
+    }
+    
+    var myTools: [String: [String: ToolSpecValue]] {
+        Dictionary(uniqueKeysWithValues: selectedTools.compactMap { tool in
+            guard case let .object(function)? = tool["function"],
+                  case let .string(name)? = function["name"] else {
+                return nil
+            }
+            return (name, tool)
+        })
+    }
+    
+    func addTool(_ toolName: String) {
+        guard let tool = availableTools[toolName] else { return }
+        selectedTools.append(tool)
+    }
+    
+    func removeTool(_ toolName: String) {
+        selectedTools.removeAll { tool in
+            guard case let .object(function)? = tool["function"],
+                  case let .string(name)? = function["name"] else {
+                return false
+            }
+            return name == toolName
+        }
     }
     
     func prettyPrint(_ value: Any) -> String {
