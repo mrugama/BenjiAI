@@ -16,6 +16,8 @@ struct HomePage: View {
     @State private var pageState: PageState
     @State private var userPrompt: String = ""
     @State private var showMemoryUsage: Bool = false
+    @State private var pulseColor: Color = .green
+    @State private var animationTimer: Timer?
     
     init() {
         // Initialize pageState based on first launch status
@@ -82,11 +84,6 @@ struct HomePage: View {
                         hideKeyboard()
                     }
                 VStack(alignment: .leading) {
-                    if clipperAssistant.running {
-                        ProgressView("Generating...")
-                            .frame(maxHeight: 20)
-                        Spacer()
-                    }
                     modelOutputView
                     PromptUI(promptText: $userPrompt) {
                         generate()
@@ -95,7 +92,7 @@ struct HomePage: View {
                 .padding()
                 .toolbar {
                     ToolbarItem(placement: .topBarLeading) {
-                        copyOutputButton
+                        dynamicActionButton
                     }
                     ToolbarItem(placement: .topBarTrailing) {
                         memoryUsageButton
@@ -136,6 +133,42 @@ struct HomePage: View {
         }
     }
     
+    var dynamicActionButton: some View {
+        Button {
+            if clipperAssistant.running {
+                // Cancel the generation
+                cancel()
+            } else {
+                // Copy the output
+                Task {
+                    copyToClipboard(clipperAssistant.output)
+                }
+            }
+        } label: {
+            if clipperAssistant.running {
+                Label("Stop Generation", systemImage: "stop.fill")
+                    .foregroundStyle(pulseColor)
+            } else {
+                Label("Copy Output", systemImage: "doc.on.doc.fill")
+                    .foregroundStyle(.white)
+            }
+        }
+        .disabled(clipperAssistant.running ? false : clipperAssistant.output.isEmpty)
+        .labelStyle(.titleAndIcon)
+        .onAppear {
+            if clipperAssistant.running {
+                startPulseAnimation()
+            }
+        }
+        .onChange(of: clipperAssistant.running) { _, isRunning in
+            if isRunning {
+                startPulseAnimation()
+            } else {
+                stopPulseAnimation()
+            }
+        }
+    }
+    
     var memoryUsageButton: some View {
         Button {
             showMemoryUsage.toggle()
@@ -156,18 +189,23 @@ struct HomePage: View {
                 .foregroundColor(.white)
         }
     }
-
-    var copyOutputButton: some View {
-        Button {
-            Task {
-                copyToClipboard(clipperAssistant.output)
+    
+    private func startPulseAnimation() {
+        animationTimer = Timer.scheduledTimer(withTimeInterval: 0.6, repeats: true) { _ in
+            Task { @MainActor in
+                withAnimation(.easeInOut(duration: 0.6)) {
+                    pulseColor = pulseColor == .green ? Color.green.opacity(0.4) : .green
+                }
             }
-        } label: {
-            Label("Copy Output", systemImage: "doc.on.doc.fill")
-                .foregroundColor(.white)
         }
-        .disabled(clipperAssistant.output == "")
-        .labelStyle(.titleAndIcon)
+    }
+    
+    private func stopPulseAnimation() {
+        animationTimer?.invalidate()
+        animationTimer = nil
+        Task { @MainActor in
+            pulseColor = .green
+        }
     }
     
     private func loadLLM() {

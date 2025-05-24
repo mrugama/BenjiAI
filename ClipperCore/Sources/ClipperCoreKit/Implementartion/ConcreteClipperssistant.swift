@@ -64,7 +64,7 @@ final class ConcreteClipperAssistant: ClipperAssistant, @unchecked Sendable {
     }
     
     func generate(prompt: String) {
-        guard running == false else { return }
+        guard !running, loadedLLM != nil else { return }
         lock.withLock {
             generationTask = Task { @MainActor in
                 running = true
