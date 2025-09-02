@@ -16,8 +16,6 @@ struct HomePage: View {
     @State private var pageState: PageState
     @State private var userPrompt: String = ""
     @State private var showMemoryUsage: Bool = false
-    @State private var pulseColor: Color = .green
-    @State private var animationTimer: Timer?
     
     init() {
         // Initialize pageState based on first launch status
@@ -147,26 +145,12 @@ struct HomePage: View {
         } label: {
             if clipperAssistant.running {
                 Label("Stop Generation", systemImage: "stop.fill")
-                    .foregroundStyle(pulseColor)
             } else {
                 Label("Copy Output", systemImage: "doc.on.doc.fill")
-                    .foregroundStyle(.white)
             }
         }
         .disabled(clipperAssistant.running ? false : clipperAssistant.output.isEmpty)
         .labelStyle(.titleAndIcon)
-        .onAppear {
-            if clipperAssistant.running {
-                startPulseAnimation()
-            }
-        }
-        .onChange(of: clipperAssistant.running) { _, isRunning in
-            if isRunning {
-                startPulseAnimation()
-            } else {
-                stopPulseAnimation()
-            }
-        }
     }
     
     var memoryUsageButton: some View {
@@ -187,24 +171,6 @@ struct HomePage: View {
         } label: {
             Image(systemName: "gear")
                 .foregroundColor(.white)
-        }
-    }
-    
-    private func startPulseAnimation() {
-        animationTimer = Timer.scheduledTimer(withTimeInterval: 0.6, repeats: true) { _ in
-            Task { @MainActor in
-                withAnimation(.easeInOut(duration: 0.6)) {
-                    pulseColor = pulseColor == .green ? Color.green.opacity(0.4) : .green
-                }
-            }
-        }
-    }
-    
-    private func stopPulseAnimation() {
-        animationTimer?.invalidate()
-        animationTimer = nil
-        Task { @MainActor in
-            pulseColor = .green
         }
     }
     

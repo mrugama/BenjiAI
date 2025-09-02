@@ -1,6 +1,7 @@
 import MLXLMCommon
 import MLX
 import SwiftUI
+import ToolSpecsManager
 
 public protocol ClipperLLM
 where Self: Sendable, Self: Identifiable {
@@ -23,6 +24,7 @@ where Self: Sendable, Self: Observable {
     var isLoading: Bool { get }
     var loadingProgress: (model: String, progress: Double) { get }
     var generationTask: Task<Void, Error>? { get }
+    var toolSpecManager: ToolSpecManager { get }
     
     func load()
     

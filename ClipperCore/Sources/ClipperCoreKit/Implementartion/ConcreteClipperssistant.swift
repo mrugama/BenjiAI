@@ -4,6 +4,7 @@ import MLXLLM
 import MLXLMCommon
 import MLXRandom
 import SwiftUI
+import ToolSpecsManager
 
 @Observable
 final class ConcreteClipperAssistant: ClipperAssistant, @unchecked Sendable {
@@ -13,19 +14,21 @@ final class ConcreteClipperAssistant: ClipperAssistant, @unchecked Sendable {
     private(set) var modelInfo: (model: String, weights: String, numParams: String) = (model: "", weights: "0.0", numParams: "0")
     private(set) var llms: [any ClipperLLM] = modelList
     private(set) var llm: String?
-    private let desfaultLLM: String = "mlx-community/Qwen2.5-1.5B-Instruct-4bit"
+    private let desfaultLLM: String = "mlx-community/Llama-3.2-3B-Instruct"
     private(set) var loadedLLM: CAModel?
     private(set) var running: Bool = false
     private(set) var isLoading: Bool = false
     private(set) var loadingProgress: (model: String, progress: Double) = (model: "", progress: 0.0)
     
     private let generateParameters: GenerateParameters
+    private(set) var toolSpecManager: ToolSpecManager
     
     /// A task responsible for handling the generation process.
     private(set) var generationTask: Task<Void, Error>?
     
-    init() {
+    init(_ toolSpecManager: ToolSpecManager) {
         self.generateParameters = GenerateParameters()
+        self.toolSpecManager = toolSpecManager
     }
     
     func load() {
@@ -70,28 +73,14 @@ final class ConcreteClipperAssistant: ClipperAssistant, @unchecked Sendable {
                 running = true
                 output = ""
                 guard let loadedLLM else { output = "No llm loaded"; return }
-                let availableTools: [[String: Any]] = [
-                    [
-                        "type": "function",
-                        "function": [
-                            "name": "getTodayDate",
-                            "description": "Get the current date and time",
-                            "parameters": [
-                                "type": "object",
-                                "properties": [:],
-                                "required": [],
-                            ]
-                        ]
-                    ]
-                ]
                 
                 let userInput = UserInput(
                     prompt: prompt,
-                    tools: availableTools,
+                    tools: nil, //toolSpecManager.myTools,
                     additionalContext: [
-                        "Markdown": "true",
-                        "markdownTheme": "gitHub",
-                        "imageURL": "true"
+                        "language": ["es", "en"],
+                        "userLocation": ["lat": 40.7128, "lon": -74.0060],
+                        "userRole": "pet_owner"
                     ]
                 )
                 

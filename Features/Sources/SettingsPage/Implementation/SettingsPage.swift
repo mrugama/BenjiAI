@@ -14,7 +14,7 @@ struct SettingsPage: View {
         NavigationStack {
             VStack {
                 List {
-                    VersionView()
+                    AppVersionViewRow()
                     Section("Model") {
                         modelSelectionView
                     }

@@ -21,6 +21,7 @@ let package = Package(
         .target(
             name: "ClipperCoreKit",
             dependencies: [
+                "ToolSpecsManager",
                 .product(name: "MLXLLM", package: "mlx-swift-examples"),
             ]
         ),

@@ -11,7 +11,7 @@ struct AppVersionViewRow: View {
 
     var body: some View {
         HStack(alignment: .center) {
-            Image("Clipper", bundle: .main)
+            Image("AppLogo", bundle: .main)
                 .resizable()
                 .scaledToFit()
                 .frame(width: 64, height: 64)

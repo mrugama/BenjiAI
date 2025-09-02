@@ -1,7 +1,10 @@
 import SwiftUI
+import ToolSpecsManager
 
 struct ClipperAssistantEnvironmentKey: EnvironmentKey {
-    static let defaultValue: ClipperAssistant = ConcreteClipperAssistant()
+    static let defaultValue: ClipperAssistant = ConcreteClipperAssistant(
+        ToolSpecManagerService.provideService()
+    )
 }
 
 struct DeviceStatEnvironmentKey: EnvironmentKey {
