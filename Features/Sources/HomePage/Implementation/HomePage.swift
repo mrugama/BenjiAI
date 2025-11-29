@@ -1,6 +1,4 @@
 import ClipperCoreKit
-import OnboardUI
-import LoadingUI
 import MarkdownUI
 import SharedUIKit
 import SwiftUI
@@ -8,69 +6,15 @@ import SettingsPage
 
 struct HomePage: View {
     @Environment(\.deviceStat) private var deviceStat
-    @Environment(\.clipperAssistant) private var clipperAssistant
+    @Environment(\.clipperAssistant) private var clipper
     @Environment(\.hideKeyboard) private var hideKeyboard
-    @AppStorage("isFirstLaunch") var isFirstLaunch: Bool = true
-    @AppStorage("ClipperModel") private var savedLlmId: String = "mlx-community/Qwen2.5-1.5B-Instruct-4bit"
-    
-    @State private var pageState: PageState
+
+    @State private var viewModel: HomePageViewModel = .init()
     @State private var userPrompt: String = ""
     @State private var showMemoryUsage: Bool = false
     
-    init() {
-        // Initialize pageState based on first launch status
-        let isFirst = UserDefaults.standard.object(forKey: "isFirstLaunch") == nil || UserDefaults.standard.bool(forKey: "isFirstLaunch")
-        _pageState = State(initialValue: isFirst ? .welcome : .main)
-    }
-    
     var body: some View {
-        currentPageView
-            .preferredColorScheme(.dark)
-            .task(id: clipperAssistant.isLoading) {
-                // Handle loading completion
-                if !clipperAssistant.isLoading && pageState == .loading {
-                    withAnimation(.easeInOut(duration: 0.5)) {
-                        pageState = .main
-                    }
-                }
-            }
-            .onAppear {
-                // Load LLM if not first launch and not already loaded
-                if !isFirstLaunch && clipperAssistant.loadedLLM == nil {
-                    loadLLM()
-                }
-            }
-    }
-    
-    @ViewBuilder
-    private var currentPageView: some View {
-        switch pageState {
-        case .welcome:
-            OnboardUIPageService.pageView($isFirstLaunch)
-                .onChange(of: isFirstLaunch) { _, newValue in
-                    if !newValue {
-                        // Animate transition from welcome to loading
-                        withAnimation(.easeInOut(duration: 0.5)) {
-                            pageState = .loading
-                        }
-                        // Start loading LLM
-                        DispatchQueue.main.asyncAfter(deadline: .now() + 0.3) {
-                            loadLLM()
-                        }
-                    }
-                }
-        case .main:
-            mainView
-        case .settings:
-            SettingsPageService.pageView($pageState)
-        case .loading:
-            ZStack {
-                Color.black
-                    .ignoresSafeArea(.all)
-                LoadingUIService.pageView
-            }
-            .interactiveDismissDisabled()
-        }
+        mainView
     }
     
     private var mainView: some View {
@@ -115,9 +59,9 @@ struct HomePage: View {
         ScrollView(.vertical, showsIndicators: false) {
             ScrollViewReader { sp in
                 Group {
-                    AnswerUI(response: clipperAssistant.output)
+                    AnswerUI(response: clipper.output)
                 }
-                .onChange(of: clipperAssistant.output) { _, _ in
+                .onChange(of: clipper.output) { _, _ in
                     sp.scrollTo("bottom")
                 }
                 
@@ -133,23 +77,23 @@ struct HomePage: View {
     
     var dynamicActionButton: some View {
         Button {
-            if clipperAssistant.running {
+            if clipper.running {
                 // Cancel the generation
                 cancel()
             } else {
                 // Copy the output
                 Task {
-                    copyToClipboard(clipperAssistant.output)
+                    copyToClipboard(clipper.output)
                 }
             }
         } label: {
-            if clipperAssistant.running {
+            if clipper.running {
                 Label("Stop Generation", systemImage: "stop.fill")
             } else {
                 Label("Copy Output", systemImage: "doc.on.doc.fill")
             }
         }
-        .disabled(clipperAssistant.running ? false : clipperAssistant.output.isEmpty)
+        .disabled(clipper.running ? false : clipper.output.isEmpty)
         .labelStyle(.titleAndIcon)
     }
     
@@ -160,13 +104,13 @@ struct HomePage: View {
             Image(systemName: "chart.bar.xaxis.ascending.badge.clock")
                 .foregroundColor(.white)
         }
-        .disabled(clipperAssistant.llm == nil)
+        .disabled(clipper.llm == nil)
     }
     
     var settingsButton: some View {
         Button {
             withAnimation(.easeInOut(duration: 0.3)) {
-                pageState = .settings
+                viewModel.pageState = .settings
             }
         } label: {
             Image(systemName: "gear")
@@ -174,19 +118,14 @@ struct HomePage: View {
         }
     }
     
-    private func loadLLM() {
-        clipperAssistant.selectedModel(savedLlmId)
-        clipperAssistant.load()
-    }
-    
     private func generate() {
         guard !userPrompt.trimmingCharacters(in: .whitespacesAndNewlines).isEmpty else { return }
-        clipperAssistant.generate(prompt: userPrompt)
+        clipper.generate(prompt: userPrompt)
         userPrompt = ""
     }
     
     private func cancel() {
-        clipperAssistant.generationTask?.cancel()
+        clipper.generationTask?.cancel()
     }
     
     private func copyToClipboard(_ string: String) {
@@ -198,7 +137,3 @@ struct HomePage: View {
 #endif
     }
 }
-
-//#Preview(traits: .sizeThatFitsLayout) {
-//    HomePage(isFirstLaunch: false)
-//}

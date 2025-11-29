@@ -4,7 +4,6 @@ import MLX
 @Observable
 final class DeviceStatImpl: DeviceStat, @unchecked Sendable {
 
-    @MainActor
     var gpuUsage = GPU.snapshot()
 
     private let initialGPUSnapshot = GPU.snapshot()

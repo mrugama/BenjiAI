@@ -1,11 +1,12 @@
 import SwiftUI
+import SharedUIKit
 
 @MainActor
 public struct OnboardUIPageService: Sendable {
     public static func pageView(
-        _ isFirstLaunch: Binding<Bool>
+        _ pageState: Binding<PageState>
     ) -> some View {
-        OnboardUI(isFirstLaunch: isFirstLaunch)
+        OnboardUI(pageState: pageState)
     }
 }
 

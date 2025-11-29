@@ -26,7 +26,7 @@ where Self: Sendable, Self: Observable {
     var generationTask: Task<Void, Error>? { get }
     var toolSpecManager: ToolSpecManager { get }
     
-    func load()
+    func load() async
     
     func generate(prompt: String)
     
@@ -36,7 +36,7 @@ where Self: Sendable, Self: Observable {
 public protocol DeviceStat
 where Self: Sendable, Self: Observable {
     typealias ClipperGPU = GPU
-    @MainActor
+    //@MainActor
     var gpuUsage: GPU.Snapshot { get }
 }
 

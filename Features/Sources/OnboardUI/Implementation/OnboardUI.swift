@@ -1,7 +1,9 @@
 import SwiftUI
+import SharedUIKit
 
 struct OnboardUI: View {
-    @Binding var isFirstLaunch: Bool
+    @Binding var pageState: PageState
+    @AppStorage("isFirstLaunch") private var isFirstLaunch: Bool = true
     var body: some View {
         ScrollView(.vertical, showsIndicators: false) {
             VStack(alignment: .leading, spacing: 30) {
@@ -26,7 +28,7 @@ struct OnboardUI: View {
                 
                 Button {
                     withAnimation {
-                        isFirstLaunch = false
+                        pageState = .loading
                     }
                 } label: {
                     Text("Get Started")
@@ -40,6 +42,9 @@ struct OnboardUI: View {
             }
             .frame(maxWidth: .infinity, maxHeight: .infinity)
             .padding([.leading, .trailing], 50)
+        }
+        .onAppear {
+            isFirstLaunch = false
         }
     }
     
@@ -102,8 +107,4 @@ struct OnboardUI: View {
             }
         }
     }
-}
-
-#Preview {
-    OnboardUI(isFirstLaunch: .constant(false))
 }

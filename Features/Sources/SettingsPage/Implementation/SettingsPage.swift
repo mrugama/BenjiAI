@@ -34,7 +34,7 @@ struct SettingsPage: View {
                 .toolbar {
                     ToolbarItem(placement: .topBarLeading) {
                         Button("Back") {
-                            pageState = .main
+                            pageState = .home
                         }
                     }
                 }
@@ -125,14 +125,12 @@ struct SettingsPage: View {
     
     private var downloadButton: some View {
         Button("Download LLM") {
-            Task {
-                await MainActor.run {
-                    withAnimation(.easeInOut(duration: 0.3)) {
-                        pageState = .loading
-                    }
-                    clipperAssistant.load()
-                    savedLlmId = clipperAssistant.llm
+            Task { @MainActor in
+                withAnimation(.easeInOut(duration: 0.3)) {
+                    pageState = .loading
                 }
+                await clipperAssistant.load()
+                savedLlmId = clipperAssistant.llm
                 // The HomePage will handle transitioning back to .main when loading completes
             }
         }

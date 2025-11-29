@@ -1,8 +1,9 @@
 import SwiftUI
+import SharedUIKit
 
 @MainActor
 public struct LoadingUIService: Sendable {
-    public static var pageView: some View {
-        LLMLoadingView()
+    public static func pageView(_ pageState: Binding<PageState>) -> some View {
+        LLMLoadingView(pageState: pageState)
     }
 }

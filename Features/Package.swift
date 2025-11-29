@@ -7,8 +7,8 @@ let package = Package(
     platforms: [.iOS(.v18), .macOS(.v14)],
     products: [
         .library(
-            name: "HomePage",
-            targets: ["HomePage"])
+            name: "Coordinator",
+            targets: ["Coordinator"])
     ],
     dependencies: [
         .package(path: "../ClipperCore"),
@@ -16,13 +16,23 @@ let package = Package(
     ],
     targets: [
         .target(
+            name: "Coordinator",
+            dependencies: [
+                "HomePage",
+                "OnboardUI",
+                "LoadingUI",
+                "SettingsPage",
+                "SharedUIKit",
+                .product(name: "ClipperCoreKit", package: "ClipperCore"),
+            ]
+        )
+        ,
+        .target(
             name: "HomePage",
             dependencies: [
                 "SharedUIKit",
                 "ToolSpecPage",
                 "SettingsPage",
-                "OnboardUI",
-                "LoadingUI",
                 .product(name: "ClipperCoreKit", package: "ClipperCore"),
                 .product(name: "MarkdownUI", package: "swift-markdown-ui")
             ]
@@ -38,7 +48,8 @@ let package = Package(
         .target(
             name: "OnboardUI",
             dependencies: [
-                .product(name: "ClipperCoreKit", package: "ClipperCore")
+                "SharedUIKit",
+                .product(name: "ClipperCoreKit", package: "ClipperCore"),
             ]
         ),
         .target(
@@ -48,7 +59,12 @@ let package = Package(
                 .product(name: "ClipperCoreKit", package: "ClipperCore")
             ]
         ),
-        .target(name: "SharedUIKit"),
+        .target(
+            name: "SharedUIKit",
+            dependencies: [
+                .product(name: "ToolSpecsManager", package: "ClipperCore")
+            ]
+        ),
         .target(
             name: "ToolSpecPage",
             dependencies: [

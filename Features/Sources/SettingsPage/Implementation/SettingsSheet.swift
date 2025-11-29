@@ -27,7 +27,7 @@ struct SettingsSheet: View {
     
     func llmSelected(_ llm: any ClipperLLM) {
         Task {
-            clipperAssistant.selectedModel(llm.id)
+            await clipperAssistant.selectedModel(llm.id)
             if await clipperAssistant.loadedLLM?.configuration.name != llm.id {
                 showDownloadButton = true
             }

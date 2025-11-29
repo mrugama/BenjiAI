@@ -1,8 +1,16 @@
 import ClipperCoreKit
+import SharedUIKit
 import SwiftUI
 
 @Observable
 final class HomePageViewModel {
-    @AppStorage("isFirstLaunch") var isFirstLaunch: Bool = true
-    var pageState: PageState = .main
+    var isFirstLaunch: Bool {
+        get { UserDefaults.standard.bool(forKey: "isFirstLaunch") }
+        set { UserDefaults.standard.set(newValue, forKey: "isFirstLaunch") }
+    }
+    var pageState: PageState
+    
+    init(pageState: PageState = .home) {
+        self.pageState = pageState
+    }
 }

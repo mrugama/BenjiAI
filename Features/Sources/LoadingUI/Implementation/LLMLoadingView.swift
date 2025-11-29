@@ -1,9 +1,12 @@
 import SwiftUI
 import SharedUIKit
 import ClipperCoreKit
+import SharedUIKit
 
 struct LLMLoadingView: View {
+    @Binding var pageState: PageState
     @Environment(\.clipperAssistant) private var clipper
+    @AppStorage("BenjiLLM") private var savedLlmId: String = "mlx-community/Qwen2.5-1.5B-Instruct-4bit"
 
     var body: some View {
         ZStack {
@@ -44,6 +47,13 @@ struct LLMLoadingView: View {
                     .padding()
             }
             .padding()
+        }
+        .ignoresSafeArea(.all)
+        .interactiveDismissDisabled()
+        .task {
+                clipper.selectedModel(savedLlmId)
+                await clipper.load()
+                pageState = .home
         }
     }
 }
