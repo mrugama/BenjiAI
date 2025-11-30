@@ -23,7 +23,6 @@ let package = Package(
                 "LoadingUI",
                 "SettingsPage",
                 "SharedUIKit",
-                .product(name: "ClipperCoreKit", package: "ClipperCore"),
             ]
         )
         ,

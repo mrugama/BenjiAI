@@ -9,15 +9,12 @@ struct HomePage: View {
     @Environment(\.clipperAssistant) private var clipper
     @Environment(\.hideKeyboard) private var hideKeyboard
 
+    @Binding var pageState: PageState
     @State private var viewModel: HomePageViewModel = .init()
     @State private var userPrompt: String = ""
     @State private var showMemoryUsage: Bool = false
     
     var body: some View {
-        mainView
-    }
-    
-    private var mainView: some View {
         NavigationStack {
             ZStack {
                 Color.black
@@ -110,7 +107,7 @@ struct HomePage: View {
     var settingsButton: some View {
         Button {
             withAnimation(.easeInOut(duration: 0.3)) {
-                viewModel.pageState = .settings
+                pageState = .settings
             }
         } label: {
             Image(systemName: "gear")

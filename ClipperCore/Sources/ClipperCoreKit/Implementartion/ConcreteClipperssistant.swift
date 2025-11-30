@@ -90,10 +90,9 @@ final class ConcreteClipperAssistant: ClipperAssistant, @unchecked Sendable {
             {
               "user_languages": ["Spanish", "English"],
               "user_location": "Brooklyn, NY, USA",
-              "user_nationalities": ["American", "Nicaraguan"],
-              "user_birth_country": "Nicaragua",
+              "user_nationalities": "American",
               "user_full_name": "Marlon Rugama",
-              "user_dob": "Dec/11/1980"
+              "user_dob": "Jan/20/1990"
             }
             [/PERSONAL_CONTEXT]
             
