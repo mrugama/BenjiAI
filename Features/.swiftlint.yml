@@ -1,0 +1,6 @@
+# /Features/.swiftlint.yml (Root)
+
+# We leave this empty or add common rules.
+# Its primary existence allows the nested configs to work.
+included:
+  - Sources
