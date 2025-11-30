@@ -2,7 +2,7 @@ import SwiftUI
 import SharedUIKit
 
 @MainActor
-public struct SettingsPageService: Sendable {
+public struct SettingsPageService {
     public static func pageView(
         _ pageState: Binding<PageState>
     ) -> some View {

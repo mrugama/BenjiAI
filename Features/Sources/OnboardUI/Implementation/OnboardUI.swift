@@ -12,20 +12,20 @@ struct OnboardUI: View {
                     .fontWeight(.heavy)
                     .foregroundStyle(Color.indigo)
                     .padding(.top)
-                
+
                 privacyView
-                
+
                 yourAIView
-                
+
                 customizeYourAIView
-                
+
                 trainYourModelView
-                
+
                 Text("On device AI, anytime, anywhere.")
                     .font(.footnote)
                     .frame(maxWidth: .infinity)
                     .foregroundStyle(Color.gray)
-                
+
                 Button {
                     withAnimation {
                         pageState = .loading
@@ -47,7 +47,7 @@ struct OnboardUI: View {
             isFirstLaunch = false
         }
     }
-    
+
     private var privacyView: some View {
         HStack(spacing: 18) {
             Image(systemName: "figure.child.and.lock.fill")
@@ -62,7 +62,7 @@ struct OnboardUI: View {
             }
         }
     }
-    
+
     private var yourAIView: some View {
         HStack(spacing: 18) {
             Image(systemName: "apple.intelligence")
@@ -77,7 +77,7 @@ struct OnboardUI: View {
             }
         }
     }
-    
+
     private var customizeYourAIView: some View {
         HStack(spacing: 18) {
             Image(systemName: "pencil.and.scribble")
@@ -92,7 +92,7 @@ struct OnboardUI: View {
             }
         }
     }
-    
+
     private var trainYourModelView: some View {
         HStack(spacing: 18) {
             Image(systemName: "figure.strengthtraining.traditional.circle")
@@ -102,7 +102,12 @@ struct OnboardUI: View {
             VStack(alignment: .leading) {
                 Text("Train on Your Terms")
                     .font(.headline)
-                Text("Want smarter results? Allow your model to learn from your behavior — or wipe its memory whenever you want.")
+                Text(
+                """
+                Want smarter results? Allow your model to learn from your behavior —
+                or wipe its memory whenever you want.
+                """
+                )
                     .font(.subheadline)
             }
         }

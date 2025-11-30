@@ -7,7 +7,7 @@ import SwiftUI
 
 struct CoordinatorView: View {
     @State private var pageState: PageState = .welcome
-    
+
     var body: some View {
         switch pageState {
         case .welcome:
@@ -21,5 +21,11 @@ struct CoordinatorView: View {
         case .loading:
             LoadingUIService.pageView($pageState)
         }
+    }
+}
+
+public struct MyView: View {
+    public var body: some View {
+        /*@START_MENU_TOKEN@*//*@PLACEHOLDER=Hello, world!@*/Text("Hello, world!")/*@END_MENU_TOKEN@*/
     }
 }

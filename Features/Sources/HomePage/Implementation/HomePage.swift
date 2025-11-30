@@ -13,7 +13,7 @@ struct HomePage: View {
     @State private var viewModel: HomePageViewModel = .init()
     @State private var userPrompt: String = ""
     @State private var showMemoryUsage: Bool = false
-    
+
     var body: some View {
         NavigationStack {
             ZStack {
@@ -51,17 +51,17 @@ struct HomePage: View {
             .navigationBarTitleDisplayMode(.inline)
         }
     }
-    
+
     var modelOutputView: some View {
         ScrollView(.vertical, showsIndicators: false) {
-            ScrollViewReader { sp in
+            ScrollViewReader { reader in
                 Group {
                     AnswerUI(response: clipper.output)
                 }
                 .onChange(of: clipper.output) { _, _ in
-                    sp.scrollTo("bottom")
+                    reader.scrollTo("bottom")
                 }
-                
+
                 Spacer()
                     .frame(width: 1, height: 1)
                     .id("bottom")
@@ -71,7 +71,7 @@ struct HomePage: View {
             hideKeyboard()
         }
     }
-    
+
     var dynamicActionButton: some View {
         Button {
             if clipper.running {
@@ -93,7 +93,7 @@ struct HomePage: View {
         .disabled(clipper.running ? false : clipper.output.isEmpty)
         .labelStyle(.titleAndIcon)
     }
-    
+
     var memoryUsageButton: some View {
         Button {
             showMemoryUsage.toggle()
@@ -103,7 +103,7 @@ struct HomePage: View {
         }
         .disabled(clipper.llm == nil)
     }
-    
+
     var settingsButton: some View {
         Button {
             withAnimation(.easeInOut(duration: 0.3)) {
@@ -114,17 +114,17 @@ struct HomePage: View {
                 .foregroundColor(.white)
         }
     }
-    
+
     private func generate() {
         guard !userPrompt.trimmingCharacters(in: .whitespacesAndNewlines).isEmpty else { return }
         clipper.generate(prompt: userPrompt)
         userPrompt = ""
     }
-    
+
     private func cancel() {
         clipper.generationTask?.cancel()
     }
-    
+
     private func copyToClipboard(_ string: String) {
 #if os(macOS)
         NSPasteboard.general.clearContents()

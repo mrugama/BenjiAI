@@ -12,7 +12,7 @@ struct ToolSpecView: View {
                         }
                     }
                 }
-                
+
                 Section("Available tools") {
                     Label("getTodayDate", systemImage: "calendar")
                         .onTapGesture {

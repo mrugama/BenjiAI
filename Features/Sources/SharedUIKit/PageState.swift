@@ -6,4 +6,4 @@ public enum PageState {
     case home
     case settings
     case loading
-} 
+}

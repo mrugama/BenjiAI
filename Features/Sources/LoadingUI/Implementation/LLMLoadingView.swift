@@ -1,7 +1,6 @@
 import SwiftUI
 import SharedUIKit
 import ClipperCoreKit
-import SharedUIKit
 
 struct LLMLoadingView: View {
     @Binding var pageState: PageState

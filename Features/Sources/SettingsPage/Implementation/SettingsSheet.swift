@@ -5,7 +5,7 @@ struct SettingsSheet: View {
     @Environment(\.dismiss) var dismiss
     @Environment(\.clipperAssistant) private var clipperAssistant
     @Binding var showDownloadButton: Bool
-    
+
     var body: some View {
         List {
             Section {
@@ -24,15 +24,14 @@ struct SettingsSheet: View {
         }
         .listStyle(.plain)
     }
-    
+
     func llmSelected(_ llm: any ClipperLLM) {
         Task {
             clipperAssistant.selectedModel(llm.id)
             if await clipperAssistant.loadedLLM?.configuration.name != llm.id {
                 showDownloadButton = true
             }
-            dismiss()            
+            dismiss()
         }
     }
 }
-

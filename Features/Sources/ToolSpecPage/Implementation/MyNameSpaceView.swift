@@ -20,4 +20,3 @@ struct MyNameSpaceView: View {
 #Preview {
     MyNameSpaceView()
 }
-

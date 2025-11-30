@@ -1,6 +1,6 @@
 import Foundation
-import MLXLMCommon
 import MLXLLM
+import MLXLMCommon
 
 struct ConcreteClipperLLM: ClipperLLM {
     var id: String

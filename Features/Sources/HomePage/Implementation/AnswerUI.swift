@@ -59,7 +59,7 @@ struct AnswerUI: View {
     AnswerUI(response:
         """
         ## Hey there
-        
+
         Hey! How can I help you today?
         We have a lot of text to explain many ideas in the world.
         """

@@ -9,7 +9,7 @@ final class HomePageViewModel {
         set { UserDefaults.standard.set(newValue, forKey: "isFirstLaunch") }
     }
     var pageState: PageState
-    
+
     init(pageState: PageState = .home) {
         self.pageState = pageState
     }

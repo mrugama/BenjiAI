@@ -21,11 +21,11 @@ public struct MetalBackgroundView: UIViewRepresentable, Sendable {
                   let encoder = commandBuffer.makeRenderCommandEncoder(descriptor: descriptor) else { return }
 
             // Clear color animation: change over time
-            let t = Float(Date().timeIntervalSinceReferenceDate.truncatingRemainder(dividingBy: 10)) / 10.0
+            let time = Float(Date().timeIntervalSinceReferenceDate.truncatingRemainder(dividingBy: 10)) / 10.0
             view.clearColor = MTLClearColor(
-                red: Double(sin(t * 2 * .pi) * 0.2 + 0.6),
-                green: Double(cos(t * 2 * .pi) * 0.2 + 0.4),
-                blue: Double(sin(t * 2 * .pi + .pi/2) * 0.2 + 0.5),
+                red: Double(sin(time * 2 * .pi) * 0.2 + 0.6),
+                green: Double(cos(time * 2 * .pi) * 0.2 + 0.4),
+                blue: Double(sin(time * 2 * .pi + .pi/2) * 0.2 + 0.5),
                 alpha: 1
             )
 

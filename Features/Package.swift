@@ -12,7 +12,8 @@ let package = Package(
     ],
     dependencies: [
         .package(path: "../ClipperCore"),
-        .package(url: "https://github.com/gonzalezreal/swift-markdown-ui", from: "2.0.2")
+        .package(url: "https://github.com/gonzalezreal/swift-markdown-ui", from: "2.0.2"),
+        .package(url: "https://github.com/realm/SwiftLint", from: "0.54.0")
     ],
     targets: [
         .target(
@@ -23,6 +24,9 @@ let package = Package(
                 "LoadingUI",
                 "SettingsPage",
                 "SharedUIKit",
+            ],
+            plugins: [
+                .plugin(name: "SwiftLintBuildToolPlugin", package: "SwiftLint")
             ]
         )
         ,
@@ -34,6 +38,9 @@ let package = Package(
                 "SettingsPage",
                 .product(name: "ClipperCoreKit", package: "ClipperCore"),
                 .product(name: "MarkdownUI", package: "swift-markdown-ui")
+            ],
+            plugins: [
+                .plugin(name: "SwiftLintBuildToolPlugin", package: "SwiftLint")
             ]
         ),
         .target(name: "PlaygroundUI", dependencies: ["SharedUIKit"]),
@@ -42,6 +49,9 @@ let package = Package(
             dependencies: [
                 "SharedUIKit",
                 .product(name: "ClipperCoreKit", package: "ClipperCore")
+            ],
+            plugins: [
+                .plugin(name: "SwiftLintBuildToolPlugin", package: "SwiftLint")
             ]
         ),
         .target(
@@ -49,6 +59,9 @@ let package = Package(
             dependencies: [
                 "SharedUIKit",
                 .product(name: "ClipperCoreKit", package: "ClipperCore"),
+            ],
+            plugins: [
+                .plugin(name: "SwiftLintBuildToolPlugin", package: "SwiftLint")
             ]
         ),
         .target(
@@ -56,18 +69,27 @@ let package = Package(
             dependencies: [
                 "SharedUIKit",
                 .product(name: "ClipperCoreKit", package: "ClipperCore")
+            ],
+            plugins: [
+                .plugin(name: "SwiftLintBuildToolPlugin", package: "SwiftLint")
             ]
         ),
         .target(
             name: "SharedUIKit",
             dependencies: [
                 .product(name: "ToolSpecsManager", package: "ClipperCore")
+            ],
+            plugins: [
+                .plugin(name: "SwiftLintBuildToolPlugin", package: "SwiftLint")
             ]
         ),
         .target(
             name: "ToolSpecPage",
             dependencies: [
                 .product(name: "ToolSpecsManager", package: "ClipperCore"),
+            ],
+            plugins: [
+                .plugin(name: "SwiftLintBuildToolPlugin", package: "SwiftLint")
             ]
         ),
     ]

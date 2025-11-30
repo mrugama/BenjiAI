@@ -5,11 +5,11 @@ import ToolSpecsManager
 
 public struct ToolResultView: View {
     let viewData: ToolViewData
-    
+
     public init(viewData: ToolViewData) {
         self.viewData = viewData
     }
-    
+
     public var body: some View {
         switch viewData.template {
         case "date_display":
@@ -26,7 +26,7 @@ public struct ToolResultView: View {
 
 private struct DateDisplayView: View {
     let data: [String: any Sendable]
-    
+
     var body: some View {
         VStack(spacing: 16) {
             // Day display
@@ -36,7 +36,7 @@ private struct DateDisplayView: View {
                     Text("\(day)")
                         .font(.system(size: 48, weight: .bold, design: .rounded))
                         .foregroundColor(.primary)
-                    
+
                     Text(dayName)
                         .font(.title2)
                         .fontWeight(.medium)
@@ -49,7 +49,7 @@ private struct DateDisplayView: View {
                         .stroke(Color.blue.opacity(0.3), lineWidth: 1)
                 )
             }
-            
+
             // Time and date info
             VStack(spacing: 8) {
                 if let time = data["time"] as? String {
@@ -58,7 +58,7 @@ private struct DateDisplayView: View {
                         .fontWeight(.semibold)
                         .foregroundColor(.primary)
                 }
-                
+
                 if let fullDate = data["fullDate"] as? String {
                     Text(fullDate)
                         .font(.body)
@@ -80,7 +80,7 @@ private struct DateDisplayView: View {
 
 private struct SearchResultsView: View {
     let data: [String: any Sendable]
-    
+
     var body: some View {
         VStack(alignment: .leading, spacing: 16) {
             // Header
@@ -94,7 +94,7 @@ private struct SearchResultsView: View {
                 }
                 .padding(.bottom, 8)
             }
-            
+
             // Results
             if let results = data["results"] as? [[String: String]] {
                 LazyVStack(spacing: 12) {
@@ -103,7 +103,7 @@ private struct SearchResultsView: View {
                     }
                 }
             }
-            
+
             // Result count
             if let count = data["resultCount"] as? Int {
                 Text("\(count) result\(count == 1 ? "" : "s") found")
@@ -124,7 +124,7 @@ private struct SearchResultsView: View {
 private struct SearchResultCard: View {
     let result: [String: String]
     let index: Int
-    
+
     var body: some View {
         VStack(alignment: .leading, spacing: 8) {
             HStack {
@@ -134,7 +134,7 @@ private struct SearchResultCard: View {
                     .foregroundColor(.white)
                     .frame(width: 20, height: 20)
                     .background(Circle().fill(Color.blue))
-                
+
                 if let title = result["title"] {
                     Text(title)
                         .font(.headline)
@@ -143,14 +143,14 @@ private struct SearchResultCard: View {
                         .lineLimit(2)
                 }
             }
-            
+
             if let snippet = result["snippet"] {
                 Text(snippet)
                     .font(.body)
                     .foregroundColor(.secondary)
                     .lineLimit(3)
             }
-            
+
             if let urlString = result["url"],
                let url = URL(string: urlString) {
                 Link(destination: url) {
@@ -178,7 +178,7 @@ private struct SearchResultCard: View {
 private struct DefaultToolView: View {
     let data: [String: any Sendable]
     let type: String
-    
+
     var body: some View {
         VStack(alignment: .leading, spacing: 12) {
             HStack {
@@ -188,7 +188,7 @@ private struct DefaultToolView: View {
                     .font(.headline)
                     .fontWeight(.semibold)
             }
-            
+
             ScrollView {
                 VStack(alignment: .leading, spacing: 8) {
                     ForEach(Array(data.keys.sorted()), id: \.self) { key in
@@ -204,7 +204,7 @@ private struct DefaultToolView: View {
                                     .foregroundColor(.primary)
                                     .textSelection(.enabled)
                             }
-                            
+
                             Spacer()
                         }
                     }
@@ -240,7 +240,7 @@ struct ToolResultView_Previews: PreviewProvider {
                 ],
                 template: "date_display"
             ))
-            
+
             // Search results view example
             ToolResultView(viewData: ToolViewData(
                 type: "search_results",

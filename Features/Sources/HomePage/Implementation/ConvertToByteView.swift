@@ -1,9 +1,9 @@
 import SwiftUI
 
 struct ConvertToByteView: View {
-    
+
     @State private var inputText: String = ""
-    
+
     var body: some View {
         VStack(alignment: .leading, spacing: 20) {
             TextField("Input your text here...", text: $inputText)
@@ -22,12 +22,12 @@ struct ConvertToByteView: View {
         }
         .padding()
     }
-    
+
     func convertToBits(_ input: String) -> String {
         let inputData = input.data(using: .utf8)!
-        return inputData.map{ String($0, radix: 2) }.joined(separator: " ")
+        return inputData.map { String($0, radix: 2) }.joined(separator: " ")
     }
-    
+
     func convertToTokens(_ input: String) -> Int {
         let inputData = input.data(using: .utf8)!
         return inputData.count

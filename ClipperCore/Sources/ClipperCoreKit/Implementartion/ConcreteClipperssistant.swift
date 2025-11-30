@@ -129,9 +129,8 @@ final class ConcreteClipperAssistant: ClipperAssistant, @unchecked Sendable {
                 var text = ""
                 for await result in stream {
                     switch result {
-                    case .token(let token):
-                        let decodedToken = context.tokenizer.decode(tokens: [token])
-                        text += decodedToken
+                    case .chunk(let chunk):
+                        text += chunk
                         let currentText = text // Capture current value to avoid data race
                         await MainActor.run {
                             self.output = currentHistory + currentText
@@ -140,6 +139,9 @@ final class ConcreteClipperAssistant: ClipperAssistant, @unchecked Sendable {
                         await MainActor.run {
                             self.stat = "\(info.tokensPerSecond) tokens/s"
                         }
+                    case .toolCall:
+                        // Tool calls are handled separately if needed
+                        break
                     }
                 }
                 

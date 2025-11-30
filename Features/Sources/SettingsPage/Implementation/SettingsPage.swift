@@ -9,7 +9,7 @@ struct SettingsPage: View {
     @AppStorage("ClipperModel") private var savedLlmId: String?
     @State private var showDowndloadButton: Bool = false
     @Binding var pageState: PageState
-    
+
     var body: some View {
         NavigationStack {
             VStack {
@@ -18,11 +18,11 @@ struct SettingsPage: View {
                     Section("Model") {
                         modelSelectionView
                     }
-                    
+
                     Section("Description") {
                         modelDescriptionView
                     }
-                    
+
                     if clipperAssistant.loadedLLM != nil {
                         Section("Loaded model") {
                             loadedModelInfoView
@@ -44,7 +44,7 @@ struct SettingsPage: View {
                         .presentationDetents([.medium])
                         .presentationBackground(.thinMaterial)
                 }
-                
+
                 if showDowndloadButton {
                     downloadButton
                 }
@@ -55,7 +55,7 @@ struct SettingsPage: View {
             await checkModelStatus()
         }
     }
-    
+
     private var modelSelectionView: some View {
         HStack(spacing: 12) {
             Image(systemName: "apple.intelligence")
@@ -81,7 +81,7 @@ struct SettingsPage: View {
             showMenu = true
         }
     }
-    
+
     private var modelDescriptionView: some View {
         Group {
             if let selectedLLM = selectedModel {
@@ -91,7 +91,7 @@ struct SettingsPage: View {
             }
         }
     }
-    
+
     private var loadedModelInfoView: some View {
         Group {
             VStack(alignment: .leading) {
@@ -122,7 +122,7 @@ struct SettingsPage: View {
             }
         }
     }
-    
+
     private var downloadButton: some View {
         Button("Download LLM") {
             Task { @MainActor in
@@ -138,15 +138,15 @@ struct SettingsPage: View {
         .padding(16)
         .disabled(clipperAssistant.llm == nil)
     }
-    
+
     private var selectedModel: (any ClipperLLM)? {
         clipperAssistant.llms.filter({ $0.id == clipperAssistant.llm}).first
     }
-    
+
     private func checkModelStatus() async {
         if clipperAssistant.loadedLLM == nil {
             showDowndloadButton = true
-        } else if let loadedLLM = clipperAssistant.loadedLLM, 
+        } else if let loadedLLM = clipperAssistant.loadedLLM,
                   await loadedLLM.configuration.name != clipperAssistant.llm {
             showDowndloadButton = true
         }
