@@ -11,17 +11,17 @@
 /* End PBXBuildFile section */
 
 /* Begin PBXFileReference section */
-		E519C2C52DC8377800693DA3 /* BenjiAI-Info.plist */ = {isa = PBXFileReference; lastKnownFileType = text.plist; path = "BenjiAI-Info.plist"; sourceTree = "<group>"; };
-		E56432762D5E53B200180963 /* BenjiAI.app */ = {isa = PBXFileReference; explicitFileType = wrapper.application; includeInIndex = 0; path = BenjiAI.app; sourceTree = BUILT_PRODUCTS_DIR; };
+		E519C2C52DC8377800693DA3 /* Benji-Info.plist */ = {isa = PBXFileReference; lastKnownFileType = text.plist.xml; path = "Benji-Info.plist"; sourceTree = "<group>"; };
+		E56432762D5E53B200180963 /* Benji.app */ = {isa = PBXFileReference; explicitFileType = wrapper.application; includeInIndex = 0; path = Benji.app; sourceTree = BUILT_PRODUCTS_DIR; };
 		E56432912D5E545A00180963 /* ClipperCore */ = {isa = PBXFileReference; lastKnownFileType = wrapper; path = ClipperCore; sourceTree = "<group>"; };
 		E564C6BC2DA75A9400CC28BD /* Features */ = {isa = PBXFileReference; lastKnownFileType = wrapper; path = Features; sourceTree = "<group>"; };
-		E5A9978F2EDC8CB70007CA59 /* BenjiAI.entitlements */ = {isa = PBXFileReference; lastKnownFileType = text.plist.entitlements; path = BenjiAI.entitlements; sourceTree = "<group>"; };
+		E5A9978F2EDC8CB70007CA59 /* Benji.entitlements */ = {isa = PBXFileReference; lastKnownFileType = text.plist.entitlements; path = Benji.entitlements; sourceTree = "<group>"; };
 /* End PBXFileReference section */
 
 /* Begin PBXFileSystemSynchronizedRootGroup section */
-		E56432782D5E53B200180963 /* Clipper */ = {
+		E56432782D5E53B200180963 /* Benji */ = {
 			isa = PBXFileSystemSynchronizedRootGroup;
-			path = Clipper;
+			path = Benji;
 			sourceTree = "<group>";
 		};
 /* End PBXFileSystemSynchronizedRootGroup section */
@@ -41,11 +41,11 @@
 		E564326D2D5E53B200180963 = {
 			isa = PBXGroup;
 			children = (
-				E5A9978F2EDC8CB70007CA59 /* BenjiAI.entitlements */,
-				E519C2C52DC8377800693DA3 /* BenjiAI-Info.plist */,
+				E5A9978F2EDC8CB70007CA59 /* Benji.entitlements */,
+				E519C2C52DC8377800693DA3 /* Benji-Info.plist */,
 				E564C6BC2DA75A9400CC28BD /* Features */,
 				E56432912D5E545A00180963 /* ClipperCore */,
-				E56432782D5E53B200180963 /* Clipper */,
+				E56432782D5E53B200180963 /* Benji */,
 				E56432922D5E5DAF00180963 /* Frameworks */,
 				E56432772D5E53B200180963 /* Products */,
 			);
@@ -54,7 +54,7 @@
 		E56432772D5E53B200180963 /* Products */ = {
 			isa = PBXGroup;
 			children = (
-				E56432762D5E53B200180963 /* BenjiAI.app */,
+				E56432762D5E53B200180963 /* Benji.app */,
 			);
 			name = Products;
 			sourceTree = "<group>";
@@ -69,9 +69,9 @@
 /* End PBXGroup section */
 
 /* Begin PBXNativeTarget section */
-		E56432752D5E53B200180963 /* BenjiAI */ = {
+		E56432752D5E53B200180963 /* Benji */ = {
 			isa = PBXNativeTarget;
-			buildConfigurationList = E56432842D5E53B400180963 /* Build configuration list for PBXNativeTarget "BenjiAI" */;
+			buildConfigurationList = E56432842D5E53B400180963 /* Build configuration list for PBXNativeTarget "Benji" */;
 			buildPhases = (
 				E56432722D5E53B200180963 /* Sources */,
 				E56432732D5E53B200180963 /* Frameworks */,
@@ -82,14 +82,14 @@
 			dependencies = (
 			);
 			fileSystemSynchronizedGroups = (
-				E56432782D5E53B200180963 /* Clipper */,
+				E56432782D5E53B200180963 /* Benji */,
 			);
-			name = BenjiAI;
+			name = Benji;
 			packageProductDependencies = (
 				E5A9978D2EDB934A0007CA59 /* Coordinator */,
 			);
-			productName = Clipper;
-			productReference = E56432762D5E53B200180963 /* BenjiAI.app */;
+			productName = Benji;
+			productReference = E56432762D5E53B200180963 /* Benji.app */;
 			productType = "com.apple.product-type.application";
 		};
 /* End PBXNativeTarget section */
@@ -107,7 +107,7 @@
 					};
 				};
 			};
-			buildConfigurationList = E56432712D5E53B200180963 /* Build configuration list for PBXProject "BenjiAI" */;
+			buildConfigurationList = E56432712D5E53B200180963 /* Build configuration list for PBXProject "Benji" */;
 			developmentRegion = en;
 			hasScannedForEncodings = 0;
 			knownRegions = (
@@ -121,7 +121,7 @@
 			projectDirPath = "";
 			projectRoot = "";
 			targets = (
-				E56432752D5E53B200180963 /* BenjiAI */,
+				E56432752D5E53B200180963 /* Benji */,
 			);
 		};
 /* End PBXProject section */
@@ -275,13 +275,15 @@
 			buildSettings = {
 				ASSETCATALOG_COMPILER_APPICON_NAME = AppIcon;
 				ASSETCATALOG_COMPILER_GLOBAL_ACCENT_COLOR_NAME = AccentColor;
-				CODE_SIGN_ENTITLEMENTS = BenjiAI.entitlements;
+				CODE_SIGN_ENTITLEMENTS = Benji.entitlements;
+				CODE_SIGN_IDENTITY = "Apple Development";
 				CODE_SIGN_STYLE = Automatic;
 				CURRENT_PROJECT_VERSION = 6;
-				DEVELOPMENT_ASSET_PATHS = "\"Clipper/Preview Content\"";
+				DEVELOPMENT_ASSET_PATHS = "\"Benji/Preview Content\"";
+				DEVELOPMENT_TEAM = 8E32BHD578;
 				ENABLE_PREVIEWS = YES;
 				GENERATE_INFOPLIST_FILE = YES;
-				INFOPLIST_FILE = "BenjiAI-Info.plist";
+				INFOPLIST_FILE = "Benji-Info.plist";
 				INFOPLIST_KEY_CFBundleDisplayName = Benji;
 				INFOPLIST_KEY_LSApplicationCategoryType = "public.app-category.entertainment";
 				INFOPLIST_KEY_UIApplicationSceneManifest_Generation = YES;
@@ -294,8 +296,9 @@
 					"@executable_path/Frameworks",
 				);
 				MARKETING_VERSION = 1.0.2;
-				PRODUCT_BUNDLE_IDENTIFIER = com.techonte.benjiAI;
+				PRODUCT_BUNDLE_IDENTIFIER = com.techonte.benji;
 				PRODUCT_NAME = "$(TARGET_NAME)";
+				PROVISIONING_PROFILE_SPECIFIER = "";
 				SWIFT_APPROACHABLE_CONCURRENCY = YES;
 				SWIFT_DEFAULT_ACTOR_ISOLATION = MainActor;
 				SWIFT_EMIT_LOC_STRINGS = YES;
@@ -310,13 +313,15 @@
 			buildSettings = {
 				ASSETCATALOG_COMPILER_APPICON_NAME = AppIcon;
 				ASSETCATALOG_COMPILER_GLOBAL_ACCENT_COLOR_NAME = AccentColor;
-				CODE_SIGN_ENTITLEMENTS = BenjiAI.entitlements;
+				CODE_SIGN_ENTITLEMENTS = Benji.entitlements;
+				CODE_SIGN_IDENTITY = "Apple Development";
 				CODE_SIGN_STYLE = Automatic;
 				CURRENT_PROJECT_VERSION = 6;
-				DEVELOPMENT_ASSET_PATHS = "\"Clipper/Preview Content\"";
+				DEVELOPMENT_ASSET_PATHS = "\"Benji/Preview Content\"";
+				DEVELOPMENT_TEAM = 8E32BHD578;
 				ENABLE_PREVIEWS = YES;
 				GENERATE_INFOPLIST_FILE = YES;
-				INFOPLIST_FILE = "BenjiAI-Info.plist";
+				INFOPLIST_FILE = "Benji-Info.plist";
 				INFOPLIST_KEY_CFBundleDisplayName = Benji;
 				INFOPLIST_KEY_LSApplicationCategoryType = "public.app-category.entertainment";
 				INFOPLIST_KEY_UIApplicationSceneManifest_Generation = YES;
@@ -329,8 +334,9 @@
 					"@executable_path/Frameworks",
 				);
 				MARKETING_VERSION = 1.0.2;
-				PRODUCT_BUNDLE_IDENTIFIER = com.techonte.benjiAI;
+				PRODUCT_BUNDLE_IDENTIFIER = com.techonte.benji;
 				PRODUCT_NAME = "$(TARGET_NAME)";
+				PROVISIONING_PROFILE_SPECIFIER = "";
 				SWIFT_APPROACHABLE_CONCURRENCY = YES;
 				SWIFT_DEFAULT_ACTOR_ISOLATION = MainActor;
 				SWIFT_EMIT_LOC_STRINGS = YES;
@@ -343,7 +349,7 @@
 /* End XCBuildConfiguration section */
 
 /* Begin XCConfigurationList section */
-		E56432712D5E53B200180963 /* Build configuration list for PBXProject "BenjiAI" */ = {
+		E56432712D5E53B200180963 /* Build configuration list for PBXProject "Benji" */ = {
 			isa = XCConfigurationList;
 			buildConfigurations = (
 				E56432822D5E53B400180963 /* Debug */,
@@ -352,7 +358,7 @@
 			defaultConfigurationIsVisible = 0;
 			defaultConfigurationName = Release;
 		};
-		E56432842D5E53B400180963 /* Build configuration list for PBXNativeTarget "BenjiAI" */ = {
+		E56432842D5E53B400180963 /* Build configuration list for PBXNativeTarget "Benji" */ = {
 			isa = XCConfigurationList;
 			buildConfigurations = (
 				E56432852D5E53B400180963 /* Debug */,

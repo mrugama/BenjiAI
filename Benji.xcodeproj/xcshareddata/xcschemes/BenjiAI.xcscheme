@@ -16,9 +16,9 @@
             <BuildableReference
                BuildableIdentifier = "primary"
                BlueprintIdentifier = "E56432752D5E53B200180963"
-               BuildableName = "BenjiAI.app"
-               BlueprintName = "BenjiAI"
-               ReferencedContainer = "container:BenjiAI.xcodeproj">
+               BuildableName = "Benji.app"
+               BlueprintName = "Benji"
+               ReferencedContainer = "container:Benji.xcodeproj">
             </BuildableReference>
          </BuildActionEntry>
       </BuildActionEntries>
@@ -45,9 +45,9 @@
          <BuildableReference
             BuildableIdentifier = "primary"
             BlueprintIdentifier = "E56432752D5E53B200180963"
-            BuildableName = "BenjiAI.app"
-            BlueprintName = "BenjiAI"
-            ReferencedContainer = "container:BenjiAI.xcodeproj">
+            BuildableName = "Benji.app"
+            BlueprintName = "Benji"
+            ReferencedContainer = "container:Benji.xcodeproj">
          </BuildableReference>
       </BuildableProductRunnable>
    </LaunchAction>
@@ -62,9 +62,9 @@
          <BuildableReference
             BuildableIdentifier = "primary"
             BlueprintIdentifier = "E56432752D5E53B200180963"
-            BuildableName = "BenjiAI.app"
-            BlueprintName = "BenjiAI"
-            ReferencedContainer = "container:BenjiAI.xcodeproj">
+            BuildableName = "Benji.app"
+            BlueprintName = "Benji"
+            ReferencedContainer = "container:Benji.xcodeproj">
          </BuildableReference>
       </BuildableProductRunnable>
    </ProfileAction>
