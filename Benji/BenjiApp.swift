@@ -2,7 +2,7 @@ import SwiftUI
 import Coordinator
 
 @main
-struct ClipperApp: App {
+struct BenjiApp: App {
     var body: some Scene {
         WindowGroup {
             CoordinatorService.pageView
