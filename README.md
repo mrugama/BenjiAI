@@ -13,6 +13,26 @@ Benji is an on-device AI application designed to deliver contextual intelligence
 
 Benji is architected as a modular iOS application with the following design principles:
 
+```mermaid
+graph TD;
+    BenjiRoot-->Benji;
+    Benji-->BenjiApp.swift;
+    Benji-->Assets.xcassets;
+    BenjiRoot-->CkipperCore;
+    ClippercCore-->ClipperCoreKit;
+    ClippercCore-->ToolSpecsManager;
+    ClippercCore-->DynamicContent;
+    BenjiRoot-->Features;
+    Features-->Coordinator;
+    Features-->HomePage;
+    Features-->SettingsPage;
+    Features-->OnboarUI;
+    Features-->PlaygroundUI;
+    Features-->LoadingUI;
+    Features-->ToolSpecPage;
+    Features-->SharedUIKit;
+```
+
 ### Modular Design
 - **Swift Package Manager (SPM)**: The application is organized into modular packages:
   - **ClipperCore**: Core AI functionality, model management, and tool specifications
