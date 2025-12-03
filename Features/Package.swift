@@ -24,6 +24,7 @@ let package = Package(
                 "LoadingUI",
                 "SettingsPage",
                 "SharedUIKit",
+                "PlaygroundUI",
             ],
             plugins: [
                 .plugin(name: "SwiftLintBuildToolPlugin", package: "SwiftLint")

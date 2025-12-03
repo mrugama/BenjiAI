@@ -3,6 +3,8 @@
 Benji is an on-device AI application designed to deliver contextual intelligence while ensuring user privacy. Users can select their preferred AI model, and Benji offers tool calling capabilities to leverage online resources for summarizing search results, weather updates, agendas, and more. Please note that Benji is currently a work in progress.
 
 ## Compatibility
+![](https://img.shields.io/badge/iOS-iOS_17+-informational?style=flat&logo=iOS&logoColor=white&color=2bbc8a)
+![](https://img.shields.io/badge/Swift-6-informational?style=flat&logo=Swift&logoColor=white&color=2bbc8a)
 
 - **iOS Version**: Requires iOS 17.0 or later (iOS 18.0+ for certain features)
 - **Devices**: Compatible with iPhone and iPad devices running iOS 17.0+

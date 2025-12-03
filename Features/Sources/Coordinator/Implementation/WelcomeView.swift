@@ -81,3 +81,7 @@ struct WelcomeView: View {
         }
     }
 }
+
+#Preview {
+    WelcomeView(pageState: .constant(.welcome))
+}
