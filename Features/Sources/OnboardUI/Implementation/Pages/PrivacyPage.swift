@@ -94,7 +94,9 @@ struct PrivacyPage: View {
                             .stroke(Color.severanceGreen.opacity(0.5), lineWidth: 1)
                     )
                     .opacity(showContent ? 1 : 0)
-                    .padding(.bottom, 40) // Extra bottom padding
+                    
+                    // Spacer for bottom padding to avoid cut-off
+                    Color.clear.frame(height: 40)
                 }
                 .frame(minHeight: geometry.size.height) // Ensure full height
                 .frame(maxWidth: .infinity)
