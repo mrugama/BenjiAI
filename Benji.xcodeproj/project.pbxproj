@@ -282,7 +282,7 @@
 				CODE_SIGN_ENTITLEMENTS = Benji.entitlements;
 				CODE_SIGN_IDENTITY = "Apple Development";
 				CODE_SIGN_STYLE = Automatic;
-				CURRENT_PROJECT_VERSION = 7;
+				CURRENT_PROJECT_VERSION = 8;
 				DEVELOPMENT_ASSET_PATHS = "\"Benji/Preview Content\"";
 				DEVELOPMENT_TEAM = 8E32BHD578;
 				ENABLE_PREVIEWS = YES;
@@ -320,7 +320,7 @@
 				CODE_SIGN_ENTITLEMENTS = Benji.entitlements;
 				CODE_SIGN_IDENTITY = "Apple Development";
 				CODE_SIGN_STYLE = Automatic;
-				CURRENT_PROJECT_VERSION = 7;
+				CURRENT_PROJECT_VERSION = 8;
 				DEVELOPMENT_ASSET_PATHS = "\"Benji/Preview Content\"";
 				DEVELOPMENT_TEAM = 8E32BHD578;
 				ENABLE_PREVIEWS = YES;

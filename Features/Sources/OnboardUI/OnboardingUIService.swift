@@ -1,5 +1,11 @@
 import SwiftUI
 import SharedUIKit
+import EventKit
+import Contacts
+import CoreLocation
+import MediaPlayer
+import Photos
+import AVFoundation
 
 // MARK: - Onboarding State Model
 
@@ -223,11 +229,13 @@ public protocol OnboardingService: AnyObject {
 
 @MainActor
 @Observable
-public final class OnboardingServiceImpl: OnboardingService {
+public final class OnboardingServiceImpl: NSObject, OnboardingService, CLLocationManagerDelegate {
     public private(set) var state: OnboardingState
+    private var locationManager: CLLocationManager?
 
-    public init() {
+    public override init() {
         self.state = OnboardingState()
+        super.init()
     }
 
     public func updateSelectedModel(_ modelId: String?) {
@@ -247,6 +255,7 @@ public final class OnboardingServiceImpl: OnboardingService {
             state.grantedPermissions.remove(permission)
         } else {
             state.grantedPermissions.insert(permission)
+            requestSystemPermission(for: permission)
         }
     }
 
@@ -260,6 +269,46 @@ public final class OnboardingServiceImpl: OnboardingService {
 
     public func resetOnboarding() {
         state.hasCompletedOnboarding = false
+    }
+
+    private func requestSystemPermission(for permission: PermissionType) {
+        Task {
+            switch permission {
+            case .calendar:
+                let eventStore = EKEventStore()
+                if #available(iOS 17.0, macOS 14.0, *) {
+                    _ = try? await eventStore.requestFullAccessToEvents()
+                } else {
+                    _ = try? await eventStore.requestAccess(to: .event)
+                }
+
+            case .reminders:
+                let eventStore = EKEventStore()
+                if #available(iOS 17.0, macOS 14.0, *) {
+                    _ = try? await eventStore.requestFullAccessToReminders()
+                } else {
+                    _ = try? await eventStore.requestAccess(to: .reminder)
+                }
+
+            case .contacts:
+                let store = CNContactStore()
+                _ = try? await store.requestAccess(for: .contacts)
+
+            case .location:
+                self.locationManager = CLLocationManager()
+                self.locationManager?.delegate = self
+                self.locationManager?.requestWhenInUseAuthorization()
+
+            case .music:
+                _ = await MPMediaLibrary.requestAuthorization()
+
+            case .photos:
+                _ = await PHPhotoLibrary.requestAuthorization(for: .readWrite)
+
+            case .microphone:
+                _ = await AVAudioSession.sharedInstance().requestRecordPermission()
+            }
+        }
     }
 }
 

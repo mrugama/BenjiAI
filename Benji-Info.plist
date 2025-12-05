@@ -15,5 +15,19 @@
 	</array>
 	<key>com.apple.developer.kernel.increased-memory-limit</key>
 	<true/>
+	<key>NSCalendarsUsageDescription</key>
+	<string>This app requires access to your calendar to access your calendar events.</string>
+	<key>NSRemindersUsageDescription</key>
+	<string>This app requires access to your reminders to manage your tasks and reminders.</string>
+	<key>NSContactsUsageDescription</key>
+	<string>This app uses your contacts to search for and create new contact entries.</string>
+	<key>NSLocationWhenInUseUsageDescription</key>
+	<string>This app uses your location to provide location-based assistance.</string>
+	<key>NSAppleMusicUsageDescription</key>
+	<string>This app uses your media library to control music playback.</string>
+	<key>NSPhotoLibraryUsageDescription</key>
+	<string>This app analyzes and organizes your photos.</string>
+	<key>NSMicrophoneUsageDescription</key>
+	<string>This app uses the microphone for voice input and commands.</string>
 </dict>
 </plist>

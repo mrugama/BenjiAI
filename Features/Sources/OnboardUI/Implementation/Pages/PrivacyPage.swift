@@ -94,7 +94,7 @@ struct PrivacyPage: View {
                             .stroke(Color.severanceGreen.opacity(0.5), lineWidth: 1)
                     )
                     .opacity(showContent ? 1 : 0)
-                    
+
                     // Spacer for bottom padding to avoid cut-off
                     Color.clear.frame(height: 40)
                 }
