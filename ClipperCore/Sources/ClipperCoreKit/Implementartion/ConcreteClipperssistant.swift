@@ -35,7 +35,6 @@ final class ConcreteClipperAssistant: ClipperAssistant, @unchecked Sendable {
     init(_ toolSpecManager: ToolSpecManager) {
         self.generateParameters = GenerateParameters()
         self.toolSpecManager = toolSpecManager
-        
     }
     
     func load() async {
@@ -82,7 +81,6 @@ final class ConcreteClipperAssistant: ClipperAssistant, @unchecked Sendable {
     }
     
     private func generateWithToolSupport(prompt: String, loadedLLM: CAModel) async {
-        // Let the LLM handle all tool calls intelligently (MLX-Outil style)
         logger.info("Prompting model work on thread (isMainThread: \(Thread.current.isMainThread)): \(Thread.current.description)")
         let conversationHistory = "## \(prompt) \n"
         let personalInfo = """
@@ -116,9 +114,12 @@ final class ConcreteClipperAssistant: ClipperAssistant, @unchecked Sendable {
         MLXRandom.seed(UInt64(Date.timeIntervalSinceReferenceDate * 1000))
         
         do {
+            // Get current tool specifications
+            let tools = toolSpecManager.myTools
+            
             let userInput = UserInput(
                 prompt: .text(fullPromptForTextAPI),
-                tools: toolSpecManager.myTools
+                tools: tools
             )
             let currentHistory = conversationHistory
             try await loadedLLM.perform { (context: ModelContext) -> Void in
@@ -131,7 +132,7 @@ final class ConcreteClipperAssistant: ClipperAssistant, @unchecked Sendable {
                     switch result {
                     case .chunk(let chunk):
                         text += chunk
-                        let currentText = text // Capture current value to avoid data race
+                        let currentText = text
                         await MainActor.run {
                             self.output = currentHistory + currentText
                         }
@@ -145,8 +146,9 @@ final class ConcreteClipperAssistant: ClipperAssistant, @unchecked Sendable {
                     }
                 }
                 
-                // No tool calls - set final clean output
-                let finalText = text // Capture final value to avoid data race
+                // Check if the output contains tool calls and execute them
+                let finalText = await self.processToolCallsIfNeeded(text: text, conversationHistory: currentHistory)
+                
                 await MainActor.run {
                     self.output = currentHistory + finalText
                 }
@@ -160,62 +162,65 @@ final class ConcreteClipperAssistant: ClipperAssistant, @unchecked Sendable {
         }
     }
     
-
+    // MARK: - Tool Call Processing
     
-
-    
-    // Clean LLM output of all technical artifacts
-    private func cleanLLMOutput(_ text: String) -> String {
-        var cleaned = text
+    private func processToolCallsIfNeeded(text: String, conversationHistory: String) async -> String {
+        let toolCalls = parseToolCalls(from: text)
         
-        // Remove all MLX tokens and tool call syntax
-        let patternsToRemove = [
-            #"<\|[^|]+\|>"#,                    // All MLX tokens
-            #"\{[^}]*"name"[^}]*\}"#,           // JSON tool calls
-            #"```json.*?```"#,                 // JSON code blocks
-            #"The function.*?was used.*?\."#,   // Function explanations
-            #"This will.*?\."#,                // Generic explanations
-        ]
+        guard !toolCalls.isEmpty, currentToolIteration < maxToolIterations else {
+            return cleanLLMOutput(text)
+        }
         
-        for pattern in patternsToRemove {
-            cleaned = cleaned.replacingOccurrences(
-                of: pattern,
-                with: "",
-                options: [.regularExpression, .caseInsensitive]
+        currentToolIteration += 1
+        
+        var resultText = text
+        var toolResults: [String] = []
+        
+        for toolCall in toolCalls {
+            let result = await toolSpecManager.executeToolFunction(
+                name: toolCall.name,
+                parameters: toolCall.parameters
             )
-        }
-        
-        // Clean up whitespace
-        cleaned = cleaned.replacingOccurrences(of: #"\n\s*\n\s*\n"#, with: "\n\n", options: .regularExpression)
-        cleaned = cleaned.trimmingCharacters(in: .whitespacesAndNewlines)
-        
-        return cleaned
-    }
-    
-    func selectedModel(_ id: String) {
-        self.llm = id
-    }
-    
-    // MARK: - Helper methods
-    
-    private func manageModelLoading() async {
-        if let loadedLLM, await loadedLLM.configuration.name != llm {
-            let loadedModelDirURL = await loadedLLM.configuration.modelDirectory()
-            deleteFile(at: loadedModelDirURL)
-        }
-    }
-    
-    func deleteFile(at url: URL) {
-        let fileManager = FileManager.default
-        if fileManager.fileExists(atPath: url.path) {
-            do {
-                try fileManager.removeItem(at: url)
-            } catch {
-                output = "Error deleting file: \(error)"
+            
+            if result.success {
+                let formattedResult = formatToolResult(toolCall: toolCall, result: result)
+                toolResults.append(formattedResult)
+                
+                // Handle rich view results
+                if case .richView(let viewData) = result.resultType {
+                    let richResponse = createRichViewResponse(for: toolCall, viewData: viewData)
+                    toolResults.append(richResponse)
+                }
+                
+                // Handle chained tool calls
+                if result.shouldChain, let nextTool = result.suggestedNextTool {
+                    if case .chainedData(let chainedData) = result.resultType,
+                       let dataDict = chainedData as? [String: Any] {
+                        let chainedResult = await toolSpecManager.executeToolFunction(
+                            name: nextTool,
+                            parameters: dataDict
+                        )
+                        if chainedResult.success {
+                            let chainedFormatted = formatToolResult(
+                                toolCall: LocalToolCall(name: nextTool, parameters: dataDict),
+                                result: chainedResult
+                            )
+                            toolResults.append(chainedFormatted)
+                        }
+                    }
+                }
+            } else {
+                toolResults.append("❌ \(toolCall.name) failed: \(result.error ?? "Unknown error")")
             }
-        } else {
-            output = "File does not exist at path: \(url.path)"
         }
+        
+        // Clean the original text and append tool results
+        resultText = cleanLLMOutput(text)
+        if !toolResults.isEmpty {
+            resultText += "\n\n" + toolResults.joined(separator: "\n\n")
+        }
+        
+        return resultText
     }
     
     // MARK: - Tool Call Parsing
@@ -243,10 +248,6 @@ final class ConcreteClipperAssistant: ClipperAssistant, @unchecked Sendable {
                         let name = String(text[nameRange])
                         let parametersString = String(text[parametersRange])
                         
-                        // Only parse if it's one of our valid tools
-                        let validTools = ["getTodayDate", "searchDuckduckgo", "processSearchResults"]
-                        guard validTools.contains(name) else { continue }
-                        
                         // Parse the parameters JSON
                         if let parametersData = parametersString.data(using: .utf8),
                            let parameters = try? JSONSerialization.jsonObject(with: parametersData) as? [String: Any] {
@@ -269,7 +270,7 @@ final class ConcreteClipperAssistant: ClipperAssistant, @unchecked Sendable {
         var toolCalls: [LocalToolCall] = []
         let lowercased = text.lowercased()
         
-        // Only trigger getTodayDate for very specific date-related queries
+        // Date-related queries
         let dateKeywords = ["today's date", "today date", "what's today", "current date", "what date is it", "what's the date", "todays date"]
         let isDateQuery = dateKeywords.contains { keyword in
             lowercased.contains(keyword)
@@ -277,19 +278,17 @@ final class ConcreteClipperAssistant: ClipperAssistant, @unchecked Sendable {
         
         if isDateQuery && !toolCalls.contains(where: { $0.name == "getTodayDate" }) {
             toolCalls.append(LocalToolCall(name: "getTodayDate", parameters: ["displayType": "view"]))
-            return toolCalls // Return immediately to prevent other tool calls
+            return toolCalls
         }
         
-        // Be more restrictive about search - only trigger on explicit search requests
+        // Search triggers
         let searchTriggers = ["search for", "look up", "find information about", "who is", "what is"]
         
         for trigger in searchTriggers {
             if lowercased.contains(trigger) {
-                // Extract the query after the trigger
                 if let range = lowercased.range(of: trigger) {
                     let afterTrigger = String(text[range.upperBound...]).trimmingCharacters(in: .whitespacesAndNewlines)
                     if !afterTrigger.isEmpty && afterTrigger.count > 2 {
-                        // Clean the query - remove common question words
                         let cleanQuery = afterTrigger
                             .replacingOccurrences(of: "?", with: "")
                             .trimmingCharacters(in: .whitespacesAndNewlines)
@@ -297,7 +296,7 @@ final class ConcreteClipperAssistant: ClipperAssistant, @unchecked Sendable {
                         if !cleanQuery.isEmpty && !toolCalls.contains(where: { $0.name == "searchDuckduckgo" }) {
                             toolCalls.append(LocalToolCall(name: "searchDuckduckgo", parameters: ["query": cleanQuery]))
                         }
-                        break // Only add one search call
+                        break
                     }
                 }
             }
@@ -306,10 +305,38 @@ final class ConcreteClipperAssistant: ClipperAssistant, @unchecked Sendable {
         return toolCalls
     }
     
+    // MARK: - Output Cleaning
+    
+    private func cleanLLMOutput(_ text: String) -> String {
+        var cleaned = text
+        
+        // Remove all MLX tokens and tool call syntax
+        let patternsToRemove = [
+            #"<\|[^|]+\|>"#,
+            #"\{[^}]*"name"[^}]*\}"#,
+            #"```json.*?```"#,
+            #"The function.*?was used.*?\."#,
+            #"This will.*?\."#,
+        ]
+        
+        for pattern in patternsToRemove {
+            cleaned = cleaned.replacingOccurrences(
+                of: pattern,
+                with: "",
+                options: [.regularExpression, .caseInsensitive]
+            )
+        }
+        
+        // Clean up whitespace
+        cleaned = cleaned.replacingOccurrences(of: #"\n\s*\n\s*\n"#, with: "\n\n", options: .regularExpression)
+        cleaned = cleaned.trimmingCharacters(in: .whitespacesAndNewlines)
+        
+        return cleaned
+    }
+    
     private func removeToolCallSyntax(from text: String) -> String {
         var cleanedText = text
         
-        // Remove the python_tag tool call patterns and MLX tokens
         let mlxPatterns = [
             #"<\|python_tag\|>.*?<\|eom_id\|>"#,
             #"<\|start_header_id\|>assistant<\|end_header_id\|>"#,
@@ -326,7 +353,6 @@ final class ConcreteClipperAssistant: ClipperAssistant, @unchecked Sendable {
             )
         }
         
-        // Remove any remaining tool call JSON patterns
         let jsonPattern = #"\{\s*"name":\s*"[^"]+"\s*,\s*"parameters":\s*\{[^}]*\}\s*\}"#
         cleanedText = cleanedText.replacingOccurrences(
             of: jsonPattern,
@@ -334,53 +360,13 @@ final class ConcreteClipperAssistant: ClipperAssistant, @unchecked Sendable {
             options: [.regularExpression, .caseInsensitive]
         )
         
-        // Remove common tool call explanations
-        let explanationPatterns = [
-            "The code above will.*?\\.",
-            "This function call will.*?\\.",
-            "This will.*?\\.",
-            "The.*?function.*?will.*?\\.",
-            "This JSON.*?will.*?\\.",
-            "The function \".*?\" was used.*?\\.",
-            "The \".*?\" function.*?\\.",
-            "Function \".*?\" was called.*?\\.",
-            "Using the \".*?\" function.*?\\.",
-            "The.*?function returns.*?\\.",
-            "This function.*?\\.",
-            ".*?was used to.*?\\."
-        ]
-        
-        for pattern in explanationPatterns {
-            cleanedText = cleanedText.replacingOccurrences(
-                of: pattern,
-                with: "",
-                options: [.regularExpression, .caseInsensitive]
-            )
-        }
-        
-        // Remove any lines that are purely explanatory about tools
-        let lines = cleanedText.components(separatedBy: .newlines)
-        let filteredLines = lines.filter { line in
-            let trimmedLine = line.trimmingCharacters(in: .whitespacesAndNewlines).lowercased()
-            
-            // Skip empty lines or lines that explain tool usage
-            if trimmedLine.isEmpty { return false }
-            if trimmedLine.contains("function") && (trimmedLine.contains("was used") || trimmedLine.contains("returns") || trimmedLine.contains("will")) { return false }
-            if trimmedLine.contains("tool") && (trimmedLine.contains("called") || trimmedLine.contains("executed")) { return false }
-            if trimmedLine.starts(with: "the ") && trimmedLine.contains("function") { return false }
-            if trimmedLine.starts(with: "using ") && trimmedLine.contains("function") { return false }
-            
-            return true
-        }
-        
-        cleanedText = filteredLines.joined(separator: "\n")
-        
-        // Clean up extra whitespace and newlines
         cleanedText = cleanedText.replacingOccurrences(of: #"\n\s*\n\s*\n"#, with: "\n\n", options: .regularExpression)
         cleanedText = cleanedText.trimmingCharacters(in: .whitespacesAndNewlines)
         
         return cleanedText
     }
+    
+    // MARK: - Tool Result Formatting
     
     private func createRichViewResponse(for toolCall: LocalToolCall, viewData: ToolViewData) -> String {
         switch viewData.type {
@@ -388,110 +374,146 @@ final class ConcreteClipperAssistant: ClipperAssistant, @unchecked Sendable {
             if let dayName = viewData.data["dayName"] as? String,
                let fullDate = viewData.data["fullDate"] as? String,
                let time = viewData.data["time"] as? String {
-                return "📅 **Today's Date**\n\n**\(dayName)** - \(time)\n\(fullDate)\n\n*Rich date view available in UI*"
+                return "📅 **Today's Date**\n\n**\(dayName)** - \(time)\n\(fullDate)"
             } else {
-                return "📅 **Today's Date**\n\n*Date information available in rich view format*"
+                return "📅 **Today's Date**\n\n*Date information available*"
             }
             
         case "search_results":
             if let query = viewData.data["query"] as? String,
                let resultCount = viewData.data["resultCount"] as? Int {
-                return "🔍 **Search Results for '\(query)'**\n\nFound \(resultCount) result\(resultCount == 1 ? "" : "s").\n\n*Rich search results view available in UI*"
+                return "🔍 **Search Results for '\(query)'**\n\nFound \(resultCount) result\(resultCount == 1 ? "" : "s")."
             } else {
-                return "🔍 **Search Results**\n\n*Search results available in rich view format*"
+                return "🔍 **Search Results**\n\n*Search results available*"
             }
             
-        default:
-            return "🎨 **Rich Content Available**\n\nType: \(viewData.type)\nTemplate: \(viewData.template)\n\n*Rich view available in UI*"
-        }
-    }
-    
-    private func decidePresentationType(for toolName: String, result: ToolFunctionResult) -> String {
-        // AI logic to decide the best presentation method
-        switch toolName {
-        case "searchDuckduckgo":
-            // For search results, check the query type and content
-            if let query = result.metadata["originalQuery"] as? String {
-                if query.lowercased().contains("president") || query.lowercased().contains("current") {
-                    return "summary" // For factual queries, provide a summary
-                } else if query.lowercased().contains("how to") || query.lowercased().contains("tutorial") {
-                    return "webview" // For tutorials, show the actual webpage
-                } else {
-                    return "formatted" // For general queries, show formatted results
-                }
+        case "calendar_event", "calendar_events_list":
+            if let title = viewData.data["title"] as? String {
+                return "📅 **Calendar Event: \(title)**"
             }
-            return "summary"
+            return "📅 **Calendar Information**"
+            
+        case "reminder", "reminders_list":
+            if let title = viewData.data["title"] as? String {
+                return "⏰ **Reminder: \(title)**"
+            }
+            return "⏰ **Reminder Information**"
+            
+        case "contacts_list", "contact_detail":
+            return "👤 **Contact Information**"
+            
+        case "current_location", "geocoded_location", "distance_calculation":
+            if let address = viewData.data["address"] as? String {
+                return "📍 **Location: \(address)**"
+            }
+            return "📍 **Location Information**"
+            
+        case "music_search_results", "now_playing", "playback_state":
+            return "🎵 **Music**"
+            
         default:
-            return "summary"
+            return "🎨 **\(viewData.type)**"
         }
     }
     
     private func formatToolResult(toolCall: LocalToolCall, result: ToolFunctionResult) -> String {
-        var formatted = "**\(toolCall.name)**"
+        var formatted = ""
         
         if result.success {
             switch result.resultType {
             case .data(let data):
                 if let resultDict = data as? [String: Any] {
-                    formatted += "\n```json\n"
                     if let jsonData = try? JSONSerialization.data(withJSONObject: resultDict, options: .prettyPrinted),
                        let jsonString = String(data: jsonData, encoding: .utf8) {
-                        formatted += jsonString
+                        formatted = "```json\n\(jsonString)\n```"
                     } else {
-                        formatted += "\(resultDict)"
+                        formatted = "\(resultDict)"
                     }
-                    formatted += "\n```"
                 } else {
-                    formatted += "\n\(data)"
+                    formatted = "\(data)"
                 }
                 
             case .text(let text):
-                formatted += "\n\(text)"
+                formatted = text
                 
             case .richView(let viewData):
-                formatted += "\n🎨 **Rich View: \(viewData.type)**\n"
-                formatted += "Template: \(viewData.template)\n"
-                
-                // Format the view data for display
-                if let jsonData = try? JSONSerialization.data(withJSONObject: viewData.data, options: .prettyPrinted),
-                   let jsonString = String(data: jsonData, encoding: .utf8) {
-                    formatted += "```json\n\(jsonString)\n```"
-                }
+                formatted = createRichViewResponse(for: toolCall, viewData: viewData)
                 
             case .webContent(let url):
-                formatted += "\n🌐 **Web Content**\n"
-                formatted += "URL: \(url.absoluteString)\n"
+                formatted = "🌐 **Web Content**\nURL: \(url.absoluteString)"
                 if let title = result.metadata["title"] as? String {
-                    formatted += "Title: \(title)\n"
-                }
-                if let snippet = result.metadata["snippet"] as? String {
-                    formatted += "Preview: \(snippet)\n"
+                    formatted += "\nTitle: \(title)"
                 }
                 
-            case .chainedData(let data):
-                formatted += "\n🔗 **Chained Data** (processed by next tool)\n"
-                if let dataDict = data as? [String: Any],
-                   let jsonData = try? JSONSerialization.data(withJSONObject: dataDict, options: .prettyPrinted),
-                   let jsonString = String(data: jsonData, encoding: .utf8) {
-                    formatted += "```json\n\(jsonString)\n```"
-                }
+            case .chainedData:
+                // Chained data is processed separately
+                formatted = ""
             }
-            
-            // Add metadata if present
-            if !result.metadata.isEmpty {
-                formatted += "\n\n*Metadata:*\n"
-                for (key, value) in result.metadata {
-                    formatted += "- \(key): \(value)\n"
-                }
-            }
-            
         } else {
-            formatted += "\n❌ Error: \(result.error ?? "Unknown error")"
+            formatted = "❌ Error: \(result.error ?? "Unknown error")"
         }
         
         return formatted
     }
+    
+    // MARK: - Model Selection
+    
+    func selectedModel(_ id: String) {
+        self.llm = id
+    }
+    
+    // MARK: - Tool Management
+    
+    func enableTool(_ toolId: String) async {
+        await toolSpecManager.enableTool(id: toolId)
+    }
+    
+    func disableTool(_ toolId: String) async {
+        await toolSpecManager.disableTool(id: toolId)
+    }
+    
+    func toolsByCategory() async -> [ToolCategory: [any AssistantTool]] {
+        let registeredTools = await toolSpecManager.registeredTools
+        var result: [ToolCategory: [any AssistantTool]] = [:]
+        
+        for tool in registeredTools.values {
+            var tools = result[tool.category] ?? []
+            tools.append(tool)
+            result[tool.category] = tools
+        }
+        
+        return result
+    }
+    
+    func isToolEnabled(_ toolId: String) async -> Bool {
+        let selectedTools = await toolSpecManager.selectedTools
+        return selectedTools[toolId] != nil
+    }
+    
+    // MARK: - Private Helper Methods
+    
+    private func manageModelLoading() async {
+        if let loadedLLM, await loadedLLM.configuration.name != llm {
+            let loadedModelDirURL = await loadedLLM.configuration.modelDirectory()
+            deleteFile(at: loadedModelDirURL)
+        }
+    }
+    
+    func deleteFile(at url: URL) {
+        let fileManager = FileManager.default
+        if fileManager.fileExists(atPath: url.path) {
+            do {
+                try fileManager.removeItem(at: url)
+            } catch {
+                output = "Error deleting file: \(error)"
+            }
+        } else {
+            output = "File does not exist at path: \(url.path)"
+        }
+    }
 }
+
+// MARK: - Errors
 
 enum ClipperAssistantError: LocalizedError {
     case invalidInput, invalidOutput,

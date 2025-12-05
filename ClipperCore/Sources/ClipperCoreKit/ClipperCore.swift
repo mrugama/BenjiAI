@@ -83,6 +83,22 @@ where Self: Sendable, Self: Observable {
     /// - Parameter id: The unique identifier of the language model to select.
     /// - Note: The selected model must be loaded using `load()` before it can be used for generation.
     func selectedModel(_ id: String)
+    
+    /// Enable a specific tool by its identifier
+    /// - Parameter toolId: The unique identifier of the tool to enable
+    func enableTool(_ toolId: String) async
+    
+    /// Disable a specific tool by its identifier
+    /// - Parameter toolId: The unique identifier of the tool to disable
+    func disableTool(_ toolId: String) async
+    
+    /// Get all registered tools grouped by category
+    func toolsByCategory() async -> [ToolCategory: [any AssistantTool]]
+    
+    /// Check if a tool is currently enabled
+    /// - Parameter toolId: The unique identifier of the tool
+    /// - Returns: True if the tool is enabled, false otherwise
+    func isToolEnabled(_ toolId: String) async -> Bool
 }
 
 /// A protocol for accessing device statistics, particularly GPU usage information.
