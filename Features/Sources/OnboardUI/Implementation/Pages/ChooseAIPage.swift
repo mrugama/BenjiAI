@@ -6,6 +6,9 @@ struct ChooseAIPage: View {
     let onboardingService: OnboardingService
     @State private var showContent = false
     @State private var selectedModelId: String?
+    @State private var showMoreModels = false
+
+    private let defaultModelId = "mlx-community/Qwen2.5-1.5B-Instruct-4bit"
 
     var body: some View {
         VStack(spacing: 24) {
@@ -27,24 +30,65 @@ struct ChooseAIPage: View {
             // Model list
             ScrollView(.vertical, showsIndicators: false) {
                 VStack(spacing: 12) {
-                    ForEach(clipperAssistant.llms, id: \.id) { llm in
+                    // Selected Model Section
+                    if let selectedId = selectedModelId,
+                       let selectedLLM = clipperAssistant.llms.first(where: { $0.id == selectedId }) {
+                        Text("SELECTED MODEL")
+                            .font(.system(size: 12, weight: .bold, design: .monospaced))
+                            .foregroundColor(.severanceGreen)
+                            .frame(maxWidth: .infinity, alignment: .leading)
+                            .padding(.top, 8)
+
                         ModelSelectionCard(
-                            llm: llm,
-                            isSelected: selectedModelId == llm.id,
-                            isDefault: llm.id == "mlx-community/Llama-3.2-3B-Instruct"
+                            llm: selectedLLM,
+                            isSelected: true,
+                            isDefault: selectedLLM.id == defaultModelId
                         ) {
-                            withAnimation(.spring(response: 0.3, dampingFraction: 0.7)) {
-                                selectedModelId = llm.id
-                                onboardingService.updateSelectedModel(llm.id)
-                                clipperAssistant.selectedModel(llm.id)
+                            // No action needed if already selected
+                        }
+                        .transition(.scale.combined(with: .opacity))
+                    }
+
+                    // More Models Section
+                    VStack(spacing: 12) {
+                        Button(action: {
+                            withAnimation(.spring(response: 0.4, dampingFraction: 0.7)) {
+                                showMoreModels.toggle()
+                            }
+                        }) {
+                            HStack {
+                                Text("MORE MODELS")
+                                    .font(.system(size: 12, weight: .bold, design: .monospaced))
+                                    .foregroundColor(.severanceMuted)
+                                
+                                Spacer()
+                                
+                                Image(systemName: "chevron.down")
+                                    .foregroundColor(.severanceMuted)
+                                    .rotationEffect(.degrees(showMoreModels ? 180 : 0))
+                            }
+                            .padding(.vertical, 8)
+                            .contentShape(Rectangle())
+                        }
+                        .buttonStyle(.plain)
+                        
+                        if showMoreModels {
+                            ForEach(sortedAvailableModels, id: \.id) { llm in
+                                ModelSelectionCard(
+                                    llm: llm,
+                                    isSelected: false,
+                                    isDefault: llm.id == defaultModelId
+                                ) {
+                                    selectModel(llm)
+                                }
+                                .transition(.move(edge: .top).combined(with: .opacity))
                             }
                         }
-                        .opacity(showContent ? 1 : 0)
-                        .offset(y: showContent ? 0 : 20)
                     }
                 }
                 .padding(.horizontal, 24)
             }
+            .opacity(showContent ? 1 : 0)
 
             // Info footer
             HStack(spacing: 8) {
@@ -60,14 +104,42 @@ struct ChooseAIPage: View {
         .onAppear {
             // Set default model if none selected
             if selectedModelId == nil {
-                selectedModelId = "mlx-community/Llama-3.2-3B-Instruct"
-                onboardingService.updateSelectedModel(selectedModelId)
-                clipperAssistant.selectedModel(selectedModelId!)
+                selectModelById(defaultModelId)
+            } else if !clipperAssistant.llms.contains(where: { $0.id == selectedModelId }) {
+                 // Fallback if saved ID is invalid
+                 selectModelById(defaultModelId)
             }
 
             withAnimation(.spring(response: 0.6, dampingFraction: 0.8).delay(0.1)) {
                 showContent = true
             }
+        }
+    }
+    
+    // Helper to get sorted models excluding selected
+    private var sortedAvailableModels: [any ClipperLLM] {
+        clipperAssistant.llms
+            .filter { $0.id != selectedModelId }
+            .sorted { (lm1, lm2) -> Bool in
+                // Priority to default model
+                if lm1.id == defaultModelId { return true }
+                if lm2.id == defaultModelId { return false }
+                return lm1.name < lm2.name
+            }
+    }
+    
+    private func selectModel(_ llm: any ClipperLLM) {
+        selectModelById(llm.id)
+        withAnimation(.spring(response: 0.4, dampingFraction: 0.7)) {
+            showMoreModels = false
+        }
+    }
+    
+    private func selectModelById(_ id: String) {
+        withAnimation(.spring(response: 0.3, dampingFraction: 0.7)) {
+            selectedModelId = id
+            onboardingService.updateSelectedModel(id)
+            clipperAssistant.selectedModel(id)
         }
     }
 }
@@ -97,6 +169,7 @@ struct ModelSelectionCard: View {
                         Text(llm.name)
                             .font(.system(size: 15, weight: .semibold, design: .monospaced))
                             .foregroundColor(.severanceText)
+                            .multilineTextAlignment(.leading)
 
                         if isDefault {
                             Text("DEFAULT")
@@ -114,6 +187,7 @@ struct ModelSelectionCard: View {
                         .font(.system(size: 11, design: .monospaced))
                         .foregroundColor(.severanceMuted)
                         .lineLimit(2)
+                        .multilineTextAlignment(.leading)
                 }
 
                 Spacer()
