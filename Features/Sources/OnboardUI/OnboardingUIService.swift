@@ -306,7 +306,11 @@ public final class OnboardingServiceImpl: NSObject, OnboardingService, CLLocatio
                 _ = await PHPhotoLibrary.requestAuthorization(for: .readWrite)
 
             case .microphone:
-                _ = await AVAudioSession.sharedInstance().requestRecordPermission()
+                if #available(iOS 17.0, macOS 14.0, *) {
+                    AVAudioApplication.requestRecordPermission { _ in }
+                } else {
+                    AVAudioSession.sharedInstance().requestRecordPermission { _ in }
+                }
             }
         }
     }
