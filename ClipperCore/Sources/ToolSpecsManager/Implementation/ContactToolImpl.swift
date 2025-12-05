@@ -252,7 +252,7 @@ final class ContactToolImpl: ContactTool, @unchecked Sendable {
             return try await contactStore.requestAccess(for: .contacts)
         case .denied, .restricted:
             return false
-        @unknown default:
+        default:
             return false
         }
     }

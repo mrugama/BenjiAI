@@ -27,6 +27,9 @@ final class ConcreteClipperAssistant: ClipperAssistant, @unchecked Sendable {
     private let maxToolIterations = 5
     private var currentToolIteration = 0
     
+    // System prompt for AI persona
+    private var systemPrompt: String = "You are a helpful AI assistant."
+    
     /// A task responsible for handling the generation process.
     private(set) var generationTask: Task<Void, Error>?
     
@@ -35,6 +38,10 @@ final class ConcreteClipperAssistant: ClipperAssistant, @unchecked Sendable {
     init(_ toolSpecManager: ToolSpecManager) {
         self.generateParameters = GenerateParameters()
         self.toolSpecManager = toolSpecManager
+    }
+    
+    func setSystemPrompt(_ systemPrompt: String) {
+        self.systemPrompt = systemPrompt
     }
     
     func load() async {
@@ -83,27 +90,7 @@ final class ConcreteClipperAssistant: ClipperAssistant, @unchecked Sendable {
     private func generateWithToolSupport(prompt: String, loadedLLM: CAModel) async {
         logger.info("Prompting model work on thread (isMainThread: \(Thread.current.isMainThread)): \(Thread.current.description)")
         let conversationHistory = "## \(prompt) \n"
-        let personalInfo = """
-            [PERSONAL_CONTEXT]
-            {
-              "user_languages": ["Spanish", "English"],
-              "user_location": "Brooklyn, NY, USA",
-              "user_nationalities": "American",
-              "user_full_name": "Marlon Rugama",
-              "user_dob": "Jan/20/1990"
-            }
-            [/PERSONAL_CONTEXT]
-            
-            \(prompt)
-            """
         
-        let systemPrompt = """
-        You are a helpful assistant. Below is the current user's personal context provided as a JSON object. You MUST use this information to answer questions about the user's personal details. Acknowledge that you have access to this context.
-
-        CONTEXT:
-        \(personalInfo)
-        """
-
         let fullPromptForTextAPI = """
         \(systemPrompt)
 

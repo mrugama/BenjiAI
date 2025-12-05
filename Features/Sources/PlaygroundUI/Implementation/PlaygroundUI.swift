@@ -3,9 +3,9 @@ import SharedUIKit
 
 struct PlaygroundUI: View {
     var userPrompt: String?
-    
+
     var body: some View {
-        GeometryReader { geometry in
+        GeometryReader { _ in
             VStack(spacing: 0) {
                 userPromptView
                 ScrollView(.vertical) {
@@ -19,7 +19,7 @@ struct PlaygroundUI: View {
             .background(Color.antiqueWhite)
         }
     }
-    
+
     private var userPromptView: some View {
         VStack(alignment: .leading) {
             if let userPrompt {

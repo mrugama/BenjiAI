@@ -49,6 +49,7 @@ let package = Package(
             name: "SettingsPage",
             dependencies: [
                 "SharedUIKit",
+                "OnboardUI",
                 .product(name: "ClipperCoreKit", package: "ClipperCore")
             ],
             plugins: [

@@ -99,6 +99,10 @@ where Self: Sendable, Self: Observable {
     /// - Parameter toolId: The unique identifier of the tool
     /// - Returns: True if the tool is enabled, false otherwise
     func isToolEnabled(_ toolId: String) async -> Bool
+    
+    /// Set the system prompt for the AI assistant
+    /// - Parameter systemPrompt: The system prompt to use for generation
+    func setSystemPrompt(_ systemPrompt: String)
 }
 
 /// A protocol for accessing device statistics, particularly GPU usage information.

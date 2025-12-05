@@ -4,7 +4,7 @@ import SharedUIKit
 struct MainInputUI: View {
     @Environment(\.appTheme) private var appTheme
     var height: CGFloat = 0
-    
+
     var body: some View {
         VStack(alignment: .leading) {
             NavigationLink {
@@ -31,4 +31,3 @@ struct MainInputUI: View {
 #Preview {
     MainInputUI(height: 50)
 }
-
