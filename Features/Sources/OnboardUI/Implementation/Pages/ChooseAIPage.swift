@@ -51,18 +51,18 @@ struct ChooseAIPage: View {
 
                     // More Models Section
                     VStack(spacing: 12) {
-                        Button(action: {
+                        Button {
                             withAnimation(.spring(response: 0.4, dampingFraction: 0.7)) {
                                 showMoreModels.toggle()
                             }
-                        }) {
+                        } label: {
                             HStack {
                                 Text("MORE MODELS")
                                     .font(.system(size: 12, weight: .bold, design: .monospaced))
                                     .foregroundColor(.severanceMuted)
-                                
+
                                 Spacer()
-                                
+
                                 Image(systemName: "chevron.down")
                                     .foregroundColor(.severanceMuted)
                                     .rotationEffect(.degrees(showMoreModels ? 180 : 0))
@@ -71,7 +71,7 @@ struct ChooseAIPage: View {
                             .contentShape(Rectangle())
                         }
                         .buttonStyle(.plain)
-                        
+
                         if showMoreModels {
                             ForEach(sortedAvailableModels, id: \.id) { llm in
                                 ModelSelectionCard(
@@ -115,7 +115,7 @@ struct ChooseAIPage: View {
             }
         }
     }
-    
+
     // Helper to get sorted models excluding selected
     private var sortedAvailableModels: [any ClipperLLM] {
         clipperAssistant.llms
@@ -127,15 +127,17 @@ struct ChooseAIPage: View {
                 return lm1.name < lm2.name
             }
     }
-    
+
     private func selectModel(_ llm: any ClipperLLM) {
         selectModelById(llm.id)
+        // Animate closing the list separately to avoid nested conflicting animations
         withAnimation(.spring(response: 0.4, dampingFraction: 0.7)) {
             showMoreModels = false
         }
     }
-    
+
     private func selectModelById(_ id: String) {
+        // Single source of truth for selection animation
         withAnimation(.spring(response: 0.3, dampingFraction: 0.7)) {
             selectedModelId = id
             onboardingService.updateSelectedModel(id)

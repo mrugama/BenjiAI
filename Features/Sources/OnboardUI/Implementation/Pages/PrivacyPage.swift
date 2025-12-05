@@ -4,99 +4,101 @@ struct PrivacyPage: View {
     @State private var showContent = false
 
     var body: some View {
-        ScrollView(.vertical, showsIndicators: false) {
-            VStack(spacing: 32) {
-                // Spacer for top padding
-                Color.clear.frame(height: 20)
+        GeometryReader { geometry in
+            ScrollView(.vertical, showsIndicators: false) {
+                VStack(spacing: 32) {
+                    Spacer(minLength: 20) // Flexible spacer with minimum height
 
-                // Icon
-                ZStack {
-                    Circle()
-                        .fill(Color.severanceGreen.opacity(0.1))
-                        .frame(width: 140, height: 140)
+                    // Icon
+                    ZStack {
+                        Circle()
+                            .fill(Color.severanceGreen.opacity(0.1))
+                            .frame(width: 140, height: 140)
 
-                    Circle()
-                        .stroke(Color.severanceGreen.opacity(0.3), lineWidth: 2)
-                        .frame(width: 140, height: 140)
+                        Circle()
+                            .stroke(Color.severanceGreen.opacity(0.3), lineWidth: 2)
+                            .frame(width: 140, height: 140)
 
-                    Image(systemName: "lock.shield.fill")
-                        .font(.system(size: 60))
-                        .foregroundColor(.severanceGreen)
-                        .shadow(color: .severanceGreen.opacity(0.5), radius: 20)
-                }
-                .opacity(showContent ? 1 : 0)
-                .scaleEffect(showContent ? 1 : 0.5)
+                        Image(systemName: "lock.shield.fill")
+                            .font(.system(size: 60))
+                            .foregroundColor(.severanceGreen)
+                            .shadow(color: .severanceGreen.opacity(0.5), radius: 20)
+                    }
+                    .opacity(showContent ? 1 : 0)
+                    .scaleEffect(showContent ? 1 : 0.5)
 
-                VStack(spacing: 16) {
-                    GlowingText(
-                        text: "PRIVACY FIRST",
-                        font: .system(size: 28, weight: .bold, design: .monospaced),
-                        glowRadius: 8
-                    )
+                    VStack(spacing: 16) {
+                        GlowingText(
+                            text: "PRIVACY FIRST",
+                            font: .system(size: 28, weight: .bold, design: .monospaced),
+                            glowRadius: 8
+                        )
 
-                    Text("Your data never leaves your device")
-                        .font(.system(size: 16, design: .monospaced))
-                        .foregroundColor(.severanceMuted)
+                        Text("Your data never leaves your device")
+                            .font(.system(size: 16, design: .monospaced))
+                            .foregroundColor(.severanceMuted)
+                            .opacity(showContent ? 1 : 0)
+                            .multilineTextAlignment(.center)
+                    }
+
+                    // Privacy features
+                    VStack(spacing: 16) {
+                        PrivacyFeatureRow(
+                            icon: "network.slash",
+                            title: "No Cloud Processing",
+                            description: "AI runs entirely on your device"
+                        )
                         .opacity(showContent ? 1 : 0)
-                        .multilineTextAlignment(.center)
+                        .offset(y: showContent ? 0 : 20)
+
+                        PrivacyFeatureRow(
+                            icon: "eye.slash.fill",
+                            title: "No Tracking",
+                            description: "Zero analytics or behavior tracking"
+                        )
+                        .opacity(showContent ? 1 : 0)
+                        .offset(y: showContent ? 0 : 20)
+
+                        PrivacyFeatureRow(
+                            icon: "xmark.shield.fill",
+                            title: "No Cookies",
+                            description: "Completely anonymous usage"
+                        )
+                        .opacity(showContent ? 1 : 0)
+                        .offset(y: showContent ? 0 : 20)
+
+                        PrivacyFeatureRow(
+                            icon: "hand.raised.fill",
+                            title: "No Data Collection",
+                            description: "Your conversations stay private"
+                        )
+                        .opacity(showContent ? 1 : 0)
+                        .offset(y: showContent ? 0 : 20)
+                    }
+                    .padding(.horizontal, 24)
+
+                    Spacer(minLength: 20) // Flexible spacer
+
+                    // Anonymous badge
+                    HStack(spacing: 8) {
+                        Image(systemName: "checkmark.seal.fill")
+                            .foregroundColor(.severanceGreen)
+                        Text("100% ANONYMOUS")
+                            .font(.system(size: 12, weight: .bold, design: .monospaced))
+                            .foregroundColor(.severanceGreen)
+                    }
+                    .padding(.horizontal, 16)
+                    .padding(.vertical, 8)
+                    .background(
+                        Capsule()
+                            .stroke(Color.severanceGreen.opacity(0.5), lineWidth: 1)
+                    )
+                    .opacity(showContent ? 1 : 0)
+                    .padding(.bottom, 40) // Extra bottom padding
                 }
-
-                // Privacy features
-                VStack(spacing: 16) {
-                    PrivacyFeatureRow(
-                        icon: "network.slash",
-                        title: "No Cloud Processing",
-                        description: "AI runs entirely on your device"
-                    )
-                    .opacity(showContent ? 1 : 0)
-                    .offset(y: showContent ? 0 : 20)
-
-                    PrivacyFeatureRow(
-                        icon: "eye.slash.fill",
-                        title: "No Tracking",
-                        description: "Zero analytics or behavior tracking"
-                    )
-                    .opacity(showContent ? 1 : 0)
-                    .offset(y: showContent ? 0 : 20)
-
-                    PrivacyFeatureRow(
-                        icon: "xmark.shield.fill",
-                        title: "No Cookies",
-                        description: "Completely anonymous usage"
-                    )
-                    .opacity(showContent ? 1 : 0)
-                    .offset(y: showContent ? 0 : 20)
-
-                    PrivacyFeatureRow(
-                        icon: "hand.raised.fill",
-                        title: "No Data Collection",
-                        description: "Your conversations stay private"
-                    )
-                    .opacity(showContent ? 1 : 0)
-                    .offset(y: showContent ? 0 : 20)
-                }
-                .padding(.horizontal, 24)
-
-                // Anonymous badge
-                HStack(spacing: 8) {
-                    Image(systemName: "checkmark.seal.fill")
-                        .foregroundColor(.severanceGreen)
-                    Text("100% ANONYMOUS")
-                        .font(.system(size: 12, weight: .bold, design: .monospaced))
-                        .foregroundColor(.severanceGreen)
-                }
-                .padding(.horizontal, 16)
-                .padding(.vertical, 8)
-                .background(
-                    Capsule()
-                        .stroke(Color.severanceGreen.opacity(0.5), lineWidth: 1)
-                )
-                .opacity(showContent ? 1 : 0)
-
-                // Spacer for bottom padding to avoid cut-off
-                Color.clear.frame(height: 40)
+                .frame(minHeight: geometry.size.height) // Ensure full height
+                .frame(maxWidth: .infinity)
             }
-            .frame(maxWidth: .infinity)
         }
         .onAppear {
             withAnimation(.spring(response: 0.8, dampingFraction: 0.7).delay(0.2)) {
