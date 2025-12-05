@@ -8,6 +8,7 @@ struct OnboardingUI: View {
 
     @State private var currentPage = 0
     @State private var showBackground = false
+    @AppStorage("BenjiLLM") private var savedLlmId: String = "mlx-community/Qwen2.5-1.5B-Instruct-4bit"
     @Environment(\.clipperAssistant) private var clipperAssistant
 
     private let totalPages = 5
@@ -74,8 +75,9 @@ struct OnboardingUI: View {
         // Set the system prompt based on selected persona
         clipperAssistant.setSystemPrompt(onboardingService.state.selectedPersona.systemPrompt)
 
-        // Set the selected model if one was chosen
+        // Set the selected model if one was chosen and persist to AppStorage
         if let selectedModelId = onboardingService.state.selectedModelId {
+            savedLlmId = selectedModelId
             clipperAssistant.selectedModel(selectedModelId)
         }
 

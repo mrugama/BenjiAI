@@ -6,6 +6,7 @@ import ClipperCoreKit
 struct ModelSelectionSheet: View {
     let clipperAssistant: ClipperAssistant
     @Binding var showDownloadButton: Bool
+    @AppStorage("BenjiLLM") private var savedLlmId: String = "mlx-community/Qwen2.5-1.5B-Instruct-4bit"
     @Environment(\.dismiss) var dismiss
 
     var body: some View {
@@ -55,6 +56,8 @@ struct ModelSelectionSheet: View {
 
     private func selectModel(_ llm: any ClipperLLM) {
         Task {
+            // Persist model selection to AppStorage
+            savedLlmId = llm.id
             clipperAssistant.selectedModel(llm.id)
             if await clipperAssistant.loadedLLM?.configuration.name != llm.id {
                 showDownloadButton = true

@@ -8,6 +8,7 @@ import SwiftUI
 struct DownloadModelButton: View {
     let clipperAssistant: ClipperAssistant
     @Binding var pageState: PageState
+    @AppStorage("BenjiLLM") private var savedLlmId: String = "mlx-community/Qwen2.5-1.5B-Instruct-4bit"
 
     var body: some View {
         Button {
@@ -16,6 +17,10 @@ struct DownloadModelButton: View {
                     pageState = .loading
                 }
                 await clipperAssistant.load()
+                // Persist the loaded model to AppStorage
+                if let loadedModelId = clipperAssistant.llm {
+                    savedLlmId = loadedModelId
+                }
             }
         } label: {
             HStack(spacing: 12) {
