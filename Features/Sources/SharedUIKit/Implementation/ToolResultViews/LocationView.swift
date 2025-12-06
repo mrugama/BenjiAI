@@ -40,10 +40,9 @@ struct LocationView: View {
                 }
                 if let lat = data["latitude"] as? Double,
                    let lon = data["longitude"] as? Double {
-                    Text("""
-                    Coordinates: \(lat, format: .number.precision(.fractionLength(4))),
-                    \(lon, format: .number.precision(.fractionLength(4)))
-                    """)
+                    let latFormatted = lat.formatted(.number.precision(.fractionLength(4)))
+                    let lonFormatted = lon.formatted(.number.precision(.fractionLength(4)))
+                    Text("Coordinates: \(latFormatted), \(lonFormatted)")
                         .font(.caption)
                         .foregroundStyle(.secondary)
                 }
