@@ -1,0 +1,162 @@
+# UI Rules for AI Agent
+# These rules guide AI agents when generating or modifying SwiftUI code
+
+categories:
+  deprecated_apis:
+    name: "Deprecated API Replacements"
+    description: "Replace deprecated SwiftUI APIs with their modern equivalents"
+    rules:
+      - name: "foregroundColor to foregroundStyle"
+        description: "Replace foregroundColor() with foregroundStyle(). The latter supports more advanced features like gradients."
+        pattern: "foregroundColor()"
+        replacement: "foregroundStyle()"
+      
+      - name: "cornerRadius to clipShape"
+        description: "Replace cornerRadius() with clipShape(.rect(cornerRadius:)). The latter offers more advanced features such as uneven rounded rectangles."
+        pattern: "cornerRadius()"
+        replacement: "clipShape(.rect(cornerRadius:))"
+      
+      - name: "onChange modifier parameters"
+        description: "The onChange() modifier should not be used in its 1-parameter variant. Either accept two parameters or none, but the old variant is unsafe and deprecated."
+        pattern: "onChange(\\s*\\{[^}]+\\})"
+        replacement: "Use onChange with two parameters or none"
+      
+      - name: "tabItem to Tab API"
+        description: "Replace old tabItem() modifier with the new Tab API. This provides type-safe tab selection and supports iOS 26 search tab design."
+        pattern: "tabItem()"
+        replacement: "New Tab API"
+      
+      - name: "NavigationView to NavigationStack"
+        description: "Replace NavigationView with NavigationStack. Only stay with NavigationView if you still need to support iOS 15."
+        pattern: "NavigationView"
+        replacement: "NavigationStack"
+      
+      - name: "Task.sleep API"
+        description: "Replace Task.sleep(nanoseconds:) with Task.sleep(for:) using values such as .seconds(1)."
+        pattern: "Task\\.sleep\\(nanoseconds:"
+        replacement: "Task.sleep(for: .seconds(...))"
+
+  accessibility:
+    name: "Accessibility Improvements"
+    description: "Improve accessibility for VoiceOver, eye tracking, and other assistive technologies"
+    rules:
+      - name: "onTapGesture to Button"
+        description: "Replace almost all use of onTapGesture() with an actual button. Only exceptions are where you need to know a tap's location or the number of taps. This is significantly better for VoiceOver and eye tracking on visionOS."
+        pattern: "onTapGesture()"
+        replacement: "Button with proper action"
+        exceptions:
+          - "When tap location is needed"
+          - "When number of taps is needed"
+      
+      - name: "Button label API"
+        description: "Watch out for button labels being made with Label rather than the newer, inline API (Button(\"Tap me\", systemImage: \"plus\", action: whatever)), or worse, with just an image. This is a real problem for VoiceOver users."
+        pattern: "Label.*Button|Button.*Image.*only"
+        replacement: "Button(\"Label\", systemImage: \"icon\", action: {...})"
+
+  modern_swiftui:
+    name: "Modern SwiftUI Patterns"
+    description: "Use modern SwiftUI APIs and patterns for better performance and features"
+    rules:
+      - name: "ObservableObject to @Observable"
+        description: "Replace ObservableObject with the @Observable macro, unless you specifically rely on the Combine publisher for some reason. This makes code simpler and faster."
+        pattern: "ObservableObject|@Published"
+        replacement: "@Observable macro"
+        exceptions:
+          - "When Combine publisher is specifically needed"
+      
+      - name: "NavigationLink to navigationDestination"
+        description: "Watch out for using the old, inline destination NavigationLink API in lists, and replace it with navigationDestination(for:) or similar."
+        pattern: "NavigationLink.*destination:"
+        replacement: "navigationDestination(for:)"
+      
+      - name: "Computed properties to separate views"
+        description: "If code breaks up views by placing things into computed properties, split them out into separate SwiftUI views instead. This is important for performance when using @Observable – computed properties do not benefit from the intelligent view invalidation of @Observable."
+        pattern: "var.*View:\\s*some\\s+View\\s*\\{[^}]+\\}"
+        replacement: "Extract to separate View struct"
+
+  typography:
+    name: "Typography & Styling"
+    description: "Use Dynamic Type and proper font styling"
+    rules:
+      - name: "Dynamic Type fonts"
+        description: "Some LLMs (particularly Claude) love to force specific font sizes – search for .font(.system(size: and replace as many of them as you can using Dynamic Type fonts. If you can support iOS 26 or later, you can also use .font(.body.scaled(by: 1.5)) and similar."
+        pattern: "\\.font\\(\\.system\\(size:"
+        replacement: "Dynamic Type fonts (.body, .title, etc.) or .font(.body.scaled(by: ...)) for iOS 26+"
+      
+      - name: "fontWeight overuse"
+        description: "All three popular LLMs seem to enjoy over-using the fontWeight() modifier. Remember that fontWeight(.bold) and bold() do not always produce the same result."
+        pattern: "fontWeight\\(\\.bold\\)"
+        replacement: "Consider using bold() modifier instead"
+
+  code_organization:
+    name: "Code Organization"
+    description: "Best practices for organizing Swift code"
+    rules:
+      - name: "File organization"
+        description: "Watch out for placing lots of types in a single file – it's a fantastic way to guarantee longer build times."
+        pattern: "Multiple types in one file"
+        replacement: "Split types into separate files"
+      
+      - name: "ForEach enumeration"
+        description: "Replace code like ForEach(Array(x.enumerated()), id: \\.element.id) with ForEach(x.enumerated(), id: \\.element.id) – we don't need the Array initializer."
+        pattern: "ForEach\\(Array\\(.*\\.enumerated\\(\\)\\)"
+        replacement: "ForEach(...enumerated(), id: \\.element.id)"
+
+  swiftdata_cloudkit:
+    name: "SwiftData & CloudKit"
+    description: "Considerations for SwiftData and CloudKit integration"
+    rules:
+      - name: "@Attribute(.unique) warning"
+        description: "Be careful if you see @Attribute(.unique) in SwiftData model definitions – this does not work with CloudKit."
+        pattern: "@Attribute\\(\\.unique\\)"
+        replacement: "Avoid @Attribute(.unique) if using CloudKit"
+
+  rendering:
+    name: "Rendering & Graphics"
+    description: "Modern rendering APIs"
+    rules:
+      - name: "UIGraphicsImageRenderer to ImageRenderer"
+        description: "If you're rendering SwiftUI views, you should replace UIGraphicsImageRenderer with ImageRenderer."
+        pattern: "UIGraphicsImageRenderer"
+        replacement: "ImageRenderer"
+
+  concurrency:
+    name: "Concurrency & Async"
+    description: "Modern concurrency patterns and best practices"
+    rules:
+      - name: "DispatchQueue.main.async avoidance"
+        description: "If the LLM hits a concurrency problem, you can expect to see DispatchQueue.main.async used an unreasonable number of times. Ditch it in favor of proper async/await patterns."
+        pattern: "DispatchQueue\\.main\\.async"
+        replacement: "Use proper async/await or @MainActor"
+      
+      - name: "MainActor isolation"
+        description: "If you're working with a new app project, main actor isolation is on by default so you don't need to mark things with @MainActor."
+        pattern: "@MainActor.*unnecessary"
+        replacement: "Remove @MainActor if main actor isolation is on by default"
+
+  formatting:
+    name: "Formatting & Type Safety"
+    description: "Use type-safe formatting and modern Swift patterns"
+    rules:
+      - name: "C-style number formatting"
+        description: "I know the resulting code is longer, but try to replace C-style number formatting with the safer versions. For example, Text(String(format: \"%.2f\", abs(myNumber))) can be Text(abs(change), format: .number.precision(.fractionLength(2)))."
+        pattern: "String\\(format:.*%[df]"
+        replacement: "Use .format() modifier with .number.precision()"
+        example:
+          old: "Text(String(format: \"%.2f\", abs(myNumber)))"
+          new: "Text(abs(change), format: .number.precision(.fractionLength(2)))"
+      
+      - name: "URL.documentsDirectory"
+        description: "You can safely replace the longer code to find the documents directory with just URL.documentsDirectory."
+        pattern: "FileManager.*documentsDirectory|URL\\(fileURLWithPath:.*Documents"
+        replacement: "URL.documentsDirectory"
+
+# Metadata for rule management
+metadata:
+  version: "1.0.0"
+  last_updated: "2025-12-06"
+  notes: |
+    - Rules are organized by category for easy navigation
+    - Each rule includes a pattern (regex) and replacement guidance
+    - Exceptions are noted where applicable
+    - To add new rules, add them to the appropriate category or create a new category
