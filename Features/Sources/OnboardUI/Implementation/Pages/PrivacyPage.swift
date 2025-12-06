@@ -21,7 +21,7 @@ struct PrivacyPage: View {
 
                         Image(systemName: "lock.shield.fill")
                             .font(.system(size: 60))
-                            .foregroundColor(.severanceGreen)
+                            .foregroundStyle(Color.severanceGreen)
                             .shadow(color: .severanceGreen.opacity(0.5), radius: 20)
                     }
                     .opacity(showContent ? 1 : 0)
@@ -36,7 +36,7 @@ struct PrivacyPage: View {
 
                         Text("Your data never leaves your device")
                             .font(.system(size: 16, design: .monospaced))
-                            .foregroundColor(.severanceMuted)
+                            .foregroundStyle(Color.severanceMuted)
                             .opacity(showContent ? 1 : 0)
                             .multilineTextAlignment(.center)
                     }
@@ -82,10 +82,10 @@ struct PrivacyPage: View {
                     // Anonymous badge
                     HStack(spacing: 8) {
                         Image(systemName: "checkmark.seal.fill")
-                            .foregroundColor(.severanceGreen)
+                            .foregroundStyle(Color.severanceGreen)
                         Text("100% ANONYMOUS")
                             .font(.system(size: 12, weight: .bold, design: .monospaced))
-                            .foregroundColor(.severanceGreen)
+                            .foregroundStyle(Color.severanceGreen)
                     }
                     .padding(.horizontal, 16)
                     .padding(.vertical, 8)
@@ -119,17 +119,17 @@ struct PrivacyFeatureRow: View {
         HStack(spacing: 16) {
             Image(systemName: icon)
                 .font(.system(size: 24))
-                .foregroundColor(.severanceGreen)
+                .foregroundStyle(Color.severanceGreen)
                 .frame(width: 40)
 
             VStack(alignment: .leading, spacing: 4) {
                 Text(title)
                     .font(.system(size: 15, weight: .semibold, design: .monospaced))
-                    .foregroundColor(.severanceText)
+                    .foregroundStyle(Color.severanceText)
 
                 Text(description)
                     .font(.system(size: 13, design: .monospaced))
-                    .foregroundColor(.severanceMuted)
+                    .foregroundStyle(Color.severanceMuted)
                     .fixedSize(horizontal: false, vertical: true) // Allow text to wrap
             }
 

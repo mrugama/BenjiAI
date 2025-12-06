@@ -17,7 +17,7 @@ struct PermissionsPage: View {
 
                 Text("Grant access to enhance your AI experience")
                     .font(.system(size: 14, design: .monospaced))
-                    .foregroundColor(.severanceMuted)
+                    .foregroundStyle(Color.severanceMuted)
                     .multilineTextAlignment(.center)
             }
             .padding(.top, 20)
@@ -27,11 +27,11 @@ struct PermissionsPage: View {
             HStack(spacing: 12) {
                 Image(systemName: "shield.checkered")
                     .font(.system(size: 20))
-                    .foregroundColor(.severanceAmber)
+                    .foregroundStyle(Color.severanceAmber)
 
                 Text("All permissions are optional and can be changed in Settings")
                     .font(.system(size: 11, design: .monospaced))
-                    .foregroundColor(.severanceMuted)
+                    .foregroundStyle(Color.severanceMuted)
             }
             .padding(12)
             .background(
@@ -69,7 +69,7 @@ struct PermissionsPage: View {
                 let total = PermissionType.allCases.count
                 Text("\(grantedPermissions.count) of \(total) permissions granted")
                     .font(.system(size: 12, design: .monospaced))
-                    .foregroundColor(.severanceMuted)
+                    .foregroundStyle(Color.severanceMuted)
 
                 // Progress bar
                 GeometryReader { geometry in
@@ -124,17 +124,17 @@ struct PermissionRow: View {
 
                     Image(systemName: permission.icon)
                         .font(.system(size: 20))
-                        .foregroundColor(isGranted ? .severanceGreen : .severanceMuted)
+                        .foregroundStyle(isGranted ? Color.severanceGreen : Color.severanceMuted)
                 }
 
                 VStack(alignment: .leading, spacing: 4) {
                     Text(permission.rawValue)
                         .font(.system(size: 15, weight: .semibold, design: .monospaced))
-                        .foregroundColor(.severanceText)
+                        .foregroundStyle(Color.severanceText)
 
                     Text(permission.description)
                         .font(.system(size: 11, design: .monospaced))
-                        .foregroundColor(.severanceMuted)
+                        .foregroundStyle(Color.severanceMuted)
                 }
 
                 Spacer()

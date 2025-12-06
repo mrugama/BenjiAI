@@ -53,66 +53,19 @@ struct HomePage: View {
     }
 
     var modelOutputView: some View {
-        ScrollView(.vertical, showsIndicators: false) {
-            ScrollViewReader { reader in
-                Group {
-                    AnswerUI(response: clipper.output)
-                }
-                .onChange(of: clipper.output) { _, _ in
-                    reader.scrollTo("bottom")
-                }
-
-                Spacer()
-                    .frame(width: 1, height: 1)
-                    .id("bottom")
-            }
-        }
-        .onTapGesture {
-            hideKeyboard()
-        }
+        ModelOutputView()
     }
 
     var dynamicActionButton: some View {
-        Button {
-            if clipper.running {
-                // Cancel the generation
-                cancel()
-            } else {
-                // Copy the output
-                Task {
-                    copyToClipboard(clipper.output)
-                }
-            }
-        } label: {
-            if clipper.running {
-                Label("Stop Generation", systemImage: "stop.fill")
-            } else {
-                Label("Copy Output", systemImage: "doc.on.doc.fill")
-            }
-        }
-        .disabled(clipper.running ? false : clipper.output.isEmpty)
-        .labelStyle(.titleAndIcon)
+        DynamicActionButton(cancel: cancel, copyToClipboard: copyToClipboard)
     }
 
     var memoryUsageButton: some View {
-        Button {
-            showMemoryUsage.toggle()
-        } label: {
-            Image(systemName: "chart.bar.xaxis.ascending.badge.clock")
-                .foregroundColor(.white)
-        }
-        .disabled(clipper.llm == nil)
+        MemoryUsageButton(showMemoryUsage: $showMemoryUsage, isDisabled: clipper.llm == nil)
     }
 
     var settingsButton: some View {
-        Button {
-            withAnimation(.easeInOut(duration: 0.3)) {
-                pageState = .settings
-            }
-        } label: {
-            Image(systemName: "gear")
-                .foregroundColor(.white)
-        }
+        SettingsButton(pageState: $pageState)
     }
 
     private func generate() {
@@ -132,5 +85,88 @@ struct HomePage: View {
 #else
         UIPasteboard.general.string = string
 #endif
+    }
+}
+
+// MARK: - Extracted Views
+
+private struct ModelOutputView: View {
+    @Environment(\.clipperAssistant) private var clipper
+    @Environment(\.hideKeyboard) private var hideKeyboard
+
+    var body: some View {
+        ScrollView(.vertical, showsIndicators: false) {
+            ScrollViewReader { reader in
+                Group {
+                    AnswerUI(response: clipper.output)
+                }
+                .onChange(of: clipper.output) { _, _ in
+                    reader.scrollTo("bottom")
+                }
+
+                Spacer()
+                    .frame(width: 1, height: 1)
+                    .id("bottom")
+            }
+        }
+        .onTapGesture {
+            hideKeyboard()
+        }
+    }
+}
+
+private struct DynamicActionButton: View {
+    @Environment(\.clipperAssistant) private var clipper
+    let cancel: () -> Void
+    let copyToClipboard: (String) -> Void
+
+    var body: some View {
+        Button {
+            if clipper.running {
+                cancel()
+            } else {
+                Task {
+                    copyToClipboard(clipper.output)
+                }
+            }
+        } label: {
+            if clipper.running {
+                Label("Stop Generation", systemImage: "stop.fill")
+            } else {
+                Label("Copy Output", systemImage: "doc.on.doc.fill")
+            }
+        }
+        .disabled(clipper.running ? false : clipper.output.isEmpty)
+        .labelStyle(.titleAndIcon)
+    }
+}
+
+private struct MemoryUsageButton: View {
+    @Binding var showMemoryUsage: Bool
+    let isDisabled: Bool
+
+    var body: some View {
+        Button {
+            showMemoryUsage.toggle()
+        } label: {
+            Image(systemName: "chart.bar.xaxis.ascending.badge.clock")
+                .foregroundStyle(.white)
+        }
+        .disabled(isDisabled)
+    }
+}
+
+private struct SettingsButton: View {
+    @Binding var pageState: PageState
+
+    var body: some View {
+        Button {
+            withAnimation(.easeInOut(duration: 0.3)) {
+                pageState = .settings
+            }
+        } label: {
+            Image(systemName: "gear")
+                .foregroundStyle(.white)
+        }
     }
 }

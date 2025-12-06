@@ -22,7 +22,7 @@ struct ChooseAIPage: View {
 
                 Text("Select your preferred language model")
                     .font(.system(size: 14, design: .monospaced))
-                    .foregroundColor(.severanceMuted)
+                    .foregroundStyle(Color.severanceMuted)
             }
             .padding(.top, 20)
             .opacity(showContent ? 1 : 0)
@@ -35,7 +35,7 @@ struct ChooseAIPage: View {
                        let selectedLLM = clipperAssistant.llms.first(where: { $0.id == selectedId }) {
                         Text("SELECTED MODEL")
                             .font(.system(size: 12, weight: .bold, design: .monospaced))
-                            .foregroundColor(.severanceGreen)
+                            .foregroundStyle(Color.severanceGreen)
                             .frame(maxWidth: .infinity, alignment: .leading)
                             .padding(.top, 8)
 
@@ -59,12 +59,12 @@ struct ChooseAIPage: View {
                             HStack {
                                 Text("MORE MODELS")
                                     .font(.system(size: 12, weight: .bold, design: .monospaced))
-                                    .foregroundColor(.severanceMuted)
+                                    .foregroundStyle(Color.severanceMuted)
 
                                 Spacer()
 
                                 Image(systemName: "chevron.down")
-                                    .foregroundColor(.severanceMuted)
+                                    .foregroundStyle(Color.severanceMuted)
                                     .rotationEffect(.degrees(showMoreModels ? 180 : 0))
                             }
                             .padding(.vertical, 8)
@@ -93,10 +93,10 @@ struct ChooseAIPage: View {
             // Info footer
             HStack(spacing: 8) {
                 Image(systemName: "info.circle")
-                    .foregroundColor(.severanceMuted)
+                    .foregroundStyle(Color.severanceMuted)
                 Text("Models run locally on your device")
                     .font(.system(size: 12, design: .monospaced))
-                    .foregroundColor(.severanceMuted)
+                    .foregroundStyle(Color.severanceMuted)
             }
             .opacity(showContent ? 1 : 0)
             .padding(.bottom, 20)
@@ -163,20 +163,20 @@ struct ModelSelectionCard: View {
 
                     Image(systemName: "cpu.fill")
                         .font(.system(size: 22))
-                        .foregroundColor(isSelected ? .severanceGreen : .severanceMuted)
+                        .foregroundStyle(isSelected ? Color.severanceGreen : Color.severanceMuted)
                 }
 
                 VStack(alignment: .leading, spacing: 4) {
                     HStack {
                         Text(llm.name)
                             .font(.system(size: 15, weight: .semibold, design: .monospaced))
-                            .foregroundColor(.severanceText)
+                            .foregroundStyle(Color.severanceText)
                             .multilineTextAlignment(.leading)
 
                         if isDefault {
                             Text("DEFAULT")
                                 .font(.system(size: 9, weight: .bold, design: .monospaced))
-                                .foregroundColor(.severanceBackground)
+                                .foregroundStyle(Color.severanceBackground)
                                 .padding(.horizontal, 6)
                                 .padding(.vertical, 2)
                                 .background(
@@ -187,7 +187,7 @@ struct ModelSelectionCard: View {
 
                     Text(llm.description)
                         .font(.system(size: 11, design: .monospaced))
-                        .foregroundColor(.severanceMuted)
+                        .foregroundStyle(Color.severanceMuted)
                         .lineLimit(2)
                         .multilineTextAlignment(.leading)
                 }

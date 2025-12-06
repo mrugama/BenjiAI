@@ -21,7 +21,7 @@ struct AppVersionViewRow: View {
                     .font(.title)
                 Text("Version: \(appVersion) (\(buildNumber))")
                     .font(.footnote)
-                    .foregroundColor(.secondary)
+                    .foregroundStyle(.secondary)
             }
         }
     }

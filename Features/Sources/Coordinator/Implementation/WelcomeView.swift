@@ -40,7 +40,7 @@ struct WelcomeView: View {
                         .resizable()
                         .aspectRatio(contentMode: .fit)
                         .frame(width: 100, height: 100)
-                        .foregroundColor(koalaGrey)
+                        .foregroundStyle(koalaGrey)
                         .scaleEffect(isPulsing ? 1.05 : 1.0) // Apply the pulsing scale effect
                         .animation(
                             Animation.easeInOut(duration: 1.5)
@@ -53,7 +53,7 @@ struct WelcomeView: View {
 
                 Text("Benji")
                     .font(.system(size: 48, weight: .bold, design: .rounded))
-                    .foregroundColor(koalaGrey.opacity(0.85))
+                    .foregroundStyle(koalaGrey.opacity(0.85))
                     .padding(.top, 30)
                     .scaleEffect(isPulsing ? 1.0 : 0.95)
                     .animation(.spring().speed(0.5), value: isPulsing)
@@ -63,7 +63,7 @@ struct WelcomeView: View {
                 Text("Your Companion")
                     .font(.caption)
                     .fontWeight(.medium)
-                    .foregroundColor(koalaGrey.opacity(0.6))
+                    .foregroundStyle(koalaGrey.opacity(0.6))
             }
         }
         // When the view appears, start the animation

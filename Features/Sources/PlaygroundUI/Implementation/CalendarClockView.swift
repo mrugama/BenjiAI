@@ -107,7 +107,7 @@ struct CalendarGrid: View {
                                 .fill(isToday ? Color.orange : Color.clear)
                                 .animation(.spring(), value: isToday)
                         )
-                        .foregroundColor(isToday ? .white : .primary)
+                        .foregroundStyle(isToday ? .white : .primary)
                 }
             }
             .padding(.top, 8)

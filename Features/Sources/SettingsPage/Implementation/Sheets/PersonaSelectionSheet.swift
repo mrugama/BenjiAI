@@ -21,10 +21,10 @@ struct PersonaSelectionSheet: View {
                         // Warning
                         HStack(spacing: 12) {
                             Image(systemName: "exclamationmark.triangle.fill")
-                                .foregroundColor(.severanceAmber)
+                                .foregroundStyle(Color.severanceAmber)
                             Text("Personas are experimental. Always consult professionals for specialized advice.")
                                 .font(.system(size: 11, design: .monospaced))
-                                .foregroundColor(.severanceMuted)
+                                .foregroundStyle(Color.severanceMuted)
                         }
                         .padding(12)
                         .frame(maxWidth: .infinity, alignment: .leading)
@@ -51,7 +51,7 @@ struct PersonaSelectionSheet: View {
                 ToolbarItem(placement: .principal) {
                     Text("AI PERSONA")
                         .font(.system(size: 14, weight: .bold, design: .monospaced))
-                        .foregroundColor(.severanceGreen)
+                        .foregroundStyle(Color.severanceGreen)
                         .tracking(2)
                 }
 
@@ -60,7 +60,7 @@ struct PersonaSelectionSheet: View {
                         dismiss()
                     }
                     .font(.system(size: 14, design: .monospaced))
-                    .foregroundColor(.severanceGreen)
+                    .foregroundStyle(Color.severanceGreen)
                 }
             }
             .toolbarBackground(Color.severanceBackground, for: .navigationBar)
@@ -98,17 +98,17 @@ private struct PersonaSheetRow: View {
 
                     Image(systemName: persona.icon)
                         .font(.system(size: 20))
-                        .foregroundColor(isSelected ? .severanceGreen : .severanceMuted)
+                        .foregroundStyle(isSelected ? Color.severanceGreen : Color.severanceMuted)
                 }
 
                 VStack(alignment: .leading, spacing: 4) {
                     Text(persona.rawValue)
                         .font(.system(size: 14, weight: .semibold, design: .monospaced))
-                        .foregroundColor(.severanceText)
+                        .foregroundStyle(Color.severanceText)
 
                     Text(persona.subtitle)
                         .font(.system(size: 10, design: .monospaced))
-                        .foregroundColor(.severanceMuted)
+                        .foregroundStyle(Color.severanceMuted)
                 }
 
                 Spacer()
@@ -116,7 +116,7 @@ private struct PersonaSheetRow: View {
                 if isSelected {
                     Image(systemName: "checkmark.circle.fill")
                         .font(.system(size: 20))
-                        .foregroundColor(.severanceGreen)
+                        .foregroundStyle(Color.severanceGreen)
                 }
             }
             .padding(16)

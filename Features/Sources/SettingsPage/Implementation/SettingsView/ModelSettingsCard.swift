@@ -22,18 +22,18 @@ struct ModelSettingsCard: View {
 
                     Image(systemName: "cpu.fill")
                         .font(.system(size: 20))
-                        .foregroundColor(.severanceGreen)
+                        .foregroundStyle(Color.severanceGreen)
                 }
 
                 VStack(alignment: .leading, spacing: 4) {
                     Text(selectedModel?.name ?? "No model selected")
                         .font(.system(size: 14, weight: .semibold, design: .monospaced))
-                        .foregroundColor(.severanceText)
+                        .foregroundStyle(Color.severanceText)
 
                     if let model = selectedModel {
                         Text(model.id)
                             .font(.system(size: 10, design: .monospaced))
-                            .foregroundColor(.severanceMuted)
+                            .foregroundStyle(Color.severanceMuted)
                             .lineLimit(1)
                     }
                 }
@@ -42,7 +42,7 @@ struct ModelSettingsCard: View {
 
                 Image(systemName: "chevron.right")
                     .font(.system(size: 14))
-                    .foregroundColor(.severanceMuted)
+                    .foregroundStyle(Color.severanceMuted)
             }
             .padding(16)
             .background(

@@ -17,7 +17,7 @@ struct ToolsPage: View {
 
                 Text("Choose which tools your AI can use")
                     .font(.system(size: 14, design: .monospaced))
-                    .foregroundColor(.severanceMuted)
+                    .foregroundStyle(Color.severanceMuted)
             }
             .padding(.top, 20)
             .opacity(showContent ? 1 : 0)
@@ -66,7 +66,7 @@ struct ToolsPage: View {
             // Counter
             Text("\(enabledTools.count) tools enabled")
                 .font(.system(size: 12, design: .monospaced))
-                .foregroundColor(.severanceMuted)
+                .foregroundStyle(Color.severanceMuted)
                 .padding(.bottom, 20)
                 .opacity(showContent ? 1 : 0)
         }
@@ -113,17 +113,17 @@ struct ToolSelectionCard: View {
 
                     Image(systemName: tool.icon)
                         .font(.system(size: 22))
-                        .foregroundColor(isEnabled ? .severanceGreen : .severanceMuted)
+                        .foregroundStyle(isEnabled ? Color.severanceGreen : Color.severanceMuted)
                 }
 
                 VStack(spacing: 4) {
                     Text(tool.name)
                         .font(.system(size: 13, weight: .semibold, design: .monospaced))
-                        .foregroundColor(.severanceText)
+                        .foregroundStyle(Color.severanceText)
 
                     Text(tool.description)
                         .font(.system(size: 10, design: .monospaced))
-                        .foregroundColor(.severanceMuted)
+                        .foregroundStyle(Color.severanceMuted)
                         .lineLimit(2)
                         .multilineTextAlignment(.center)
                 }
@@ -131,7 +131,7 @@ struct ToolSelectionCard: View {
                 // Status indicator
                 Image(systemName: isEnabled ? "checkmark.circle.fill" : "circle")
                     .font(.system(size: 18))
-                    .foregroundColor(isEnabled ? .severanceGreen : .severanceBorder)
+                    .foregroundStyle(isEnabled ? Color.severanceGreen : Color.severanceBorder)
             }
             .frame(maxWidth: .infinity)
             .padding(16)
@@ -164,7 +164,7 @@ struct QuickActionButton: View {
                 Text(title)
                     .font(.system(size: 12, weight: .medium, design: .monospaced))
             }
-            .foregroundColor(.severanceGreen)
+            .foregroundStyle(Color.severanceGreen)
             .padding(.horizontal, 16)
             .padding(.vertical, 10)
             .background(

@@ -10,7 +10,7 @@ struct SearchResultsView: View {
             if let query = data["query"] as? String {
                 HStack {
                     Image(systemName: "magnifyingglass")
-                        .foregroundColor(.blue)
+                        .foregroundStyle(.blue)
                     Text("Search Results for: \(query)")
                         .font(.headline)
                         .fontWeight(.semibold)
@@ -20,8 +20,8 @@ struct SearchResultsView: View {
 
             if let results = data["results"] as? [[String: String]] {
                 LazyVStack(spacing: 12) {
-                    ForEach(Array(results.enumerated()), id: \.offset) { index, result in
-                        SearchResultCard(result: result, index: index + 1)
+                    ForEach(results.indices, id: \.self) { index in
+                        SearchResultCard(result: results[index], index: index + 1)
                     }
                 }
             }
@@ -29,7 +29,7 @@ struct SearchResultsView: View {
             if let count = data["resultCount"] as? Int {
                 Text("\(count) result\(count == 1 ? "" : "s") found")
                     .font(.caption)
-                    .foregroundColor(.secondary)
+                    .foregroundStyle(.secondary)
                     .padding(.top, 8)
             }
         }

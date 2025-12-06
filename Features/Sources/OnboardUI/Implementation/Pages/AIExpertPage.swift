@@ -18,7 +18,7 @@ struct AIExpertPage: View {
 
                 Text("Define your AI's personality")
                     .font(.system(size: 14, design: .monospaced))
-                    .foregroundColor(.severanceMuted)
+                    .foregroundStyle(Color.severanceMuted)
             }
             .padding(.top, 16)
             .opacity(showContent ? 1 : 0)
@@ -27,16 +27,16 @@ struct AIExpertPage: View {
             HStack(spacing: 10) {
                 Image(systemName: "exclamationmark.triangle.fill")
                     .font(.system(size: 16))
-                    .foregroundColor(.severanceAmber)
+                    .foregroundStyle(Color.severanceAmber)
 
                 VStack(alignment: .leading, spacing: 2) {
                     Text("EXPERIMENTAL FEATURE")
                         .font(.system(size: 10, weight: .bold, design: .monospaced))
-                        .foregroundColor(.severanceAmber)
+                        .foregroundStyle(Color.severanceAmber)
 
                     Text("AI responses are for guidance only. Always consult professionals.")
                         .font(.system(size: 10, design: .monospaced))
-                        .foregroundColor(.severanceMuted)
+                        .foregroundStyle(Color.severanceMuted)
                 }
             }
             .padding(12)
@@ -79,14 +79,14 @@ struct AIExpertPage: View {
             if selectedPersona != .generic {
                 HStack(spacing: 8) {
                     Image(systemName: "info.circle")
-                        .foregroundColor(.severanceCyan)
+                        .foregroundStyle(Color.severanceCyan)
 
                     Button {
                         showDisclaimer = true
                     } label: {
                         Text("View disclaimer for \(selectedPersona.rawValue)")
                             .font(.system(size: 11, design: .monospaced))
-                            .foregroundColor(.severanceCyan)
+                            .foregroundStyle(Color.severanceCyan)
                             .underline()
                     }
                 }
@@ -156,19 +156,19 @@ struct PersonaCard: View {
 
                     Image(systemName: persona.icon)
                         .font(.system(size: 22))
-                        .foregroundColor(isSelected ? .severanceGreen : .severanceMuted)
+                        .foregroundStyle(isSelected ? Color.severanceGreen : Color.severanceMuted)
                 }
 
                 VStack(spacing: 3) {
                     Text(persona.rawValue)
                         .font(.system(size: 11, weight: .semibold, design: .monospaced))
-                        .foregroundColor(.severanceText)
+                        .foregroundStyle(Color.severanceText)
                         .lineLimit(1)
                         .minimumScaleFactor(0.8)
 
                     Text(persona.subtitle)
                         .font(.system(size: 9, design: .monospaced))
-                        .foregroundColor(.severanceMuted)
+                        .foregroundStyle(Color.severanceMuted)
                         .lineLimit(1)
                 }
             }

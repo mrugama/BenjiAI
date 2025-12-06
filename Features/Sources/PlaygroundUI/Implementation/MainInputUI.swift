@@ -19,7 +19,7 @@ struct MainInputUI: View {
                     .foregroundStyle(appTheme.textSecondary)
                     .safeAreaPadding(.all)
                     .padding(.leading, 12)
-                    .background(appTheme.background.cornerRadius(15))
+                    .background(appTheme.background.clipShape(.rect(cornerRadius: 15)))
                     .shadow(color: appTheme.shadow, radius: 20)
             }
             Spacer()

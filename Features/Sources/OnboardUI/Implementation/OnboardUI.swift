@@ -34,7 +34,7 @@ struct OnboardUI: View {
                     Text("Get Started")
                         .font(.headline)
                         .frame(maxWidth: .infinity)
-                        .foregroundColor(.white)
+                        .foregroundStyle(.white)
                         .padding()
                 }
                 .buttonStyle(.borderedProminent)

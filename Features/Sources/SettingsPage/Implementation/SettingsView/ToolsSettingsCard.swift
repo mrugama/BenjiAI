@@ -17,24 +17,24 @@ struct ToolsSettingsCard: View {
 
                     Image(systemName: "wrench.and.screwdriver.fill")
                         .font(.system(size: 20))
-                        .foregroundColor(.severanceCyan)
+                        .foregroundStyle(Color.severanceCyan)
                 }
 
                 VStack(alignment: .leading, spacing: 4) {
                     Text("Enabled Tools")
                         .font(.system(size: 14, weight: .semibold, design: .monospaced))
-                        .foregroundColor(.severanceText)
+                        .foregroundStyle(Color.severanceText)
 
                     Text("\(enabledCount) of \(ToolSelectionInfo.allTools.count) active")
                         .font(.system(size: 11, design: .monospaced))
-                        .foregroundColor(.severanceMuted)
+                        .foregroundStyle(Color.severanceMuted)
                 }
 
                 Spacer()
 
                 Image(systemName: "chevron.right")
                     .font(.system(size: 14))
-                    .foregroundColor(.severanceMuted)
+                    .foregroundStyle(Color.severanceMuted)
             }
             .padding(16)
             .background(

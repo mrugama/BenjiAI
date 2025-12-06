@@ -35,7 +35,7 @@ struct ModelSelectionSheet: View {
                 ToolbarItem(placement: .principal) {
                     Text("SELECT MODEL")
                         .font(.system(size: 14, weight: .bold, design: .monospaced))
-                        .foregroundColor(.severanceGreen)
+                        .foregroundStyle(Color.severanceGreen)
                         .tracking(2)
                 }
 
@@ -44,7 +44,7 @@ struct ModelSelectionSheet: View {
                         dismiss()
                     }
                     .font(.system(size: 14, design: .monospaced))
-                    .foregroundColor(.severanceGreen)
+                    .foregroundStyle(Color.severanceGreen)
                 }
             }
             .toolbarBackground(Color.severanceBackground, for: .navigationBar)
@@ -82,17 +82,17 @@ private struct ModelSheetRow: View {
 
                     Image(systemName: "cpu.fill")
                         .font(.system(size: 20))
-                        .foregroundColor(isSelected ? .severanceGreen : .severanceMuted)
+                        .foregroundStyle(isSelected ? Color.severanceGreen : Color.severanceMuted)
                 }
 
                 VStack(alignment: .leading, spacing: 4) {
                     Text(llm.name)
                         .font(.system(size: 14, weight: .semibold, design: .monospaced))
-                        .foregroundColor(.severanceText)
+                        .foregroundStyle(Color.severanceText)
 
                     Text(llm.description)
                         .font(.system(size: 10, design: .monospaced))
-                        .foregroundColor(.severanceMuted)
+                        .foregroundStyle(Color.severanceMuted)
                         .lineLimit(2)
                 }
 
@@ -101,7 +101,7 @@ private struct ModelSheetRow: View {
                 if isSelected {
                     Image(systemName: "checkmark.circle.fill")
                         .font(.system(size: 20))
-                        .foregroundColor(.severanceGreen)
+                        .foregroundStyle(Color.severanceGreen)
                 }
             }
             .padding(16)

@@ -1,4 +1,5 @@
 import SwiftUI
+import OnboardUI
 
 // MARK: - Settings Section
 
@@ -15,7 +16,7 @@ struct SettingsSection<Content: View>: View {
         VStack(alignment: .leading, spacing: 12) {
             Text(title)
                 .font(.system(size: 11, weight: .bold, design: .monospaced))
-                .foregroundColor(.severanceMuted)
+                .foregroundStyle(Color.severanceMuted)
                 .tracking(1)
 
             content

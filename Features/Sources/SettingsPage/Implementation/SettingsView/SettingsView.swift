@@ -94,7 +94,7 @@ struct SettingsView: View {
                 ToolbarItem(placement: .principal) {
                     Text("SETTINGS")
                         .font(.system(size: 14, weight: .bold, design: .monospaced))
-                        .foregroundColor(.severanceGreen)
+                        .foregroundStyle(Color.severanceGreen)
                         .tracking(2)
                 }
 
@@ -107,7 +107,7 @@ struct SettingsView: View {
                             Text("Back")
                         }
                         .font(.system(size: 14, design: .monospaced))
-                        .foregroundColor(.severanceGreen)
+                        .foregroundStyle(Color.severanceGreen)
                     }
                 }
             }

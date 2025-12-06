@@ -12,12 +12,12 @@ struct DateDisplayView: View {
                 VStack(spacing: 4) {
                     Text("\(day)")
                         .font(.system(size: 48, weight: .bold, design: .rounded))
-                        .foregroundColor(.primary)
+                        .foregroundStyle(.primary)
 
                     Text(dayName)
                         .font(.title2)
                         .fontWeight(.medium)
-                        .foregroundColor(.secondary)
+                        .foregroundStyle(.secondary)
                 }
                 .padding()
                 .background(
@@ -32,13 +32,13 @@ struct DateDisplayView: View {
                     Text(time)
                         .font(.title)
                         .fontWeight(.semibold)
-                        .foregroundColor(.primary)
+                        .foregroundStyle(.primary)
                 }
 
                 if let fullDate = data["fullDate"] as? String {
                     Text(fullDate)
                         .font(.body)
-                        .foregroundColor(.secondary)
+                        .foregroundStyle(.secondary)
                         .multilineTextAlignment(.center)
                 }
             }

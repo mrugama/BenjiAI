@@ -10,7 +10,7 @@ struct LocationView: View {
         VStack(alignment: .leading, spacing: 12) {
             HStack {
                 Image(systemName: "location.fill")
-                    .foregroundColor(.blue)
+                    .foregroundStyle(.blue)
                 Text(type == "distance_calculation" ? "Distance" : "Location")
                     .font(.headline)
                     .fontWeight(.semibold)
@@ -31,7 +31,7 @@ struct LocationView: View {
                     Text(distance)
                         .font(.title2)
                         .fontWeight(.bold)
-                        .foregroundColor(.blue)
+                        .foregroundStyle(.blue)
                 }
             } else {
                 if let address = data["address"] as? String {
@@ -40,9 +40,12 @@ struct LocationView: View {
                 }
                 if let lat = data["latitude"] as? Double,
                    let lon = data["longitude"] as? Double {
-                    Text("Coordinates: \(String(format: "%.4f", lat)), \(String(format: "%.4f", lon))")
+                    Text("""
+                    Coordinates: \(lat, format: .number.precision(.fractionLength(4))),
+                    \(lon, format: .number.precision(.fractionLength(4)))
+                    """)
                         .font(.caption)
-                        .foregroundColor(.secondary)
+                        .foregroundStyle(.secondary)
                 }
             }
         }

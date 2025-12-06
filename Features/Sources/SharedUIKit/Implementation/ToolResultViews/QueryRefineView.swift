@@ -9,7 +9,7 @@ struct QueryRefineView: View {
         VStack(alignment: .leading, spacing: 12) {
             HStack {
                 Image(systemName: "sparkles")
-                    .foregroundColor(.purple)
+                    .foregroundStyle(.purple)
                 Text("Query Refined")
                     .font(.headline)
                     .fontWeight(.semibold)
@@ -19,11 +19,11 @@ struct QueryRefineView: View {
                 VStack(alignment: .leading, spacing: 4) {
                     Text("Original:")
                         .font(.caption)
-                        .foregroundColor(.secondary)
+                        .foregroundStyle(.secondary)
                     Text(original)
                         .font(.subheadline)
                         .strikethrough()
-                        .foregroundColor(.secondary)
+                        .foregroundStyle(.secondary)
                 }
             }
 
@@ -31,11 +31,11 @@ struct QueryRefineView: View {
                 VStack(alignment: .leading, spacing: 4) {
                     Text("Refined:")
                         .font(.caption)
-                        .foregroundColor(.secondary)
+                        .foregroundStyle(.secondary)
                     Text(refined)
                         .font(.subheadline)
                         .fontWeight(.medium)
-                        .foregroundColor(.purple)
+                        .foregroundStyle(.purple)
                 }
             }
 
@@ -43,11 +43,11 @@ struct QueryRefineView: View {
                 VStack(alignment: .leading, spacing: 4) {
                     Text("Improvements:")
                         .font(.caption)
-                        .foregroundColor(.secondary)
+                        .foregroundStyle(.secondary)
                     ForEach(improvements, id: \.self) { improvement in
                         Label(improvement, systemImage: "checkmark.circle.fill")
                             .font(.caption)
-                            .foregroundColor(.green)
+                            .foregroundStyle(.green)
                     }
                 }
             }

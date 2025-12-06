@@ -17,24 +17,24 @@ struct PermissionsSettingsCard: View {
 
                     Image(systemName: "lock.shield.fill")
                         .font(.system(size: 20))
-                        .foregroundColor(.severanceAmber)
+                        .foregroundStyle(Color.severanceAmber)
                 }
 
                 VStack(alignment: .leading, spacing: 4) {
                     Text("Permissions")
                         .font(.system(size: 14, weight: .semibold, design: .monospaced))
-                        .foregroundColor(.severanceText)
+                        .foregroundStyle(Color.severanceText)
 
                     Text("\(grantedCount) of \(PermissionType.allCases.count) granted")
                         .font(.system(size: 11, design: .monospaced))
-                        .foregroundColor(.severanceMuted)
+                        .foregroundStyle(Color.severanceMuted)
                 }
 
                 Spacer()
 
                 Image(systemName: "chevron.right")
                     .font(.system(size: 14))
-                    .foregroundColor(.severanceMuted)
+                    .foregroundStyle(Color.severanceMuted)
             }
             .padding(16)
             .background(

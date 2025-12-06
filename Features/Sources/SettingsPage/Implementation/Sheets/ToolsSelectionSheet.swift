@@ -35,7 +35,7 @@ struct ToolsSelectionSheet: View {
                 ToolbarItem(placement: .principal) {
                     Text("MANAGE TOOLS")
                         .font(.system(size: 14, weight: .bold, design: .monospaced))
-                        .foregroundColor(.severanceGreen)
+                        .foregroundStyle(Color.severanceGreen)
                         .tracking(2)
                 }
 
@@ -44,7 +44,7 @@ struct ToolsSelectionSheet: View {
                         dismiss()
                     }
                     .font(.system(size: 14, design: .monospaced))
-                    .foregroundColor(.severanceGreen)
+                    .foregroundStyle(Color.severanceGreen)
                 }
             }
             .toolbarBackground(Color.severanceBackground, for: .navigationBar)
@@ -90,17 +90,17 @@ private struct ToolSheetRow: View {
 
                     Image(systemName: tool.icon)
                         .font(.system(size: 20))
-                        .foregroundColor(isEnabled ? .severanceGreen : .severanceMuted)
+                        .foregroundStyle(isEnabled ? Color.severanceGreen : Color.severanceMuted)
                 }
 
                 VStack(alignment: .leading, spacing: 4) {
                     Text(tool.name)
                         .font(.system(size: 14, weight: .semibold, design: .monospaced))
-                        .foregroundColor(.severanceText)
+                        .foregroundStyle(Color.severanceText)
 
                     Text(tool.description)
                         .font(.system(size: 10, design: .monospaced))
-                        .foregroundColor(.severanceMuted)
+                        .foregroundStyle(Color.severanceMuted)
                 }
 
                 Spacer()

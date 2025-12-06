@@ -10,7 +10,7 @@ struct MusicView: View {
         VStack(alignment: .leading, spacing: 12) {
             HStack {
                 Image(systemName: "music.note")
-                    .foregroundColor(.pink)
+                    .foregroundStyle(.pink)
                 Text(type == "music_search_results" ? "Music Search" : "Now Playing")
                     .font(.headline)
                     .fontWeight(.semibold)
@@ -18,8 +18,8 @@ struct MusicView: View {
 
             if type == "music_search_results" {
                 if let results = data["results"] as? [[String: any Sendable]] {
-                    ForEach(Array(results.enumerated()), id: \.offset) { _, result in
-                        MusicResultCard(result: result)
+                    ForEach(results.indices, id: \.self) { index in
+                        MusicResultCard(result: results[index])
                     }
                 }
             } else {
@@ -31,7 +31,7 @@ struct MusicView: View {
                 if let artist = data["artist"] as? String {
                     Text(artist)
                         .font(.subheadline)
-                        .foregroundColor(.secondary)
+                        .foregroundStyle(.secondary)
                 }
                 if let state = data["state"] as? String {
                     HStack {
@@ -39,7 +39,7 @@ struct MusicView: View {
                         Text(state.capitalized)
                     }
                     .font(.caption)
-                    .foregroundColor(.pink)
+                    .foregroundStyle(.pink)
                 }
             }
         }
@@ -58,7 +58,7 @@ private struct MusicResultCard: View {
     var body: some View {
         HStack {
             Image(systemName: "music.note")
-                .foregroundColor(.pink)
+                .foregroundStyle(.pink)
             VStack(alignment: .leading, spacing: 2) {
                 Text(result["title"] as? String ?? result["name"] as? String ?? "Unknown")
                     .font(.subheadline)
@@ -66,18 +66,18 @@ private struct MusicResultCard: View {
                 if let artist = result["artist"] as? String {
                     Text(artist)
                         .font(.caption)
-                        .foregroundColor(.secondary)
+                        .foregroundStyle(.secondary)
                 }
             }
             Spacer()
             if let duration = result["duration"] as? String {
                 Text(duration)
                     .font(.caption)
-                    .foregroundColor(.secondary)
+                    .foregroundStyle(.secondary)
             }
         }
         .padding(8)
         .background(Color.pink.opacity(0.1))
-        .cornerRadius(8)
+        .clipShape(.rect(cornerRadius: 8))
     }
 }

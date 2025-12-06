@@ -13,21 +13,21 @@ struct AppInfoCard: View {
 
                 Image(systemName: "brain.head.profile")
                     .font(.system(size: 28))
-                    .foregroundColor(.severanceGreen)
+                    .foregroundStyle(Color.severanceGreen)
             }
 
             VStack(alignment: .leading, spacing: 4) {
                 Text("Benji AI")
                     .font(.system(size: 18, weight: .bold, design: .monospaced))
-                    .foregroundColor(.severanceText)
+                    .foregroundStyle(Color.severanceText)
 
                 Text("Version 1.0.0")
                     .font(.system(size: 12, design: .monospaced))
-                    .foregroundColor(.severanceMuted)
+                    .foregroundStyle(Color.severanceMuted)
 
                 Text("On-device AI Assistant")
                     .font(.system(size: 11, design: .monospaced))
-                    .foregroundColor(.severanceCyan)
+                    .foregroundStyle(Color.severanceCyan)
             }
 
             Spacer()

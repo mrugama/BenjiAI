@@ -114,7 +114,7 @@ private struct TopBar: View {
 
                 Text("BENJI")
                     .font(.system(size: 16, weight: .bold, design: .monospaced))
-                    .foregroundColor(.severanceGreen)
+                    .foregroundStyle(Color.severanceGreen)
                     .tracking(4)
             }
 
@@ -123,7 +123,7 @@ private struct TopBar: View {
             // Version badge
             Text("v1.0")
                 .font(.system(size: 10, design: .monospaced))
-                .foregroundColor(.severanceMuted)
+                .foregroundStyle(Color.severanceMuted)
                 .padding(.horizontal, 8)
                 .padding(.vertical, 4)
                 .background(
@@ -179,7 +179,7 @@ private struct BottomNavigation: View {
                 Button(action: onComplete) {
                     Text("Skip setup")
                         .font(.system(size: 12, design: .monospaced))
-                        .foregroundColor(.severanceMuted)
+                        .foregroundStyle(Color.severanceMuted)
                 }
             }
         }

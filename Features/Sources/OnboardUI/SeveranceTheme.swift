@@ -81,13 +81,13 @@ struct GlowingText: View {
             // Glow layer
             Text(text)
                 .font(font)
-                .foregroundColor(color)
+                .foregroundStyle(color)
                 .blur(radius: glowRadius)
 
             // Main text
             Text(text)
                 .font(font)
-                .foregroundColor(color)
+                .foregroundStyle(color)
         }
     }
 }
@@ -107,12 +107,12 @@ struct TerminalText: View {
         HStack(spacing: 0) {
             Text(displayedText)
                 .font(font)
-                .foregroundColor(color)
+                .foregroundStyle(color)
 
             if displayedText.count < text.count || showCursor {
                 Text("█")
                     .font(font)
-                    .foregroundColor(color)
+                    .foregroundStyle(color)
                     .opacity(showCursor ? 1 : 0)
             }
         }
@@ -124,8 +124,11 @@ struct TerminalText: View {
 
     private func animateText() {
         displayedText = ""
-        for (index, character) in text.enumerated() {
-            DispatchQueue.main.asyncAfter(deadline: .now() + Double(index) * typingSpeed) {
+        Task { @MainActor in
+            for (index, character) in text.enumerated() {
+                if index > 0 {
+                    try? await Task.sleep(for: .seconds(typingSpeed))
+                }
                 displayedText += String(character)
             }
         }
@@ -186,7 +189,7 @@ struct SeveranceButton: View {
         Button(action: action) {
             Text(title)
                 .font(.system(size: 16, weight: .semibold, design: .monospaced))
-                .foregroundColor(isPrimary ? .severanceBackground : .severanceGreen)
+                .foregroundStyle(isPrimary ? Color.severanceBackground : Color.severanceGreen)
                 .frame(maxWidth: .infinity)
                 .padding(.vertical, 16)
                 .background(

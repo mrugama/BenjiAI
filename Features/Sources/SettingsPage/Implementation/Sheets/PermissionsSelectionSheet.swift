@@ -19,10 +19,10 @@ struct PermissionsSelectionSheet: View {
                         // Warning
                         HStack(spacing: 12) {
                             Image(systemName: "info.circle.fill")
-                                .foregroundColor(.severanceAmber)
+                                .foregroundStyle(Color.severanceAmber)
                             Text("Permissions are requested when you use related features")
                                 .font(.system(size: 11, design: .monospaced))
-                                .foregroundColor(.severanceMuted)
+                                .foregroundStyle(Color.severanceMuted)
                         }
                         .padding(12)
                         .frame(maxWidth: .infinity, alignment: .leading)
@@ -49,7 +49,7 @@ struct PermissionsSelectionSheet: View {
                 ToolbarItem(placement: .principal) {
                     Text("PERMISSIONS")
                         .font(.system(size: 14, weight: .bold, design: .monospaced))
-                        .foregroundColor(.severanceGreen)
+                        .foregroundStyle(Color.severanceGreen)
                         .tracking(2)
                 }
 
@@ -58,7 +58,7 @@ struct PermissionsSelectionSheet: View {
                         dismiss()
                     }
                     .font(.system(size: 14, design: .monospaced))
-                    .foregroundColor(.severanceGreen)
+                    .foregroundStyle(Color.severanceGreen)
                 }
             }
             .toolbarBackground(Color.severanceBackground, for: .navigationBar)
@@ -98,17 +98,17 @@ private struct PermissionSheetRow: View {
 
                     Image(systemName: permission.icon)
                         .font(.system(size: 20))
-                        .foregroundColor(isGranted ? .severanceGreen : .severanceMuted)
+                        .foregroundStyle(isGranted ? Color.severanceGreen : Color.severanceMuted)
                 }
 
                 VStack(alignment: .leading, spacing: 4) {
                     Text(permission.rawValue)
                         .font(.system(size: 14, weight: .semibold, design: .monospaced))
-                        .foregroundColor(.severanceText)
+                        .foregroundStyle(Color.severanceText)
 
                     Text(permission.description)
                         .font(.system(size: 10, design: .monospaced))
-                        .foregroundColor(.severanceMuted)
+                        .foregroundStyle(Color.severanceMuted)
                 }
 
                 Spacer()

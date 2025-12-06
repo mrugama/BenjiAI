@@ -29,7 +29,7 @@ struct DownloadModelButton: View {
                 Text("DOWNLOAD MODEL")
                     .font(.system(size: 14, weight: .bold, design: .monospaced))
             }
-            .foregroundColor(.severanceBackground)
+            .foregroundStyle(Color.severanceBackground)
             .frame(maxWidth: .infinity)
             .padding(.vertical, 16)
             .background(

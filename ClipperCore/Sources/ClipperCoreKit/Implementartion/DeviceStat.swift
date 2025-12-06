@@ -21,7 +21,7 @@ final class DeviceStatImpl: DeviceStat, @unchecked Sendable {
 
     private func updateGPUUsages() {
         let gpuSnapshotDelta = initialGPUSnapshot.delta(GPU.snapshot())
-        DispatchQueue.main.async { [weak self] in
+        Task { @MainActor [weak self] in
             self?.gpuUsage = gpuSnapshotDelta
         }
     }

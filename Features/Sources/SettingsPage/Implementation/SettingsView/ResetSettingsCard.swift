@@ -15,24 +15,24 @@ struct ResetSettingsCard: View {
 
                     Image(systemName: "arrow.counterclockwise")
                         .font(.system(size: 20))
-                        .foregroundColor(.severanceRed)
+                        .foregroundStyle(Color.severanceRed)
                 }
 
                 VStack(alignment: .leading, spacing: 4) {
                     Text("Reset Onboarding")
                         .font(.system(size: 14, weight: .semibold, design: .monospaced))
-                        .foregroundColor(.severanceText)
+                        .foregroundStyle(Color.severanceText)
 
                     Text("Show setup wizard again")
                         .font(.system(size: 11, design: .monospaced))
-                        .foregroundColor(.severanceMuted)
+                        .foregroundStyle(Color.severanceMuted)
                 }
 
                 Spacer()
 
                 Image(systemName: "chevron.right")
                     .font(.system(size: 14))
-                    .foregroundColor(.severanceMuted)
+                    .foregroundStyle(Color.severanceMuted)
             }
             .padding(16)
             .background(

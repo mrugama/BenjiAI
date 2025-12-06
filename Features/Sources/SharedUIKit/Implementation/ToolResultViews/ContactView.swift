@@ -10,7 +10,7 @@ struct ContactView: View {
         VStack(alignment: .leading, spacing: 12) {
             HStack {
                 Image(systemName: "person.crop.circle")
-                    .foregroundColor(.green)
+                    .foregroundStyle(.green)
                 Text(type.contains("list") ? "Contacts" : "Contact")
                     .font(.headline)
                     .fontWeight(.semibold)
@@ -18,8 +18,8 @@ struct ContactView: View {
 
             if type.contains("list") {
                 if let contacts = data["contacts"] as? [[String: any Sendable]] {
-                    ForEach(Array(contacts.enumerated()), id: \.offset) { _, contact in
-                        ContactCard(contact: contact)
+                    ForEach(contacts.indices, id: \.self) { index in
+                        ContactCard(contact: contacts[index])
                     }
                 }
             } else {
@@ -31,12 +31,12 @@ struct ContactView: View {
                 if let phoneNumbers = data["phoneNumbers"] as? [String], let first = phoneNumbers.first {
                     Label(first, systemImage: "phone")
                         .font(.subheadline)
-                        .foregroundColor(.secondary)
+                        .foregroundStyle(.secondary)
                 }
                 if let emails = data["emails"] as? [String], let first = emails.first {
                     Label(first, systemImage: "envelope")
                         .font(.subheadline)
-                        .foregroundColor(.secondary)
+                        .foregroundStyle(.secondary)
                 }
             }
         }
@@ -55,7 +55,7 @@ private struct ContactCard: View {
     var body: some View {
         HStack {
             Image(systemName: "person.circle.fill")
-                .foregroundColor(.green)
+                .foregroundStyle(.green)
                 .font(.title2)
             VStack(alignment: .leading, spacing: 2) {
                 Text(contact["fullName"] as? String ?? "Unknown")
@@ -64,13 +64,13 @@ private struct ContactCard: View {
                 if let phones = contact["phoneNumbers"] as? [String], let first = phones.first {
                     Text(first)
                         .font(.caption)
-                        .foregroundColor(.secondary)
+                        .foregroundStyle(.secondary)
                 }
             }
             Spacer()
         }
         .padding(8)
         .background(Color.green.opacity(0.1))
-        .cornerRadius(8)
+        .clipShape(.rect(cornerRadius: 8))
     }
 }

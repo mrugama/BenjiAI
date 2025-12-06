@@ -10,7 +10,7 @@ struct SearchResultCard: View {
                 Text("\(index)")
                     .font(.caption)
                     .fontWeight(.bold)
-                    .foregroundColor(.white)
+                    .foregroundStyle(.white)
                     .frame(width: 20, height: 20)
                     .background(Circle().fill(Color.blue))
 
@@ -18,7 +18,7 @@ struct SearchResultCard: View {
                     Text(title)
                         .font(.headline)
                         .fontWeight(.medium)
-                        .foregroundColor(.primary)
+                        .foregroundStyle(.primary)
                         .lineLimit(2)
                 }
             }
@@ -26,7 +26,7 @@ struct SearchResultCard: View {
             if let snippet = result["snippet"] {
                 Text(snippet)
                     .font(.body)
-                    .foregroundColor(.secondary)
+                    .foregroundStyle(.secondary)
                     .lineLimit(3)
             }
 
@@ -39,7 +39,7 @@ struct SearchResultCard: View {
                             .lineLimit(1)
                     }
                     .font(.caption)
-                    .foregroundColor(.blue)
+                    .foregroundStyle(.blue)
                 }
             }
         }

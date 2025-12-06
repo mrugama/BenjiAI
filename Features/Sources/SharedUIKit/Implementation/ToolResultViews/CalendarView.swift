@@ -10,7 +10,7 @@ struct CalendarView: View {
         VStack(alignment: .leading, spacing: 12) {
             HStack {
                 Image(systemName: "calendar")
-                    .foregroundColor(.red)
+                    .foregroundStyle(.red)
                 Text(type == "calendar_events_list" ? "Calendar Events" : "Calendar Event")
                     .font(.headline)
                     .fontWeight(.semibold)
@@ -18,14 +18,14 @@ struct CalendarView: View {
 
             if type == "calendar_events_list" || type == "calendar_search_results" {
                 if let events = data["events"] as? [[String: any Sendable]] {
-                    ForEach(Array(events.enumerated()), id: \.offset) { _, event in
-                        CalendarEventCard(event: event)
+                    ForEach(events.indices, id: \.self) { index in
+                        CalendarEventCard(event: events[index])
                     }
                 }
                 if let count = data["count"] as? Int {
                     Text("\(count) event\(count == 1 ? "" : "s")")
                         .font(.caption)
-                        .foregroundColor(.secondary)
+                        .foregroundStyle(.secondary)
                 }
             } else {
                 if let title = data["title"] as? String {
@@ -36,12 +36,12 @@ struct CalendarView: View {
                 if let startDate = data["startDate"] as? String {
                     Label(startDate, systemImage: "clock")
                         .font(.subheadline)
-                        .foregroundColor(.secondary)
+                        .foregroundStyle(.secondary)
                 }
                 if let notes = data["notes"] as? String, !notes.isEmpty {
                     Text(notes)
                         .font(.body)
-                        .foregroundColor(.secondary)
+                        .foregroundStyle(.secondary)
                 }
             }
         }
@@ -65,12 +65,12 @@ private struct CalendarEventCard: View {
             if let startDate = event["startDate"] as? String {
                 Text(startDate)
                     .font(.caption)
-                    .foregroundColor(.secondary)
+                    .foregroundStyle(.secondary)
             }
         }
         .padding(8)
         .frame(maxWidth: .infinity, alignment: .leading)
         .background(Color.red.opacity(0.1))
-        .cornerRadius(8)
+        .clipShape(.rect(cornerRadius: 8))
     }
 }

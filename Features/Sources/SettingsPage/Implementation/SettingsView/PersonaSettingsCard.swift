@@ -17,24 +17,24 @@ struct PersonaSettingsCard: View {
 
                     Image(systemName: selectedPersona.icon)
                         .font(.system(size: 20))
-                        .foregroundColor(.paleViolet)
+                        .foregroundStyle(Color.paleViolet)
                 }
 
                 VStack(alignment: .leading, spacing: 4) {
                     Text("AI Persona")
                         .font(.system(size: 14, weight: .semibold, design: .monospaced))
-                        .foregroundColor(.severanceText)
+                        .foregroundStyle(Color.severanceText)
 
                     Text(selectedPersona.rawValue)
                         .font(.system(size: 11, design: .monospaced))
-                        .foregroundColor(.severanceMuted)
+                        .foregroundStyle(Color.severanceMuted)
                 }
 
                 Spacer()
 
                 Image(systemName: "chevron.right")
                     .font(.system(size: 14))
-                    .foregroundColor(.severanceMuted)
+                    .foregroundStyle(Color.severanceMuted)
             }
             .padding(16)
             .background(
