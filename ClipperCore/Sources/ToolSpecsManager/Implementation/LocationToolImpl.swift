@@ -251,7 +251,7 @@ final class LocationToolImpl: NSObject, LocationTool, CLLocationManagerDelegate,
             locationManager.requestAlwaysAuthorization()
             #endif
             // Wait a bit for the user to respond
-            try? await Task.sleep(nanoseconds: 500_000_000)
+            try? await Task.sleep(for: .seconds(0.5))
             let newStatus = locationManager.authorizationStatus
             #if os(iOS)
             return newStatus == .authorizedWhenInUse || newStatus == .authorizedAlways
