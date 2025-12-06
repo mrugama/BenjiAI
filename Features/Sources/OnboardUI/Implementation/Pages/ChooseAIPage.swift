@@ -1,4 +1,5 @@
 import SwiftUI
+import SharedUIKit
 import ClipperCoreKit
 
 struct ChooseAIPage: View {
@@ -14,8 +15,8 @@ struct ChooseAIPage: View {
         VStack(spacing: 24) {
             // Header
             VStack(spacing: 12) {
-                GlowingText(
-                    text: "CHOOSE YOUR AI",
+                SeveranceUI.glowingText(
+                    "CHOOSE YOUR AI",
                     font: .system(size: 24, weight: .bold, design: .monospaced),
                     glowRadius: 6
                 )

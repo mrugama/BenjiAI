@@ -36,7 +36,7 @@ struct PlaygroundUI: View {
 
 private struct UserPromptView: View {
     let userPrompt: String?
-    
+
     var body: some View {
         VStack(alignment: .leading) {
             if let userPrompt {

@@ -1,4 +1,5 @@
 import SwiftUI
+import SharedUIKit
 
 struct PrivacyPage: View {
     @State private var showContent = false
@@ -28,9 +29,9 @@ struct PrivacyPage: View {
                     .scaleEffect(showContent ? 1 : 0.5)
 
                     VStack(spacing: 16) {
-                        GlowingText(
-                            text: "PRIVACY FIRST",
-                            font: .system(size: 28, weight: .bold, design: .monospaced),
+                        SeveranceUI.glowingText(
+                            "PRIVACY FIRST",
+                            font: Font.system(size: 28, weight: .bold, design: .monospaced),
                             glowRadius: 8
                         )
 

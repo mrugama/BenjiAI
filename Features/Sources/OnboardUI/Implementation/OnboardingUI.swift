@@ -20,11 +20,11 @@ struct OnboardingUI: View {
                 .ignoresSafeArea()
 
             // Floating particles
-            FloatingParticles()
+            SeveranceUI.floatingParticles()
                 .opacity(showBackground ? 0.6 : 0)
 
             // CRT scanline overlay
-            CRTScanlineOverlay()
+            SeveranceUI.crtScanlineOverlay()
                 .opacity(0.3)
 
             VStack(spacing: 0) {
@@ -146,13 +146,13 @@ private struct BottomNavigation: View {
     var body: some View {
         VStack(spacing: 20) {
             // Progress indicator
-            SeveranceProgressIndicator(currentPage: currentPage, totalPages: totalPages)
+            SeveranceUI.progressIndicator(currentPage: currentPage, totalPages: totalPages)
 
             // Navigation buttons
             HStack(spacing: 16) {
                 // Back button
                 if currentPage > 0 {
-                    SeveranceButton(title: "BACK", isPrimary: false) {
+                    SeveranceUI.button(title: "BACK", isPrimary: false) {
                         withAnimation(.spring(response: 0.4, dampingFraction: 0.8)) {
                             currentPage -= 1
                         }
@@ -160,7 +160,7 @@ private struct BottomNavigation: View {
                 }
 
                 // Next/Complete button
-                SeveranceButton(
+                SeveranceUI.button(
                     title: currentPage == totalPages - 1 ? "GET STARTED" : "NEXT"
                 ) {
                     if currentPage == totalPages - 1 {

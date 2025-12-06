@@ -1,31 +1,5 @@
 import SwiftUI
 
-// MARK: - Severance Color Palette
-
-/// Colors inspired by the Severance TV show aesthetic
-public extension Color {
-    /// Deep dark blue-black background
-    static let severanceBackground = Color(hex: "#0A0E14")
-    /// Terminal green glow
-    static let severanceGreen = Color(hex: "#00FF9C")
-    /// Soft cyan accent
-    static let severanceCyan = Color(hex: "#00D4AA")
-    /// Muted teal
-    static let severanceTeal = Color(hex: "#1A3A3A")
-    /// Amber warning/highlight
-    static let severanceAmber = Color(hex: "#FFB000")
-    /// Soft white text
-    static let severanceText = Color(hex: "#E8E8E8")
-    /// Muted gray text
-    static let severanceMuted = Color(hex: "#6B7280")
-    /// Card background
-    static let severanceCard = Color(hex: "#111820")
-    /// Border/divider color
-    static let severanceBorder = Color(hex: "#1F2937")
-    /// Error/destructive red
-    static let severanceRed = Color(hex: "#FF4444")
-}
-
 // MARK: - CRT Scanline Effect
 
 struct CRTScanlineOverlay: View {
@@ -157,23 +131,25 @@ struct SeveranceCard<Content: View>: View {
     }
 
     var body: some View {
-        content
-            .padding(16)
-            .background(
-                RoundedRectangle(cornerRadius: 8)
-                    .fill(Color.severanceCard)
-                    .overlay(
-                        RoundedRectangle(cornerRadius: 8)
-                            .stroke(
-                                isSelected ? Color.severanceGreen : Color.severanceBorder,
-                                lineWidth: isSelected ? 2 : 1
-                            )
-                    )
-            )
-            .shadow(color: isSelected ? Color.severanceGreen.opacity(0.3) : .clear, radius: 10)
-            .onTapGesture {
-                onTap?()
-            }
+        Button {
+            onTap?()
+        } label: {
+            content
+                .padding(16)
+                .background(
+                    RoundedRectangle(cornerRadius: 8)
+                        .fill(Color.severanceCard)
+                        .overlay(
+                            RoundedRectangle(cornerRadius: 8)
+                                .stroke(
+                                    isSelected ? Color.severanceGreen : Color.severanceBorder,
+                                    lineWidth: isSelected ? 2 : 1
+                                )
+                        )
+                )
+                .shadow(color: isSelected ? Color.severanceGreen.opacity(0.3) : .clear, radius: 10)
+        }
+        .buttonStyle(.plain)
     }
 }
 
@@ -183,10 +159,12 @@ struct SeveranceButton: View {
     let title: String
     var isPrimary: Bool = true
     var isEnabled: Bool = true
-    let action: () -> Void
+    let action: @MainActor () -> Void
 
     var body: some View {
-        Button(action: action) {
+        Button {
+            action()
+        } label: {
             Text(title)
                 .font(.system(size: 16, weight: .semibold, design: .monospaced))
                 .foregroundStyle(isPrimary ? Color.severanceBackground : Color.severanceGreen)

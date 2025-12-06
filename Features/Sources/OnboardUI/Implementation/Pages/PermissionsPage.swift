@@ -1,4 +1,5 @@
 import SwiftUI
+import SharedUIKit
 
 struct PermissionsPage: View {
     let onboardingService: OnboardingService
@@ -9,8 +10,8 @@ struct PermissionsPage: View {
         VStack(spacing: 20) {
             // Header
             VStack(spacing: 12) {
-                GlowingText(
-                    text: "TRAIN ON YOUR TERMS",
+                SeveranceUI.glowingText(
+                    "TRAIN ON YOUR TERMS",
                     font: .system(size: 22, weight: .bold, design: .monospaced),
                     glowRadius: 6
                 )

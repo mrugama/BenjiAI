@@ -1,6 +1,7 @@
 import SwiftUI
 
 public extension Color {
+    // MARK: - Core palette
     static let americanSilver = Color(hex: "#D1D1D1")
     static let antiqueWhite = Color(hex: "#F8EDD9")
     static let brightSnow = Color(hex: "#FFFFFF")
@@ -13,6 +14,28 @@ public extension Color {
     static let orange = Color(hex: "#FE7733")
     static let paleViolet = Color(hex: "#B2A1FF")
     static let papayaWhip = Color(hex: "#FFF1D4")
+
+    // MARK: - Severance palette
+    /// Colors inspired by the Severance TV show aesthetic
+    static let severanceBackground = Color(hex: "#0A0E14")
+    /// Terminal green glow
+    static let severanceGreen = Color(hex: "#00FF9C")
+    /// Soft cyan accent
+    static let severanceCyan = Color(hex: "#00D4AA")
+    /// Muted teal
+    static let severanceTeal = Color(hex: "#1A3A3A")
+    /// Amber warning/highlight
+    static let severanceAmber = Color(hex: "#FFB000")
+    /// Soft white text
+    static let severanceText = Color(hex: "#E8E8E8")
+    /// Muted gray text
+    static let severanceMuted = Color(hex: "#6B7280")
+    /// Card background
+    static let severanceCard = Color(hex: "#111820")
+    /// Border/divider color
+    static let severanceBorder = Color(hex: "#1F2937")
+    /// Error/destructive red
+    static let severanceRed = Color(hex: "#FF4444")
 
     init(hex: String) {
         let hex = hex.trimmingCharacters(in: CharacterSet.alphanumerics.inverted)

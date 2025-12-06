@@ -1,4 +1,5 @@
 import SwiftUI
+import SharedUIKit
 
 struct AIExpertPage: View {
     let onboardingService: OnboardingService
@@ -10,8 +11,8 @@ struct AIExpertPage: View {
         VStack(spacing: 16) {
             // Header
             VStack(spacing: 12) {
-                GlowingText(
-                    text: "AI EXPERT",
+                SeveranceUI.glowingText(
+                    "AI EXPERT",
                     font: .system(size: 24, weight: .bold, design: .monospaced),
                     glowRadius: 6
                 )

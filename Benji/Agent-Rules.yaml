@@ -47,11 +47,37 @@ categories:
         exceptions:
           - "When tap location is needed"
           - "When number of taps is needed"
-      
+
       - name: "Button label API"
         description: "Watch out for button labels being made with Label rather than the newer, inline API (Button(\"Tap me\", systemImage: \"plus\", action: whatever)), or worse, with just an image. This is a real problem for VoiceOver users."
         pattern: "Label.*Button|Button.*Image.*only"
         replacement: "Button(\"Label\", systemImage: \"icon\", action: {...})"
+
+      - name: "Modern Button Declaration (action → label syntax)"
+        description: |
+          Replace the old `Button(action:label:)` initializer with the new SwiftUI-recommended block syntax:
+
+          NEW:
+          Button {
+              onTap?()
+          } label: {
+              content
+                  .padding(16)
+                  .background(...)
+          }
+          .buttonStyle(.plain)
+
+          OLD:
+          Button(action: { onTap?() }) {
+              content
+                  .padding(16)
+                  .background(...)
+          }
+          .buttonStyle(.plain)
+
+          This improves readability, reduces nesting, and aligns with modern SwiftUI style affecting accessibility and maintainability.
+        pattern: "Button\\s*\\(\\s*action:"
+        replacement: "Use the new block-based Button { ... } label: { ... } syntax"
 
   modern_swiftui:
     name: "Modern SwiftUI Patterns"
@@ -139,13 +165,10 @@ categories:
     description: "Use type-safe formatting and modern Swift patterns"
     rules:
       - name: "C-style number formatting"
-        description: "I know the resulting code is longer, but try to replace C-style number formatting with the safer versions. For example, Text(String(format: \"%.2f\", abs(myNumber))) can be Text(abs(change), format: .number.precision(.fractionLength(2)))."
+        description: "Replace C-style formatting with the safer .format APIs."
         pattern: "String\\(format:.*%[df]"
         replacement: "Use .format() modifier with .number.precision()"
-        example:
-          old: "Text(String(format: \"%.2f\", abs(myNumber)))"
-          new: "Text(abs(change), format: .number.precision(.fractionLength(2)))"
-      
+
       - name: "URL.documentsDirectory"
         description: "You can safely replace the longer code to find the documents directory with just URL.documentsDirectory."
         pattern: "FileManager.*documentsDirectory|URL\\(fileURLWithPath:.*Documents"
@@ -187,9 +210,8 @@ categories:
 
 # Metadata for rule management
 metadata:
-  version: "1.0.1"
+  version: "1.0.2"
   last_updated: "2025-12-06"
   notes: |
-    - Added `modular_public_api` category to formalize the 'Approach 1' modular pattern.
-    - Rules enforce public protocols, factories returning `some View`, and internal-only implementations.
-    - Ensures clean SwiftPM architecture and maintainable modular component design.
+    - Added rule enforcing modern Button { ... } label: { ... } syntax.
+    - Maintains consistent modern SwiftUI style across components.

@@ -1,4 +1,5 @@
 import SwiftUI
+import SharedUIKit
 
 struct ToolsPage: View {
     let onboardingService: OnboardingService
@@ -9,8 +10,8 @@ struct ToolsPage: View {
         VStack(spacing: 20) {
             // Header
             VStack(spacing: 12) {
-                GlowingText(
-                    text: "MAKE IT YOURS",
+                SeveranceUI.glowingText(
+                    "MAKE IT YOURS",
                     font: .system(size: 24, weight: .bold, design: .monospaced),
                     glowRadius: 6
                 )
