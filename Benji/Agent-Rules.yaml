@@ -151,12 +151,45 @@ categories:
         pattern: "FileManager.*documentsDirectory|URL\\(fileURLWithPath:.*Documents"
         replacement: "URL.documentsDirectory"
 
+  modular_public_api:
+    name: "Modular SwiftUI Components (Approach 1)"
+    description: "Enforce strict separation between public API (protocols + factories) and internal implementation for SwiftUI components in modular architecture."
+    rules:
+      - name: "No concrete types in public API"
+        description: "Public API must not expose concrete SwiftUI view implementations. Only use protocols, opaque return types, and factory functions."
+        pattern: "public struct .*View"
+        replacement: "Expose protocol instead, and return implementation via factory function"
+      
+      - name: "Public folder: Only protocols + factories"
+        description: "All files in Public/ must contain only protocols, typealiases, and factory functions. No SwiftUI layout or styling code."
+        pattern: "SwiftUI.*body"
+        replacement: "Move concrete SwiftUI implementation to Implementation/"
+
+      - name: "Implementation folder: Contains concrete SwiftUI types"
+        description: "Concrete SwiftUI view types must be internal and placed inside Implementation/ folder."
+        pattern: "public.*implementation"
+        replacement: "Remove public modifier from implementation types"
+
+      - name: "Factory returns some View"
+        description: "All public factories must return opaque types: some View."
+        pattern: "->\\s*AnyView"
+        replacement: "Return -> some View with concrete type hidden"
+
+      - name: "Public protocols define API surface"
+        description: "Each component must have a public protocol defining its usage, initializer, and required properties, but no implementation."
+        pattern: "public struct .*Protocol"
+        replacement: "Use public protocol instead of struct"
+
+      - name: "Implementation never imported by consumers"
+        description: "Ensure implementation types are inaccessible outside the module by keeping them internal and out of Public/."
+        pattern: "public.*SeveranceButtonView"
+        replacement: "Make implementation internal under Implementation/"
+
 # Metadata for rule management
 metadata:
-  version: "1.0.0"
+  version: "1.0.1"
   last_updated: "2025-12-06"
   notes: |
-    - Rules are organized by category for easy navigation
-    - Each rule includes a pattern (regex) and replacement guidance
-    - Exceptions are noted where applicable
-    - To add new rules, add them to the appropriate category or create a new category
+    - Added `modular_public_api` category to formalize the 'Approach 1' modular pattern.
+    - Rules enforce public protocols, factories returning `some View`, and internal-only implementations.
+    - Ensures clean SwiftPM architecture and maintainable modular component design.
