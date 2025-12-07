@@ -17,9 +17,9 @@ categories:
         replacement: "clipShape(.rect(cornerRadius:))"
       
       - name: "onChange modifier parameters"
-        description: "The onChange() modifier should not be used in its 1-parameter variant. Either accept two parameters or none, but the old variant is unsafe and deprecated."
-        pattern: "onChange(\\s*\\{[^}]+\\})"
-        replacement: "Use onChange with two parameters or none"
+        description: "Avoid the deprecated 1-parameter onChange(of:perform:) closure. Use either zero parameters { } or two parameters { oldValue, newValue in } (use _ to discard oldValue if not needed)."
+        pattern: "\\.onChange\\(of:.*\\)\\s*\\{\\s*\\w+\\s+in"
+        replacement: "Use .onChange(of: value) { oldValue, newValue in } or .onChange(of: value) { _, newValue in }"
       
       - name: "tabItem to Tab API"
         description: "Replace old tabItem() modifier with the new Tab API. This provides type-safe tab selection and supports iOS 26 search tab design."
@@ -35,6 +35,21 @@ categories:
         description: "Replace Task.sleep(nanoseconds:) with Task.sleep(for:) using values such as .seconds(1)."
         pattern: "Task\\.sleep\\(nanoseconds:"
         replacement: "Task.sleep(for: .seconds(...))"
+      
+      - name: "ActivityKit deprecated update/request/end APIs"
+        description: "Avoid Activity.update(using:), Activity.request(attributes:contentState:pushType:), and Activity.end(using:dismissalPolicy:). Use update(_:) with ActivityContent, request(attributes:content:pushType:), and end(content:dismissalPolicy:) instead."
+        pattern: "Activity\\.(update\\(using:|request\\(attributes:contentState:|end\\(using:)"
+        replacement: "Use update(_:) / request(attributes:content:pushType:) / end(content:dismissalPolicy:)"
+
+      - name: "ActivityKit deprecated contentState"
+        description: "Stop reading activity.contentState; use activity.content instead."
+        pattern: "\\.contentState"
+        replacement: "Use activity.content"
+
+      - name: "Notification timeSensitive option deprecated"
+        description: "Do not request UNUserNotificationCenter authorization with the deprecated .timeSensitive option; rely on alert/sound/badge/provisional and the entitlement instead."
+        pattern: "\\.timeSensitive"
+        replacement: "Remove .timeSensitive from authorization options"
 
   accessibility:
     name: "Accessibility Improvements"
@@ -189,8 +204,10 @@ categories:
 
 # Metadata for rule management
 metadata:
-  version: "1.0.2"
-  last_updated: "2025-12-06"
+  version: "1.0.3"
+  last_updated: "2025-12-07"
   notes: |
+    - Updated onChange rule to clarify the two-parameter pattern { oldValue, newValue in } or { _, newValue in }.
+    - Added rules for ActivityKit modern APIs and Live Activities.
     - Added rule enforcing modern Button { ... } label: { ... } syntax.
     - Maintains consistent modern SwiftUI style across components.

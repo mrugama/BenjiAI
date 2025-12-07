@@ -60,6 +60,7 @@ let package = Package(
             name: "OnboardUI",
             dependencies: [
                 "SharedUIKit",
+                "BGLiveActivities",
                 .product(name: "ClipperCoreKit", package: "ClipperCore"),
             ],
             plugins: [
@@ -70,6 +71,7 @@ let package = Package(
             name: "LoadingUI",
             dependencies: [
                 "SharedUIKit",
+                "BGLiveActivities",
                 .product(name: "ClipperCoreKit", package: "ClipperCore")
             ],
             plugins: [
@@ -80,6 +82,16 @@ let package = Package(
             name: "SharedUIKit",
             dependencies: [
                 .product(name: "ToolSpecsManager", package: "ClipperCore")
+            ],
+            plugins: [
+                .plugin(name: "SwiftLintBuildToolPlugin", package: "SwiftLint")
+            ]
+        ),
+        .target(
+            name: "BGLiveActivities",
+            dependencies: [
+                "SharedUIKit",
+                .product(name: "ClipperCoreKit", package: "ClipperCore")
             ],
             plugins: [
                 .plugin(name: "SwiftLintBuildToolPlugin", package: "SwiftLint")

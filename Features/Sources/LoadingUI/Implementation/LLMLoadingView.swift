@@ -1,11 +1,13 @@
 import SwiftUI
 import SharedUIKit
 import ClipperCoreKit
+import BGLiveActivities
 
 struct LLMLoadingView: View {
     @Binding var pageState: PageState
     @Environment(\.clipperAssistant) private var clipper
     @AppStorage("BenjiLLM") private var savedLlmId: String = "mlx-community/Qwen2.5-1.5B-Instruct-4bit"
+    @State private var hasStartedLiveActivity = false
 
     var body: some View {
         ZStack {
@@ -49,10 +51,41 @@ struct LLMLoadingView: View {
         }
         .ignoresSafeArea(.all)
         .interactiveDismissDisabled()
+        .onAppear {
+            startLiveActivityIfNeeded(progress: clipper.loadingProgress.progress)
+        }
+        .onChange(of: clipper.loadingProgress.progress) { _, newProgress in
+            startLiveActivityIfNeeded(progress: newProgress)
+        }
         .task {
                 clipper.selectedModel(savedLlmId)
                 await clipper.load()
+            await endLiveActivity()
                 pageState = .home
         }
+    }
+}
+
+private extension LLMLoadingView {
+    var currentLLMName: String {
+        if let selected = clipper.llms.first(where: { $0.id == clipper.llm }) {
+            return selected.name
+        }
+        return "Benji AI"
+    }
+
+    func startLiveActivityIfNeeded(progress: Double) {
+        Task {
+            await BGLiveActivities.startOrUpdate(
+                llmName: currentLLMName,
+                progress: progress
+            )
+            hasStartedLiveActivity = true
+        }
+    }
+
+    func endLiveActivity() async {
+        guard hasStartedLiveActivity else { return }
+        await BGLiveActivities.endAll()
     }
 }

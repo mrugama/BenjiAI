@@ -11,7 +11,7 @@ struct OnboardingUI: View {
     @AppStorage("BenjiLLM") private var savedLlmId: String = "mlx-community/Qwen2.5-1.5B-Instruct-4bit"
     @Environment(\.clipperAssistant) private var clipperAssistant
 
-    private let totalPages = 5
+    private let totalPages = 6
 
     var body: some View {
         ZStack {
@@ -37,17 +37,20 @@ struct OnboardingUI: View {
                     PrivacyPage()
                         .tag(0)
 
-                    ChooseAIPage(onboardingService: onboardingService)
+                    LiveActivityPermissionPage()
                         .tag(1)
 
-                    ToolsPage(onboardingService: onboardingService)
+                    ChooseAIPage(onboardingService: onboardingService)
                         .tag(2)
 
-                    PermissionsPage(onboardingService: onboardingService)
+                    ToolsPage(onboardingService: onboardingService)
                         .tag(3)
 
-                    AIExpertPage(onboardingService: onboardingService)
+                    PermissionsPage(onboardingService: onboardingService)
                         .tag(4)
+
+                    AIExpertPage(onboardingService: onboardingService)
+                        .tag(5)
                 }
                 .tabViewStyle(.page(indexDisplayMode: .never))
                 .animation(.spring(response: 0.5, dampingFraction: 0.8), value: currentPage)

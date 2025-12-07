@@ -1,6 +1,7 @@
 import SwiftUI
 import SharedUIKit
 import OnboardUI
+import BGLiveActivities
 
 // MARK: - Settings Service Protocol
 
@@ -21,6 +22,9 @@ public protocol SettingsService: AnyObject {
 
     /// Update the AI persona
     func selectPersona(_ persona: AIPersona)
+
+    /// Request Live Activities authorization
+    func requestLiveActivitiesAuthorization() async -> LiveActivityPermissionStatus
 
     /// Reset onboarding to show again
     func resetOnboarding()
@@ -54,6 +58,10 @@ public final class SettingsServiceImpl: SettingsService {
 
     public func selectPersona(_ persona: AIPersona) {
         onboardingService.selectPersona(persona)
+    }
+
+    public func requestLiveActivitiesAuthorization() async -> LiveActivityPermissionStatus {
+        await BGLiveActivities.requestPermission()
     }
 
     public func resetOnboarding() {

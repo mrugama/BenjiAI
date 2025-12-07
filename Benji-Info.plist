@@ -13,6 +13,8 @@
 		<string>com.benjiAI.model-processing</string>
 		<string>com.benjiAI.background-fetch</string>
 	</array>
+	<key>NSSupportsLiveActivities</key>
+	<true/>
 	<key>com.apple.developer.kernel.increased-memory-limit</key>
 	<true/>
 	<key>NSCalendarsUsageDescription</key>

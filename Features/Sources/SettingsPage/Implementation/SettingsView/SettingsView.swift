@@ -60,6 +60,13 @@ struct SettingsView: View {
                             }
                         }
 
+                        // Live Activities Section
+                        SettingsSection(title: "LIVE ACTIVITIES") {
+                            LiveActivitySettingsCard {
+                                await settingsService.requestLiveActivitiesAuthorization()
+                            }
+                        }
+
                         // AI Persona Section
                         SettingsSection(title: "AI PERSONA") {
                             PersonaSettingsCard(
