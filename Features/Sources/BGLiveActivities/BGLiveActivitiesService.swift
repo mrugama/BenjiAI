@@ -35,11 +35,6 @@ public enum LiveActivityPermissionStatus: Sendable {
 // MARK: - Public Factories
 
 public enum BGLiveActivities {
-    /// Returns a Severance-themed view for displaying LLM download progress.
-    public static func progressView(llmName: String, progress: Double) -> some View {
-        LiveActivityViewImpl(llmName: llmName, progress: progress)
-    }
-
     /// Starts or updates the live activity with the given progress.
     @MainActor
     public static func startOrUpdate(llmName: String, progress: Double) async {

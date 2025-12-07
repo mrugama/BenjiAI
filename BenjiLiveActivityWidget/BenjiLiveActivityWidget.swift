@@ -79,31 +79,23 @@ struct LockScreenLiveActivityView: View {
     let progress: Double
 
     var body: some View {
-        HStack(spacing: 12) {
-            // Percentage on the left
-            VStack(alignment: .leading, spacing: 6) {
+        VStack(alignment: .leading, spacing: 8) {
+            HStack {
                 Text("\(Int(progress * 100))%")
                     .font(.system(size: 18, weight: .bold, design: .monospaced))
                     .foregroundStyle(Color.severanceGreen)
-
-                ProgressView(value: progress)
-                    .progressViewStyle(.linear)
-                    .tint(Color.severanceGreen)
-            }
-
-            Spacer()
-
-            // LLM name on the right
-            VStack(alignment: .trailing, spacing: 4) {
-                Text("Downloading")
-                    .font(.system(size: 10, design: .monospaced))
-                    .foregroundStyle(Color.severanceMuted)
+                
+                Spacer()
+                
                 Text(llmName.components(separatedBy: "/").last ?? llmName)
                     .font(.system(size: 14, weight: .semibold, design: .monospaced))
                     .foregroundStyle(Color.severanceText)
-                    .lineLimit(2)
-                    .multilineTextAlignment(.trailing)
+                    .lineLimit(1)
             }
+            
+            ProgressView(value: progress)
+                .progressViewStyle(.linear)
+                .tint(Color.severanceGreen)
         }
         .padding(16)
     }
@@ -114,6 +106,6 @@ struct LockScreenLiveActivityView: View {
 #Preview("Lock Screen", as: .content, using: LLMLiveActivityAttributes()) {
     BenjiLiveActivityWidget()
 } contentStates: {
-    LLMLiveActivityAttributes.ContentState(progress: 0.42, llmName: "mlx-community/Qwen2.5-1.5B-Instruct-4bit")
-    LLMLiveActivityAttributes.ContentState(progress: 0.85, llmName: "mlx-community/Llama-3.2-1B-Instruct-4bit")
+    LLMLiveActivityAttributes.ContentState(progress: 0.42, llmName: "Qwen2.5-1.5B")
+    LLMLiveActivityAttributes.ContentState(progress: 0.85, llmName: "Llama-3.2-1B")
 }
