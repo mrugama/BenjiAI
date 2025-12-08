@@ -1,6 +1,6 @@
 import HomePage
 import LoadingUI
-import OnboardUI
+import SetupUI
 import SettingsPage
 import SharedUIKit
 import SwiftUI
@@ -15,7 +15,7 @@ struct CoordinatorView: View {
         case .welcome:
             WelcomeView(pageState: $pageState)
         case .onboarding:
-            OnboardingUIService.pageView($pageState, onboardingService: preferencesService)
+            SetupUIService.pageView($pageState, preferencesService: preferencesService)
         case .home:
             HomePageService.pageView($pageState)
         case .settings:

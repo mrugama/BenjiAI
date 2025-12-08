@@ -3,7 +3,7 @@ import SharedUIKit
 import UserPreferences
 
 struct PermissionsPage: View {
-    let onboardingService: UserPreferencesService
+    let preferencesService: UserPreferencesService
     @State private var showContent = false
     @State private var grantedPermissions: Set<PermissionType> = []
 
@@ -89,6 +89,6 @@ struct PermissionsPage: View {
         } else {
             grantedPermissions.insert(permission)
         }
-        onboardingService.togglePermission(permission)
+        preferencesService.togglePermission(permission)
     }
 }

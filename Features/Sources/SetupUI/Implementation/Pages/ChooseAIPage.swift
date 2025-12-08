@@ -5,7 +5,7 @@ import UserPreferences
 
 struct ChooseAIPage: View {
     @Environment(\.clipperAssistant) private var clipperAssistant
-    let onboardingService: UserPreferencesService
+    let preferencesService: UserPreferencesService
     @State private var showContent = false
     @State private var selectedModelId: String?
     @State private var showMoreModels = false
@@ -142,7 +142,7 @@ struct ChooseAIPage: View {
         // Single source of truth for selection animation
         withAnimation(.spring(response: 0.3, dampingFraction: 0.7)) {
             selectedModelId = id
-            onboardingService.updateSelectedModel(id)
+            preferencesService.updateSelectedModel(id)
             clipperAssistant.selectedModel(id)
         }
     }

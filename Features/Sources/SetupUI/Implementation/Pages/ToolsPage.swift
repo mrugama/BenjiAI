@@ -3,7 +3,7 @@ import SharedUIKit
 import UserPreferences
 
 struct ToolsPage: View {
-    let onboardingService: UserPreferencesService
+    let preferencesService: UserPreferencesService
     @State private var showContent = false
     @State private var enabledTools: Set<String> = []
 
@@ -86,12 +86,12 @@ struct ToolsPage: View {
         } else {
             enabledTools.insert(toolId)
         }
-        onboardingService.toggleTool(toolId)
+        preferencesService.toggleTool(toolId)
     }
 
     private func syncWithService() {
-        for toolId in enabledTools where !onboardingService.state.enabledTools.contains(toolId) {
-            onboardingService.toggleTool(toolId)
+        for toolId in enabledTools where !preferencesService.state.enabledTools.contains(toolId) {
+            preferencesService.toggleTool(toolId)
         }
     }
 }

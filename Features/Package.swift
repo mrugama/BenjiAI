@@ -20,7 +20,7 @@ let package = Package(
             name: "Coordinator",
             dependencies: [
                 "HomePage",
-                "OnboardUI",
+                "SetupUI",
                 "LoadingUI",
                 "SettingsPage",
                 "SharedUIKit",
@@ -68,7 +68,7 @@ let package = Package(
             ]
         ),
         .target(
-            name: "OnboardUI",
+            name: "SetupUI",
             dependencies: [
                 "SharedUIKit",
                 "UserPreferences",
@@ -94,6 +94,9 @@ let package = Package(
             name: "SharedUIKit",
             dependencies: [
                 .product(name: "ToolSpecsManager", package: "ClipperCore")
+            ],
+            resources: [
+                .process("ColorSet.xcassets")
             ],
             plugins: [
                 .plugin(name: "SwiftLintBuildToolPlugin", package: "SwiftLint")

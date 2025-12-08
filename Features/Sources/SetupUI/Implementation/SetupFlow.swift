@@ -3,9 +3,9 @@ import SharedUIKit
 import ClipperCoreKit
 import UserPreferences
 
-struct OnboardingUI: View {
+struct SetupFlow: View {
     @Binding var pageState: PageState
-    let onboardingService: UserPreferencesService
+    let preferencesService: UserPreferencesService
 
     @State private var currentPage = 0
     @State private var showBackground = false
@@ -40,16 +40,16 @@ struct OnboardingUI: View {
                     LiveActivityPermissionPage()
                         .tag(1)
 
-                    ChooseAIPage(onboardingService: onboardingService)
+                    ChooseAIPage(preferencesService: preferencesService)
                         .tag(2)
 
-                    ToolsPage(onboardingService: onboardingService)
+                    ToolsPage(preferencesService: preferencesService)
                         .tag(3)
 
-                    PermissionsPage(onboardingService: onboardingService)
+                    PermissionsPage(preferencesService: preferencesService)
                         .tag(4)
 
-                    AIExpertPage(onboardingService: onboardingService)
+                    AIExpertPage(preferencesService: preferencesService)
                         .tag(5)
                 }
                 .tabViewStyle(.page(indexDisplayMode: .never))
@@ -59,7 +59,7 @@ struct OnboardingUI: View {
                 BottomNavigation(
                     currentPage: $currentPage,
                     totalPages: totalPages,
-                    onComplete: completeOnboarding
+                    onComplete: completeSetup
                 )
                 .opacity(showBackground ? 1 : 0)
             }
@@ -72,20 +72,20 @@ struct OnboardingUI: View {
         }
     }
 
-    private func completeOnboarding() {
-        onboardingService.completeOnboarding()
+    private func completeSetup() {
+        preferencesService.completeOnboarding()
 
         // Set the system prompt based on selected persona
-        clipperAssistant.setSystemPrompt(onboardingService.state.selectedPersona.systemPrompt)
+        clipperAssistant.setSystemPrompt(preferencesService.state.selectedPersona.systemPrompt)
 
         // Set the selected model if one was chosen
-        if let selectedModelId = onboardingService.state.selectedModelId {
+        if let selectedModelId = preferencesService.state.selectedModelId {
             clipperAssistant.selectedModel(selectedModelId)
         }
 
         // Enable/disable tools based on user selection
         Task {
-            for toolId in onboardingService.state.enabledTools {
+            for toolId in preferencesService.state.enabledTools {
                 await clipperAssistant.enableTool(toolId)
             }
         }
@@ -194,8 +194,8 @@ private struct BottomNavigation: View {
 // MARK: - Preview
 
 #Preview {
-    OnboardingUI(
+    SetupFlow(
         pageState: .constant(.onboarding),
-        onboardingService: UserPreferencesServiceImpl()
+        preferencesService: UserPreferencesServiceImpl()
     )
 }

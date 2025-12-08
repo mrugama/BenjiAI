@@ -3,7 +3,7 @@ import SharedUIKit
 import UserPreferences
 
 struct AIExpertPage: View {
-    let onboardingService: UserPreferencesService
+    let preferencesService: UserPreferencesService
     @State private var showContent = false
     @State private var selectedPersona: AIPersona = .generic
     @State private var showDisclaimer = false
@@ -40,7 +40,7 @@ struct AIExpertPage: View {
                         PreferenceGridCard(persona: persona, isSelected: selectedPersona == persona) {
                             withAnimation(.spring(response: 0.3, dampingFraction: 0.7)) {
                                 selectedPersona = persona
-                                onboardingService.selectPersona(persona)
+                                preferencesService.selectPersona(persona)
                             }
                         }
                         .opacity(showContent ? 1 : 0)
