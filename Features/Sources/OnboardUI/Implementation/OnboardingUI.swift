@@ -9,6 +9,7 @@ struct OnboardingUI: View {
     @State private var currentPage = 0
     @State private var showBackground = false
     @AppStorage("BenjiLLM") private var savedLlmId: String = "mlx-community/Qwen2.5-1.5B-Instruct-4bit"
+    @AppStorage("isFirstLaunch") private var isFirstLaunch: Bool = true
     @Environment(\.clipperAssistant) private var clipperAssistant
 
     private let totalPages = 6
@@ -92,6 +93,7 @@ struct OnboardingUI: View {
         }
 
         withAnimation(.spring(response: 0.5, dampingFraction: 0.8)) {
+            isFirstLaunch = false
             pageState = .loading
         }
     }

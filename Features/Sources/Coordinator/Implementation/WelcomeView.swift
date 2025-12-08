@@ -72,7 +72,7 @@ struct WelcomeView: View {
         }
         // Defines how this view should transition when it is added or removed from the screen
         .transition(.opacity)
-        .task(id: isFirstLaunch) {
+        .task {
             if isFirstLaunch && pageState == .welcome {
                 pageState = .onboarding
             } else {
