@@ -42,18 +42,18 @@ struct BenjiLiveActivityWidget: Widget {
                             .foregroundStyle(Color.severanceGreen)
                             .shadow(color: .severanceGreen.opacity(0.8), radius: 4)
                         
-                        Text("Syncing")
+                        Text("Downloading")
                             .font(.system(size: 10, design: .monospaced))
                             .foregroundStyle(Color.severanceMuted)
                     }
                 }
-                DynamicIslandExpandedRegion(.trailing) {
-                    VStack(alignment: .trailing, spacing: 2) {
-                        Text(context.state.llmName.components(separatedBy: "/").last ?? context.state.llmName)
-                            .font(.system(size: 12, weight: .semibold, design: .monospaced))
-                            .foregroundStyle(Color.severanceText)
-                            .lineLimit(1)
-                    }
+                DynamicIslandExpandedRegion(.center) {
+                    Text(context.state.llmName.components(separatedBy: "/").last ?? context.state.llmName)
+                        .font(.system(size: 10, weight: .semibold, design: .monospaced))
+                        .foregroundStyle(Color.severanceText)
+                        .lineLimit(1)
+                        .truncationMode(.middle)
+                        .minimumScaleFactor(0.6)
                 }
                 DynamicIslandExpandedRegion(.bottom) {
                     SurrealProgressBar(progress: context.state.progress)
@@ -126,6 +126,7 @@ struct SurrealLockScreenView: View {
                         .font(.system(size: 13, weight: .semibold, design: .monospaced))
                         .foregroundStyle(Color.severanceText)
                         .lineLimit(1)
+                        .minimumScaleFactor(0.7)
                 }
                 
                 // Surreal progress bar
@@ -243,6 +244,8 @@ struct SurrealBackground: View {
 #Preview("Lock Screen", as: .content, using: LLMLiveActivityAttributes()) {
     BenjiLiveActivityWidget()
 } contentStates: {
-    LLMLiveActivityAttributes.ContentState(progress: 0.42, llmName: "Qwen2.5-1.5B")
-    LLMLiveActivityAttributes.ContentState(progress: 0.75, llmName: "Llama-3.2-1B")
+    LLMLiveActivityAttributes.ContentState(progress: 0.25, llmName: "Qwen2.5-1.5B")
+    LLMLiveActivityAttributes.ContentState(progress: 0.50, llmName: "Qwen2.5-1.5B")
+    LLMLiveActivityAttributes.ContentState(progress: 0.75, llmName: "Qwen2.5-1.5B")
+    LLMLiveActivityAttributes.ContentState(progress: 1.00, llmName: "Qwen2.5-1.5B")
 }
