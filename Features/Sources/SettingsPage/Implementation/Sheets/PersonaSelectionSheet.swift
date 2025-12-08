@@ -1,11 +1,11 @@
 import SwiftUI
 import ClipperCoreKit
-import OnboardUI
+import UserPreferences
 
 // MARK: - Persona Selection Sheet
 
 struct PersonaSelectionSheet: View {
-    let onboardingService: OnboardingService
+    let preferencesService: UserPreferencesService
     @Environment(\.dismiss) var dismiss
     @Environment(\.clipperAssistant) private var clipperAssistant
     @State private var selectedPersona: AIPersona = .generic
@@ -19,22 +19,10 @@ struct PersonaSelectionSheet: View {
                 ScrollView(.vertical, showsIndicators: false) {
                     VStack(spacing: 12) {
                         // Warning
-                        HStack(spacing: 12) {
-                            Image(systemName: "exclamationmark.triangle.fill")
-                                .foregroundStyle(Color.severanceAmber)
-                            Text("Personas are experimental. Always consult professionals for specialized advice.")
-                                .font(.system(size: 11, design: .monospaced))
-                                .foregroundStyle(Color.severanceMuted)
-                        }
-                        .padding(12)
-                        .frame(maxWidth: .infinity, alignment: .leading)
-                        .background(
-                            RoundedRectangle(cornerRadius: 8)
-                                .fill(Color.severanceAmber.opacity(0.1))
-                        )
+                        WarningBanner.personaDisclaimer
 
                         ForEach(AIPersona.allCases) { persona in
-                            PersonaSheetRow(
+                            PreferenceSelectionRow(
                                 persona: persona,
                                 isSelected: selectedPersona == persona
                             ) {
@@ -69,69 +57,16 @@ struct PersonaSelectionSheet: View {
         .presentationDetents([.large])
         .presentationBackground(Color.severanceBackground)
         .onAppear {
-            selectedPersona = onboardingService.state.selectedPersona
+            selectedPersona = preferencesService.state.selectedPersona
         }
     }
 
     private func selectPersona(_ persona: AIPersona) {
         withAnimation(.spring(response: 0.3, dampingFraction: 0.7)) {
             selectedPersona = persona
-            onboardingService.selectPersona(persona)
+            preferencesService.selectPersona(persona)
             // Update the system prompt on the clipper assistant
             clipperAssistant.setSystemPrompt(persona.systemPrompt)
         }
-    }
-}
-
-private struct PersonaSheetRow: View {
-    let persona: AIPersona
-    let isSelected: Bool
-    let onSelect: () -> Void
-
-    var body: some View {
-        Button(action: onSelect) {
-            HStack(spacing: 16) {
-                ZStack {
-                    Circle()
-                        .fill(isSelected ? Color.severanceGreen.opacity(0.2) : Color.severanceTeal)
-                        .frame(width: 44, height: 44)
-
-                    Image(systemName: persona.icon)
-                        .font(.system(size: 20))
-                        .foregroundStyle(isSelected ? Color.severanceGreen : Color.severanceMuted)
-                }
-
-                VStack(alignment: .leading, spacing: 4) {
-                    Text(persona.rawValue)
-                        .font(.system(size: 14, weight: .semibold, design: .monospaced))
-                        .foregroundStyle(Color.severanceText)
-
-                    Text(persona.subtitle)
-                        .font(.system(size: 10, design: .monospaced))
-                        .foregroundStyle(Color.severanceMuted)
-                }
-
-                Spacer()
-
-                if isSelected {
-                    Image(systemName: "checkmark.circle.fill")
-                        .font(.system(size: 20))
-                        .foregroundStyle(Color.severanceGreen)
-                }
-            }
-            .padding(16)
-            .background(
-                RoundedRectangle(cornerRadius: 12)
-                    .fill(Color.severanceCard)
-                    .overlay(
-                        RoundedRectangle(cornerRadius: 12)
-                            .stroke(
-                                isSelected ? Color.severanceGreen : Color.severanceBorder,
-                                lineWidth: isSelected ? 2 : 1
-                            )
-                    )
-            )
-        }
-        .buttonStyle(PlainButtonStyle())
     }
 }

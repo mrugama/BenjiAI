@@ -1,15 +1,14 @@
 import SwiftUI
 import SharedUIKit
 import ClipperCoreKit
+import UserPreferences
 
 struct OnboardingUI: View {
     @Binding var pageState: PageState
-    let onboardingService: OnboardingService
+    let onboardingService: UserPreferencesService
 
     @State private var currentPage = 0
     @State private var showBackground = false
-    @AppStorage("BenjiLLM") private var savedLlmId: String = "mlx-community/Qwen2.5-1.5B-Instruct-4bit"
-    @AppStorage("isFirstLaunch") private var isFirstLaunch: Bool = true
     @Environment(\.clipperAssistant) private var clipperAssistant
 
     private let totalPages = 6
@@ -79,9 +78,8 @@ struct OnboardingUI: View {
         // Set the system prompt based on selected persona
         clipperAssistant.setSystemPrompt(onboardingService.state.selectedPersona.systemPrompt)
 
-        // Set the selected model if one was chosen and persist to AppStorage
+        // Set the selected model if one was chosen
         if let selectedModelId = onboardingService.state.selectedModelId {
-            savedLlmId = selectedModelId
             clipperAssistant.selectedModel(selectedModelId)
         }
 
@@ -93,7 +91,6 @@ struct OnboardingUI: View {
         }
 
         withAnimation(.spring(response: 0.5, dampingFraction: 0.8)) {
-            isFirstLaunch = false
             pageState = .loading
         }
     }
@@ -181,7 +178,9 @@ private struct BottomNavigation: View {
 
             // Skip option (except on last page)
             if currentPage < totalPages - 1 {
-                Button(action: onComplete) {
+                Button {
+                    onComplete()
+                } label: {
                     Text("Skip setup")
                         .font(.system(size: 12, design: .monospaced))
                         .foregroundStyle(Color.severanceMuted)
@@ -197,6 +196,6 @@ private struct BottomNavigation: View {
 #Preview {
     OnboardingUI(
         pageState: .constant(.onboarding),
-        onboardingService: OnboardingServiceImpl()
+        onboardingService: UserPreferencesServiceImpl()
     )
 }

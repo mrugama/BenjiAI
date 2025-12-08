@@ -1,5 +1,5 @@
 import SwiftUI
-import OnboardUI
+import SharedUIKit
 
 // MARK: - Settings Section
 

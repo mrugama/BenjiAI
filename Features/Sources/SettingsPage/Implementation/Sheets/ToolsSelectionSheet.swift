@@ -1,10 +1,10 @@
 import SwiftUI
-import OnboardUI
+import UserPreferences
 
 // MARK: - Tools Selection Sheet
 
 struct ToolsSelectionSheet: View {
-    let onboardingService: OnboardingService
+    let preferencesService: UserPreferencesService
     @Environment(\.dismiss) var dismiss
     @Environment(\.clipperAssistant) private var clipperAssistant
     @State private var enabledTools: Set<String> = []
@@ -18,7 +18,7 @@ struct ToolsSelectionSheet: View {
                 ScrollView(.vertical, showsIndicators: false) {
                     VStack(spacing: 12) {
                         ForEach(ToolSelectionInfo.allTools) { tool in
-                            ToolSheetRow(
+                            PreferenceToggleRow(
                                 tool: tool,
                                 isEnabled: enabledTools.contains(tool.id)
                             ) {
@@ -53,7 +53,7 @@ struct ToolsSelectionSheet: View {
         .presentationDetents([.large])
         .presentationBackground(Color.severanceBackground)
         .onAppear {
-            enabledTools = onboardingService.state.enabledTools
+            enabledTools = preferencesService.state.enabledTools
         }
     }
 
@@ -70,63 +70,7 @@ struct ToolsSelectionSheet: View {
                     await clipperAssistant.enableTool(toolId)
                 }
             }
-            onboardingService.toggleTool(toolId)
+            preferencesService.toggleTool(toolId)
         }
-    }
-}
-
-private struct ToolSheetRow: View {
-    let tool: ToolSelectionInfo
-    let isEnabled: Bool
-    let onToggle: () -> Void
-
-    var body: some View {
-        Button(action: onToggle) {
-            HStack(spacing: 16) {
-                ZStack {
-                    RoundedRectangle(cornerRadius: 10)
-                        .fill(isEnabled ? Color.severanceGreen.opacity(0.15) : Color.severanceTeal)
-                        .frame(width: 44, height: 44)
-
-                    Image(systemName: tool.icon)
-                        .font(.system(size: 20))
-                        .foregroundStyle(isEnabled ? Color.severanceGreen : Color.severanceMuted)
-                }
-
-                VStack(alignment: .leading, spacing: 4) {
-                    Text(tool.name)
-                        .font(.system(size: 14, weight: .semibold, design: .monospaced))
-                        .foregroundStyle(Color.severanceText)
-
-                    Text(tool.description)
-                        .font(.system(size: 10, design: .monospaced))
-                        .foregroundStyle(Color.severanceMuted)
-                }
-
-                Spacer()
-
-                // Toggle
-                ZStack {
-                    RoundedRectangle(cornerRadius: 14)
-                        .fill(isEnabled ? Color.severanceGreen : Color.severanceBorder)
-                        .frame(width: 50, height: 28)
-
-                    Circle()
-                        .fill(Color.severanceText)
-                        .frame(width: 22, height: 22)
-                        .offset(x: isEnabled ? 10 : -10)
-                }
-            }
-            .padding(16)
-            .background(
-                RoundedRectangle(cornerRadius: 12)
-                    .fill(Color.severanceCard)
-                    .overlay(
-                        RoundedRectangle(cornerRadius: 12)
-                            .stroke(Color.severanceBorder, lineWidth: 1)
-                    )
-            )
-        }
-        .buttonStyle(PlainButtonStyle())
     }
 }

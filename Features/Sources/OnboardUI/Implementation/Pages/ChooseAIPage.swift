@@ -1,15 +1,16 @@
 import SwiftUI
 import SharedUIKit
 import ClipperCoreKit
+import UserPreferences
 
 struct ChooseAIPage: View {
     @Environment(\.clipperAssistant) private var clipperAssistant
-    let onboardingService: OnboardingService
+    let onboardingService: UserPreferencesService
     @State private var showContent = false
     @State private var selectedModelId: String?
     @State private var showMoreModels = false
 
-    private let defaultModelId = "mlx-community/Qwen2.5-1.5B-Instruct-4bit"
+    private let defaultModelId = UserPreferencesState.defaultModelId
 
     var body: some View {
         VStack(spacing: 24) {
@@ -154,7 +155,9 @@ struct ModelSelectionCard: View {
     let onSelect: () -> Void
 
     var body: some View {
-        Button(action: onSelect) {
+        Button {
+            onSelect()
+        } label: {
             HStack(spacing: 16) {
                 // Icon
                 ZStack {

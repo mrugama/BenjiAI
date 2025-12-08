@@ -1,8 +1,9 @@
 import SwiftUI
 import SharedUIKit
+import UserPreferences
 
 struct ToolsPage: View {
-    let onboardingService: OnboardingService
+    let onboardingService: UserPreferencesService
     @State private var showContent = false
     @State private var enabledTools: Set<String> = []
 
@@ -30,10 +31,7 @@ struct ToolsPage: View {
                     GridItem(.flexible(), spacing: 12)
                 ], spacing: 12) {
                     ForEach(ToolSelectionInfo.allTools) { tool in
-                        ToolSelectionCard(
-                            tool: tool,
-                            isEnabled: enabledTools.contains(tool.id)
-                        ) {
+                        PreferenceGridCard(tool: tool, isEnabled: enabledTools.contains(tool.id)) {
                             withAnimation(.spring(response: 0.3, dampingFraction: 0.7)) {
                                 toggleTool(tool.id)
                             }
@@ -73,7 +71,7 @@ struct ToolsPage: View {
         }
         .onAppear {
             // Default enabled tools
-            enabledTools = ["search", "getTodayDate", "queryRefine"]
+            enabledTools = ToolSelectionInfo.defaultEnabledToolIds
             syncWithService()
 
             withAnimation(.spring(response: 0.6, dampingFraction: 0.8).delay(0.1)) {
@@ -98,67 +96,15 @@ struct ToolsPage: View {
     }
 }
 
-struct ToolSelectionCard: View {
-    let tool: ToolSelectionInfo
-    let isEnabled: Bool
-    let onToggle: () -> Void
-
-    var body: some View {
-        Button(action: onToggle) {
-            VStack(spacing: 12) {
-                // Icon
-                ZStack {
-                    RoundedRectangle(cornerRadius: 12)
-                        .fill(isEnabled ? Color.severanceGreen.opacity(0.15) : Color.severanceTeal)
-                        .frame(width: 50, height: 50)
-
-                    Image(systemName: tool.icon)
-                        .font(.system(size: 22))
-                        .foregroundStyle(isEnabled ? Color.severanceGreen : Color.severanceMuted)
-                }
-
-                VStack(spacing: 4) {
-                    Text(tool.name)
-                        .font(.system(size: 13, weight: .semibold, design: .monospaced))
-                        .foregroundStyle(Color.severanceText)
-
-                    Text(tool.description)
-                        .font(.system(size: 10, design: .monospaced))
-                        .foregroundStyle(Color.severanceMuted)
-                        .lineLimit(2)
-                        .multilineTextAlignment(.center)
-                }
-
-                // Status indicator
-                Image(systemName: isEnabled ? "checkmark.circle.fill" : "circle")
-                    .font(.system(size: 18))
-                    .foregroundStyle(isEnabled ? Color.severanceGreen : Color.severanceBorder)
-            }
-            .frame(maxWidth: .infinity)
-            .padding(16)
-            .background(
-                RoundedRectangle(cornerRadius: 12)
-                    .fill(Color.severanceCard)
-                    .overlay(
-                        RoundedRectangle(cornerRadius: 12)
-                            .stroke(
-                                isEnabled ? Color.severanceGreen : Color.severanceBorder,
-                                lineWidth: isEnabled ? 2 : 1
-                            )
-                    )
-            )
-        }
-        .buttonStyle(PlainButtonStyle())
-    }
-}
-
 struct QuickActionButton: View {
     let title: String
     let icon: String
     let action: () -> Void
 
     var body: some View {
-        Button(action: action) {
+        Button {
+            action()
+        } label: {
             HStack(spacing: 8) {
                 Image(systemName: icon)
                     .font(.system(size: 14))

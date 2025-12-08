@@ -1,33 +1,26 @@
 import SwiftUI
 import SharedUIKit
-import OnboardUI
+import UserPreferences
 import BGLiveActivities
+
+// MARK: - Re-export UserPreferences types for use by SettingsPage consumers
+// This allows code using SettingsPage to access preference types
+
+public typealias SettingsState = UserPreferencesState
 
 // MARK: - Settings Service Protocol
 
 /// Protocol defining the settings service interface - MainActor isolated for UI state management
 @MainActor
 public protocol SettingsService: AnyObject {
-    /// Get the current onboarding state
-    var onboardingState: OnboardingState { get }
+    /// Get the current preferences state
+    var preferencesState: UserPreferencesState { get }
 
-    /// Update the selected AI model
-    func updateSelectedModel(_ modelId: String?)
-
-    /// Toggle a tool on/off
-    func toggleTool(_ toolId: String)
-
-    /// Toggle a permission on/off
-    func togglePermission(_ permission: PermissionType)
-
-    /// Update the AI persona
-    func selectPersona(_ persona: AIPersona)
+    /// Get the underlying preferences service
+    var preferencesService: UserPreferencesService { get }
 
     /// Request Live Activities authorization
     func requestLiveActivitiesAuthorization() async -> LiveActivityPermissionStatus
-
-    /// Reset onboarding to show again
-    func resetOnboarding()
 }
 
 // MARK: - Settings Service Implementation
@@ -35,42 +28,22 @@ public protocol SettingsService: AnyObject {
 @MainActor
 @Observable
 public final class SettingsServiceImpl: SettingsService {
-    public var onboardingState: OnboardingState {
-        onboardingService.state
-    }
-    private let onboardingService: OnboardingService
-
-    public init(onboardingService: OnboardingService) {
-        self.onboardingService = onboardingService
+    public var preferencesState: UserPreferencesState {
+        preferencesService.state
     }
 
-    public func updateSelectedModel(_ modelId: String?) {
-        onboardingService.updateSelectedModel(modelId)
-    }
+    public let preferencesService: UserPreferencesService
 
-    public func toggleTool(_ toolId: String) {
-        onboardingService.toggleTool(toolId)
-    }
-
-    public func togglePermission(_ permission: PermissionType) {
-        onboardingService.togglePermission(permission)
-    }
-
-    public func selectPersona(_ persona: AIPersona) {
-        onboardingService.selectPersona(persona)
+    public init(preferencesService: UserPreferencesService) {
+        self.preferencesService = preferencesService
     }
 
     public func requestLiveActivitiesAuthorization() async -> LiveActivityPermissionStatus {
         await BGLiveActivities.requestPermission()
     }
-
-    public func resetOnboarding() {
-        onboardingService.resetOnboarding()
-    }
 }
 
 // MARK: - Environment Key
-// Note: Environment keys don't use actor isolation - SwiftUI handles thread safety
 
 private struct SettingsServiceKey: EnvironmentKey {
     nonisolated(unsafe) static let defaultValue: SettingsService? = nil
@@ -91,13 +64,11 @@ public struct SettingsPageService {
     /// Returns the settings page view with the specified page state binding.
     public static func pageView(
         _ pageState: Binding<PageState>,
-        settingsService: SettingsService,
-        onboardingService: OnboardingService
+        settingsService: SettingsService
     ) -> some View {
         SettingsView(
             pageState: pageState,
-            settingsService: settingsService,
-            onboardingService: onboardingService
+            settingsService: settingsService
         )
     }
 }

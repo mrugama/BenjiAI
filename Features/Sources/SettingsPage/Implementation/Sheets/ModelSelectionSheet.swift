@@ -1,12 +1,13 @@
 import SwiftUI
 import ClipperCoreKit
+import UserPreferences
 
 // MARK: - Model Selection Sheet
 
 struct ModelSelectionSheet: View {
     let clipperAssistant: ClipperAssistant
+    let preferencesService: UserPreferencesService
     @Binding var showDownloadButton: Bool
-    @AppStorage("BenjiLLM") private var savedLlmId: String = "mlx-community/Qwen2.5-1.5B-Instruct-4bit"
     @Environment(\.dismiss) var dismiss
 
     var body: some View {
@@ -18,9 +19,12 @@ struct ModelSelectionSheet: View {
                 ScrollView(.vertical, showsIndicators: false) {
                     VStack(spacing: 12) {
                         ForEach(clipperAssistant.llms, id: \.id) { llm in
-                            ModelSheetRow(
-                                llm: llm,
-                                isSelected: clipperAssistant.llm == llm.id
+                            PreferenceSelectionRow(
+                                icon: "cpu.fill",
+                                title: llm.name,
+                                subtitle: llm.description,
+                                isSelected: clipperAssistant.llm == llm.id,
+                                iconShape: .rounded
                             ) {
                                 selectModel(llm)
                             }
@@ -56,67 +60,13 @@ struct ModelSelectionSheet: View {
 
     private func selectModel(_ llm: any ClipperLLM) {
         Task {
-            // Persist model selection to AppStorage
-            savedLlmId = llm.id
+            // Persist model selection
+            preferencesService.updateSelectedModel(llm.id)
             clipperAssistant.selectedModel(llm.id)
             if await clipperAssistant.loadedLLM?.configuration.name != llm.id {
                 showDownloadButton = true
             }
             dismiss()
         }
-    }
-}
-
-private struct ModelSheetRow: View {
-    let llm: any ClipperLLM
-    let isSelected: Bool
-    let onSelect: () -> Void
-
-    var body: some View {
-        Button(action: onSelect) {
-            HStack(spacing: 16) {
-                ZStack {
-                    RoundedRectangle(cornerRadius: 10)
-                        .fill(isSelected ? Color.severanceGreen.opacity(0.2) : Color.severanceTeal)
-                        .frame(width: 44, height: 44)
-
-                    Image(systemName: "cpu.fill")
-                        .font(.system(size: 20))
-                        .foregroundStyle(isSelected ? Color.severanceGreen : Color.severanceMuted)
-                }
-
-                VStack(alignment: .leading, spacing: 4) {
-                    Text(llm.name)
-                        .font(.system(size: 14, weight: .semibold, design: .monospaced))
-                        .foregroundStyle(Color.severanceText)
-
-                    Text(llm.description)
-                        .font(.system(size: 10, design: .monospaced))
-                        .foregroundStyle(Color.severanceMuted)
-                        .lineLimit(2)
-                }
-
-                Spacer()
-
-                if isSelected {
-                    Image(systemName: "checkmark.circle.fill")
-                        .font(.system(size: 20))
-                        .foregroundStyle(Color.severanceGreen)
-                }
-            }
-            .padding(16)
-            .background(
-                RoundedRectangle(cornerRadius: 12)
-                    .fill(Color.severanceCard)
-                    .overlay(
-                        RoundedRectangle(cornerRadius: 12)
-                            .stroke(
-                                isSelected ? Color.severanceGreen : Color.severanceBorder,
-                                lineWidth: isSelected ? 2 : 1
-                            )
-                    )
-            )
-        }
-        .buttonStyle(PlainButtonStyle())
     }
 }

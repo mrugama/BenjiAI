@@ -1,8 +1,9 @@
 import SwiftUI
 import SharedUIKit
+import UserPreferences
 
 struct AIExpertPage: View {
-    let onboardingService: OnboardingService
+    let onboardingService: UserPreferencesService
     @State private var showContent = false
     @State private var selectedPersona: AIPersona = .generic
     @State private var showDisclaimer = false
@@ -25,33 +26,9 @@ struct AIExpertPage: View {
             .opacity(showContent ? 1 : 0)
 
             // Experimental warning
-            HStack(spacing: 10) {
-                Image(systemName: "exclamationmark.triangle.fill")
-                    .font(.system(size: 16))
-                    .foregroundStyle(Color.severanceAmber)
-
-                VStack(alignment: .leading, spacing: 2) {
-                    Text("EXPERIMENTAL FEATURE")
-                        .font(.system(size: 10, weight: .bold, design: .monospaced))
-                        .foregroundStyle(Color.severanceAmber)
-
-                    Text("AI responses are for guidance only. Always consult professionals.")
-                        .font(.system(size: 10, design: .monospaced))
-                        .foregroundStyle(Color.severanceMuted)
-                }
-            }
-            .padding(12)
-            .frame(maxWidth: .infinity, alignment: .leading)
-            .background(
-                RoundedRectangle(cornerRadius: 8)
-                    .fill(Color.severanceAmber.opacity(0.08))
-                    .overlay(
-                        RoundedRectangle(cornerRadius: 8)
-                            .stroke(Color.severanceAmber.opacity(0.3), lineWidth: 1)
-                    )
-            )
-            .padding(.horizontal, 24)
-            .opacity(showContent ? 1 : 0)
+            WarningBanner.experimentalFeature
+                .padding(.horizontal, 24)
+                .opacity(showContent ? 1 : 0)
 
             // Persona grid
             ScrollView(.vertical, showsIndicators: false) {
@@ -60,10 +37,7 @@ struct AIExpertPage: View {
                     GridItem(.flexible(), spacing: 10)
                 ], spacing: 10) {
                     ForEach(AIPersona.allCases) { persona in
-                        PersonaCard(
-                            persona: persona,
-                            isSelected: selectedPersona == persona
-                        ) {
+                        PreferenceGridCard(persona: persona, isSelected: selectedPersona == persona) {
                             withAnimation(.spring(response: 0.3, dampingFraction: 0.7)) {
                                 selectedPersona = persona
                                 onboardingService.selectPersona(persona)
@@ -103,92 +77,7 @@ struct AIExpertPage: View {
         .alert("Professional Disclaimer", isPresented: $showDisclaimer) {
             Button("I Understand", role: .cancel) { }
         } message: {
-            Text(getDisclaimerText(for: selectedPersona))
+            Text(selectedPersona.disclaimerText)
         }
-    }
-
-    private func getDisclaimerText(for persona: AIPersona) -> String {
-        switch persona {
-        case .vet:
-            return """
-            This AI provides general pet care guidance only.
-            For medical emergencies or health concerns, always consult a licensed veterinarian.
-            """
-        case .realEstate:
-            return """
-            This AI provides general real estate information only.
-            For transactions and legal matters, consult a licensed real estate professional.
-            """
-        case .cryptoBro, .investor:
-            return """
-            This AI does not provide financial advice.
-            All investment discussions are educational.
-            Consult a licensed financial advisor before making investment decisions.
-            """
-        case .personalTrainer:
-            return """
-            This AI provides general fitness guidance.
-            Consult a healthcare provider before starting any exercise program.
-            """
-        case .nutritionist:
-            return """
-            This AI provides general dietary information only.
-            For medical conditions or specific dietary needs, consult a registered dietitian or healthcare provider.
-            """
-        default:
-            return "This AI provides general assistance only. Always seek professional advice for specific concerns."
-        }
-    }
-}
-
-struct PersonaCard: View {
-    let persona: AIPersona
-    let isSelected: Bool
-    let onSelect: () -> Void
-
-    var body: some View {
-        Button(action: onSelect) {
-            VStack(spacing: 10) {
-                // Icon
-                ZStack {
-                    Circle()
-                        .fill(isSelected ? Color.severanceGreen.opacity(0.2) : Color.severanceTeal)
-                        .frame(width: 50, height: 50)
-
-                    Image(systemName: persona.icon)
-                        .font(.system(size: 22))
-                        .foregroundStyle(isSelected ? Color.severanceGreen : Color.severanceMuted)
-                }
-
-                VStack(spacing: 3) {
-                    Text(persona.rawValue)
-                        .font(.system(size: 11, weight: .semibold, design: .monospaced))
-                        .foregroundStyle(Color.severanceText)
-                        .lineLimit(1)
-                        .minimumScaleFactor(0.8)
-
-                    Text(persona.subtitle)
-                        .font(.system(size: 9, design: .monospaced))
-                        .foregroundStyle(Color.severanceMuted)
-                        .lineLimit(1)
-                }
-            }
-            .frame(maxWidth: .infinity)
-            .padding(.vertical, 14)
-            .padding(.horizontal, 8)
-            .background(
-                RoundedRectangle(cornerRadius: 12)
-                    .fill(Color.severanceCard)
-                    .overlay(
-                        RoundedRectangle(cornerRadius: 12)
-                            .stroke(
-                                isSelected ? Color.severanceGreen : Color.severanceBorder,
-                                lineWidth: isSelected ? 2 : 1
-                            )
-                    )
-            )
-            .shadow(color: isSelected ? Color.severanceGreen.opacity(0.2) : .clear, radius: 6)
-        }
-        .buttonStyle(PlainButtonStyle())
     }
 }

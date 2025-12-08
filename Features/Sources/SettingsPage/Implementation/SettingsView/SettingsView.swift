@@ -1,12 +1,11 @@
 import ClipperCoreKit
-import OnboardUI
+import UserPreferences
 import SharedUIKit
 import SwiftUI
 
 struct SettingsView: View {
     @Binding var pageState: PageState
     let settingsService: SettingsService
-    let onboardingService: OnboardingService
 
     @Environment(\.clipperAssistant) private var clipperAssistant
     @Environment(\.dismiss) private var dismiss
@@ -17,6 +16,10 @@ struct SettingsView: View {
     @State private var showPersonaSheet = false
     @State private var showDownloadButton = false
     @State private var showResetAlert = false
+
+    private var preferencesService: UserPreferencesService {
+        settingsService.preferencesService
+    }
 
     var body: some View {
         NavigationStack {
@@ -45,7 +48,7 @@ struct SettingsView: View {
                         // Tools Section
                         SettingsSection(title: "TOOLS") {
                             ToolsSettingsCard(
-                                enabledCount: onboardingService.state.enabledTools.count
+                                enabledCount: preferencesService.state.enabledTools.count
                             ) {
                                 showToolsSheet = true
                             }
@@ -54,7 +57,7 @@ struct SettingsView: View {
                         // Permissions Section
                         SettingsSection(title: "PERMISSIONS") {
                             PermissionsSettingsCard(
-                                grantedCount: onboardingService.state.grantedPermissions.count
+                                grantedCount: preferencesService.state.grantedPermissions.count
                             ) {
                                 showPermissionsSheet = true
                             }
@@ -70,7 +73,7 @@ struct SettingsView: View {
                         // AI Persona Section
                         SettingsSection(title: "AI PERSONA") {
                             PersonaSettingsCard(
-                                selectedPersona: onboardingService.state.selectedPersona
+                                selectedPersona: preferencesService.state.selectedPersona
                             ) {
                                 showPersonaSheet = true
                             }
@@ -125,22 +128,23 @@ struct SettingsView: View {
         .sheet(isPresented: $showModelSheet) {
             ModelSelectionSheet(
                 clipperAssistant: clipperAssistant,
+                preferencesService: preferencesService,
                 showDownloadButton: $showDownloadButton
             )
         }
         .sheet(isPresented: $showToolsSheet) {
-            ToolsSelectionSheet(onboardingService: onboardingService)
+            ToolsSelectionSheet(preferencesService: preferencesService)
         }
         .sheet(isPresented: $showPermissionsSheet) {
-            PermissionsSelectionSheet(onboardingService: onboardingService)
+            PermissionsSelectionSheet(preferencesService: preferencesService)
         }
         .sheet(isPresented: $showPersonaSheet) {
-            PersonaSelectionSheet(onboardingService: onboardingService)
+            PersonaSelectionSheet(preferencesService: preferencesService)
         }
         .alert("Reset Onboarding", isPresented: $showResetAlert) {
             Button("Cancel", role: .cancel) { }
             Button("Reset", role: .destructive) {
-                settingsService.resetOnboarding()
+                preferencesService.resetOnboarding()
                 pageState = .onboarding
             }
         } message: {

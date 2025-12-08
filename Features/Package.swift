@@ -25,6 +25,7 @@ let package = Package(
                 "SettingsPage",
                 "SharedUIKit",
                 "PlaygroundUI",
+                "UserPreferences",
             ],
             plugins: [
                 .plugin(name: "SwiftLintBuildToolPlugin", package: "SwiftLint")
@@ -46,10 +47,20 @@ let package = Package(
         ),
         .target(name: "PlaygroundUI", dependencies: ["SharedUIKit"]),
         .target(
+            name: "UserPreferences",
+            dependencies: [
+                "SharedUIKit"
+            ],
+            plugins: [
+                .plugin(name: "SwiftLintBuildToolPlugin", package: "SwiftLint")
+            ]
+        ),
+        .target(
             name: "SettingsPage",
             dependencies: [
                 "SharedUIKit",
-                "OnboardUI",
+                "UserPreferences",
+                "BGLiveActivities",
                 .product(name: "ClipperCoreKit", package: "ClipperCore")
             ],
             plugins: [
@@ -60,6 +71,7 @@ let package = Package(
             name: "OnboardUI",
             dependencies: [
                 "SharedUIKit",
+                "UserPreferences",
                 "BGLiveActivities",
                 .product(name: "ClipperCoreKit", package: "ClipperCore"),
             ],

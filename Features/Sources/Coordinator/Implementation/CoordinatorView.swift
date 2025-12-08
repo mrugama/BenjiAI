@@ -4,24 +4,24 @@ import OnboardUI
 import SettingsPage
 import SharedUIKit
 import SwiftUI
+import UserPreferences
 
 struct CoordinatorView: View {
     @State private var pageState: PageState = .welcome
-    @State private var onboardingService: OnboardingService = OnboardingServiceImpl()
+    @State private var preferencesService: UserPreferencesService = UserPreferencesServiceImpl()
 
     var body: some View {
         switch pageState {
         case .welcome:
             WelcomeView(pageState: $pageState)
         case .onboarding:
-            OnboardingUIService.pageView($pageState, onboardingService: onboardingService)
+            OnboardingUIService.pageView($pageState, onboardingService: preferencesService)
         case .home:
             HomePageService.pageView($pageState)
         case .settings:
             SettingsPageService.pageView(
                 $pageState,
-                settingsService: SettingsServiceImpl(onboardingService: onboardingService),
-                onboardingService: onboardingService
+                settingsService: SettingsServiceImpl(preferencesService: preferencesService)
             )
         case .loading:
             LoadingUIService.pageView($pageState)

@@ -1,14 +1,14 @@
 import ClipperCoreKit
-import OnboardUI
 import SharedUIKit
 import SwiftUI
+import UserPreferences
 
 // MARK: - Download Model Button
 
 struct DownloadModelButton: View {
     let clipperAssistant: ClipperAssistant
     @Binding var pageState: PageState
-    @AppStorage("BenjiLLM") private var savedLlmId: String = "mlx-community/Qwen2.5-1.5B-Instruct-4bit"
+    @AppStorage("BenjiLLM") private var savedLlmId: String = UserPreferencesState.defaultModelId
 
     var body: some View {
         Button {

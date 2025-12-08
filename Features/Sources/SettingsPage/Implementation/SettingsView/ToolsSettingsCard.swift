@@ -1,4 +1,4 @@
-import OnboardUI
+import UserPreferences
 import SwiftUI
 
 // MARK: - Tools Settings Card
