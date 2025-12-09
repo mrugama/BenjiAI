@@ -393,7 +393,7 @@
 				CODE_SIGN_ENTITLEMENTS = Benji.entitlements;
 				CODE_SIGN_IDENTITY = "Apple Development";
 				CODE_SIGN_STYLE = Automatic;
-				CURRENT_PROJECT_VERSION = 8;
+				CURRENT_PROJECT_VERSION = 9;
 				DEVELOPMENT_ASSET_PATHS = "\"Benji/Preview Content\"";
 				DEVELOPMENT_TEAM = 8E32BHD578;
 				ENABLE_PREVIEWS = YES;
@@ -434,7 +434,7 @@
 				CODE_SIGN_ENTITLEMENTS = Benji.entitlements;
 				CODE_SIGN_IDENTITY = "Apple Development";
 				CODE_SIGN_STYLE = Automatic;
-				CURRENT_PROJECT_VERSION = 8;
+				CURRENT_PROJECT_VERSION = 9;
 				DEVELOPMENT_ASSET_PATHS = "\"Benji/Preview Content\"";
 				DEVELOPMENT_TEAM = 8E32BHD578;
 				ENABLE_PREVIEWS = YES;
@@ -474,13 +474,13 @@
 				ASSETCATALOG_COMPILER_WIDGET_BACKGROUND_COLOR_NAME = WidgetBackground;
 				CODE_SIGN_IDENTITY = "Apple Development";
 				CODE_SIGN_STYLE = Automatic;
-				CURRENT_PROJECT_VERSION = 8;
+				CURRENT_PROJECT_VERSION = 9;
 				DEVELOPMENT_TEAM = 8E32BHD578;
 				GENERATE_INFOPLIST_FILE = YES;
 				INFOPLIST_FILE = BenjiLiveActivityWidget/Info.plist;
 				INFOPLIST_KEY_CFBundleDisplayName = BenjiLiveActivityWidget;
 				INFOPLIST_KEY_NSHumanReadableCopyright = "";
-				IPHONEOS_DEPLOYMENT_TARGET = 26.1;
+				IPHONEOS_DEPLOYMENT_TARGET = 18.6;
 				LD_RUNPATH_SEARCH_PATHS = (
 					"$(inherited)",
 					"@executable_path/Frameworks",
@@ -509,13 +509,13 @@
 				ASSETCATALOG_COMPILER_WIDGET_BACKGROUND_COLOR_NAME = WidgetBackground;
 				CODE_SIGN_IDENTITY = "Apple Development";
 				CODE_SIGN_STYLE = Automatic;
-				CURRENT_PROJECT_VERSION = 8;
+				CURRENT_PROJECT_VERSION = 9;
 				DEVELOPMENT_TEAM = 8E32BHD578;
 				GENERATE_INFOPLIST_FILE = YES;
 				INFOPLIST_FILE = BenjiLiveActivityWidget/Info.plist;
 				INFOPLIST_KEY_CFBundleDisplayName = BenjiLiveActivityWidget;
 				INFOPLIST_KEY_NSHumanReadableCopyright = "";
-				IPHONEOS_DEPLOYMENT_TARGET = 26.1;
+				IPHONEOS_DEPLOYMENT_TARGET = 18.6;
 				LD_RUNPATH_SEARCH_PATHS = (
 					"$(inherited)",
 					"@executable_path/Frameworks",
