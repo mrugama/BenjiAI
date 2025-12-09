@@ -44,13 +44,11 @@ final class QueryRefineToolImpl: QueryRefineTool, @unchecked Sendable {
         let suggestions = generateSearchSuggestions(query: originalQuery)
         
         // Return the refined query for chaining to search
+        // Use "query" as the key since that's what searchDuckduckgo expects
         return ToolFunctionResult(
             success: true,
             resultType: .chainedData([
-                "refinedQuery": refinedQuery.query,
-                "originalQuery": originalQuery,
-                "improvements": refinedQuery.improvements,
-                "suggestions": suggestions
+                "query": refinedQuery.query  // This is what searchDuckduckgo expects
             ] as [String: any Sendable]),
             shouldChain: true,
             suggestedNextTool: "searchDuckduckgo",

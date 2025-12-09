@@ -268,24 +268,42 @@ final class ConcreteClipperAssistant: ClipperAssistant, @unchecked Sendable {
             return toolCalls
         }
         
-        // Search triggers
-        let searchTriggers = ["search for", "look up", "find information about", "who is", "what is"]
+        // Search triggers - use smart search (refine first, then search)
+        let searchTriggers = [
+            "search for", "search", "look up", "find information about",
+            "who is", "what is", "browse the internet", "browse internet",
+            "go online", "look online", "find online", "search online"
+        ]
         
         for trigger in searchTriggers {
             if lowercased.contains(trigger) {
+                // Extract the search query
+                var cleanQuery = ""
+                
                 if let range = lowercased.range(of: trigger) {
                     let afterTrigger = String(text[range.upperBound...]).trimmingCharacters(in: .whitespacesAndNewlines)
                     if !afterTrigger.isEmpty && afterTrigger.count > 2 {
-                        let cleanQuery = afterTrigger
+                        cleanQuery = afterTrigger
                             .replacingOccurrences(of: "?", with: "")
                             .trimmingCharacters(in: .whitespacesAndNewlines)
-                        
-                        if !cleanQuery.isEmpty && !toolCalls.contains(where: { $0.name == "searchDuckduckgo" }) {
-                            toolCalls.append(LocalToolCall(name: "searchDuckduckgo", parameters: ["query": cleanQuery]))
-                        }
-                        break
                     }
                 }
+                
+                // If no query found after trigger, use the whole text as query
+                if cleanQuery.isEmpty {
+                    cleanQuery = text
+                        .replacingOccurrences(of: "?", with: "")
+                        .trimmingCharacters(in: .whitespacesAndNewlines)
+                }
+                
+                if !cleanQuery.isEmpty && !toolCalls.contains(where: { $0.name == "refineSearchQuery" }) {
+                    // Use refineSearchQuery which will chain to searchDuckduckgo automatically
+                    toolCalls.append(LocalToolCall(
+                        name: "refineSearchQuery",
+                        parameters: ["originalQuery": cleanQuery]
+                    ))
+                }
+                break
             }
         }
         
@@ -367,12 +385,7 @@ final class ConcreteClipperAssistant: ClipperAssistant, @unchecked Sendable {
             }
             
         case "search_results":
-            if let query = viewData.data["query"] as? String,
-               let resultCount = viewData.data["resultCount"] as? Int {
-                return "🔍 **Search Results for '\(query)'**\n\nFound \(resultCount) result\(resultCount == 1 ? "" : "s")."
-            } else {
-                return "🔍 **Search Results**\n\n*Search results available*"
-            }
+            return formatSearchResults(viewData: viewData)
             
         case "calendar_event", "calendar_events_list":
             if let title = viewData.data["title"] as? String {
@@ -401,6 +414,46 @@ final class ConcreteClipperAssistant: ClipperAssistant, @unchecked Sendable {
         default:
             return "🎨 **\(viewData.type)**"
         }
+    }
+    
+    private func formatSearchResults(viewData: ToolViewData) -> String {
+        var response = ""
+        
+        if let query = viewData.data["query"] as? String {
+            response += "🔍 **Search Results for '\(query)'**\n\n"
+        } else {
+            response += "🔍 **Search Results**\n\n"
+        }
+        
+        // Include actual search results
+        if let results = viewData.data["results"] as? [[String: Any]] {
+            for (index, result) in results.prefix(5).enumerated() {
+                let title = result["title"] as? String ?? "Result"
+                let snippet = result["snippet"] as? String ?? ""
+                let source = result["source"] as? String ?? ""
+                
+                response += "**\(index + 1). \(title)**\n"
+                if !snippet.isEmpty {
+                    // Truncate long snippets
+                    let truncatedSnippet = snippet.count > 300 
+                        ? String(snippet.prefix(300)) + "..." 
+                        : snippet
+                    response += "\(truncatedSnippet)\n"
+                }
+                if !source.isEmpty {
+                    response += "*Source: \(source)*\n"
+                }
+                response += "\n"
+            }
+            
+            if let resultCount = viewData.data["resultCount"] as? Int {
+                response += "---\n*Found \(resultCount) result\(resultCount == 1 ? "" : "s")*"
+            }
+        } else {
+            response += "*No detailed results available*"
+        }
+        
+        return response
     }
     
     private func formatToolResult(toolCall: LocalToolCall, result: ToolFunctionResult) -> String {
@@ -433,11 +486,38 @@ final class ConcreteClipperAssistant: ClipperAssistant, @unchecked Sendable {
                 }
                 
             case .chainedData:
-                // Chained data is processed separately
-                formatted = ""
+                // Show query refinement info if available
+                if toolCall.name == "refineSearchQuery" {
+                    formatted = formatQueryRefinement(result: result)
+                }
+                // Otherwise chained data is processed separately
             }
         } else {
             formatted = "❌ Error: \(result.error ?? "Unknown error")"
+        }
+        
+        return formatted
+    }
+    
+    private func formatQueryRefinement(result: ToolFunctionResult) -> String {
+        var formatted = ""
+        
+        if let originalQuery = result.metadata["originalQuery"] as? String,
+           let refinedQuery = result.metadata["refinedQuery"] as? String {
+            
+            // Only show if there were actual changes
+            if originalQuery.lowercased() != refinedQuery.lowercased() {
+                formatted = "🔧 **Query Optimized**\n"
+                formatted += "Original: *\"\(originalQuery)\"*\n"
+                formatted += "Searching: **\"\(refinedQuery)\"**\n"
+                
+                if let improvements = result.metadata["improvements"] as? [String], !improvements.isEmpty {
+                    let meaningfulImprovements = improvements.filter { $0 != "Query was already well-formed" }
+                    if !meaningfulImprovements.isEmpty {
+                        formatted += "\n*Improvements: \(meaningfulImprovements.joined(separator: ", "))*\n"
+                    }
+                }
+            }
         }
         
         return formatted

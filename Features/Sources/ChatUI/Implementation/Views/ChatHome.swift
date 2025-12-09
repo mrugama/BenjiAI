@@ -31,6 +31,11 @@ struct ChatHome: View {
         viewModel.currentConversation != nil && !(viewModel.currentConversation?.messages.isEmpty ?? true)
     }
 
+    /// Whether we should show streaming UI (thinking or streaming content)
+    private var isProcessing: Bool {
+        clipperAssistant.running || viewModel.isWaitingForResponse
+    }
+
     var body: some View {
         ZStack {
             Color.severanceBackground.ignoresSafeArea()
@@ -43,7 +48,7 @@ struct ChatHome: View {
             }
 
             // Only show floating mic when no conversation (on welcome screen)
-            if !hasConversation && !clipperAssistant.running {
+            if !hasConversation && !isProcessing {
                 floatingMicButton
             }
         }
@@ -74,10 +79,14 @@ struct ChatHome: View {
             )
         }
         .onChange(of: clipperAssistant.output) { _, newValue in
+            // Always try to handle streaming output
             viewModel.handleStreamingOutput(newValue, isRunning: clipperAssistant.running)
         }
         .onChange(of: clipperAssistant.running) { _, isRunning in
-            if !isRunning { viewModel.finalizeAssistantResponse(output: clipperAssistant.output) }
+            if !isRunning && viewModel.isWaitingForResponse {
+                // Finalize when AI stops running
+                viewModel.finalizeAssistantResponse(output: clipperAssistant.output)
+            }
         }
         .onAppear {
             viewModel.configure(modelContext: modelContext, clipperAssistant: clipperAssistant)
@@ -123,7 +132,7 @@ struct ChatHome: View {
     private var contentView: some View {
         if let conversation = viewModel.currentConversation, !conversation.messages.isEmpty {
             conversationView(conversation)
-        } else if viewModel.streamingMessage != nil || clipperAssistant.running {
+        } else if isProcessing {
             streamingView
         } else {
             Spacer()
@@ -158,7 +167,7 @@ struct ChatHome: View {
                         onShare: {},
                         onDelete: {}
                     )
-                } else if clipperAssistant.running {
+                } else if isProcessing {
                     thinkingIndicator
                 }
             }
@@ -183,19 +192,20 @@ struct ChatHome: View {
                         .id(message.id)
                     }
 
-                    if let streaming = viewModel.streamingMessage,
-                       !streaming.content.isEmpty,
-                       clipperAssistant.running {
-                        MessageBubble(
-                            message: streaming,
-                            isStreaming: true,
-                            onCopy: {},
-                            onShare: {},
-                            onDelete: {}
-                        )
-                        .id("streaming")
-                    } else if clipperAssistant.running {
-                        thinkingIndicator.id("thinking")
+                    // Show streaming content or thinking indicator when processing
+                    if viewModel.isWaitingForResponse {
+                        if let streaming = viewModel.streamingMessage, !streaming.content.isEmpty {
+                            MessageBubble(
+                                message: streaming,
+                                isStreaming: true,
+                                onCopy: {},
+                                onShare: {},
+                                onDelete: {}
+                            )
+                            .id("streaming")
+                        } else {
+                            thinkingIndicator.id("thinking")
+                        }
                     }
                 }
                 .padding(.vertical, 16)
@@ -205,6 +215,9 @@ struct ChatHome: View {
                 scrollToBottom(proxy: proxy, conversation: conversation)
             }
             .onChange(of: viewModel.streamingMessage?.content) { _, _ in
+                scrollToBottom(proxy: proxy, conversation: conversation)
+            }
+            .onChange(of: viewModel.isWaitingForResponse) { _, _ in
                 scrollToBottom(proxy: proxy, conversation: conversation)
             }
         }
@@ -253,7 +266,7 @@ struct ChatHome: View {
 
     private func scrollToBottom(proxy: ScrollViewProxy, conversation: Conversation) {
         let target: AnyHashable
-        if clipperAssistant.running {
+        if viewModel.isWaitingForResponse {
             if viewModel.streamingMessage != nil && !(viewModel.streamingMessage?.content.isEmpty ?? true) {
                 target = "streaming"
             } else {

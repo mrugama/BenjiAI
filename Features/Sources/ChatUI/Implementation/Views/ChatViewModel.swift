@@ -60,18 +60,30 @@ final class ChatViewModel {
     }
 
     func handleStreamingOutput(_ output: String, isRunning: Bool) {
-        guard isRunning, isWaitingForResponse else { return }
+        // Only process if we're waiting for a response
+        guard isWaitingForResponse else { return }
 
         let cleanedOutput = cleanOutput(output)
+
+        // Skip if empty (waiting for content)
+        guard !cleanedOutput.isEmpty else { return }
 
         // Only update if content has changed
         guard cleanedOutput != lastProcessedOutput else { return }
         lastProcessedOutput = cleanedOutput
 
+        // Update or create streaming message
         if streamingMessage == nil {
             streamingMessage = ChatMessage(role: .assistant, content: cleanedOutput)
         } else {
             streamingMessage?.content = cleanedOutput
+        }
+    }
+
+    func forceRefreshConversation() {
+        // Force SwiftData to refresh the conversation
+        if let conversation = currentConversation {
+            currentConversation = conversation
         }
     }
 
@@ -191,41 +203,64 @@ final class ChatViewModel {
     private func cleanOutput(_ output: String) -> String {
         var cleaned = output
 
-        // Remove the "## prompt \n" header pattern that ClipperAssistant adds
-        // Pattern: starts with "## " followed by any text until newline
-        while let range = cleaned.range(of: "## ") {
-            if let newlineRange = cleaned.range(of: "\n", range: range.upperBound..<cleaned.endIndex) {
-                cleaned = String(cleaned[newlineRange.upperBound...])
-            } else {
-                // No newline found, remove from ## to end
-                cleaned = String(cleaned[..<range.lowerBound])
-                break
+        // Remove ONLY the first "## prompt \n" header that ClipperAssistant adds
+        // This pattern is: "## <prompt text> \n" at the beginning
+        if cleaned.hasPrefix("## ") {
+            if let newlineIndex = cleaned.firstIndex(of: "\n") {
+                cleaned = String(cleaned[cleaned.index(after: newlineIndex)...])
             }
         }
 
-        // Remove any duplicate content (sometimes LLM outputs duplicates)
+        // Clean up excessive whitespace at the start
+        cleaned = cleaned.trimmingCharacters(in: .whitespacesAndNewlines)
+
+        // Remove duplicate content (when LLM repeats itself)
         cleaned = removeDuplicateContent(cleaned)
 
-        return cleaned.trimmingCharacters(in: .whitespacesAndNewlines)
+        return cleaned
     }
 
     private func removeDuplicateContent(_ text: String) -> String {
         let trimmed = text.trimmingCharacters(in: .whitespacesAndNewlines)
         guard !trimmed.isEmpty else { return trimmed }
 
-        // Check if the content is exactly duplicated
+        // Only check for longer texts (minimum 50 chars to have meaningful duplicates)
         let halfLength = trimmed.count / 2
-        guard halfLength > 20 else { return trimmed } // Only check for longer texts
+        guard halfLength > 50 else { return trimmed }
 
-        let firstHalf = String(trimmed.prefix(halfLength))
-        let secondHalf = String(trimmed.suffix(halfLength))
+        // Check if content is roughly duplicated by comparing halves
+        let firstHalf = String(trimmed.prefix(halfLength)).trimmingCharacters(in: .whitespacesAndNewlines)
+        let secondHalf = String(trimmed.suffix(halfLength)).trimmingCharacters(in: .whitespacesAndNewlines)
 
-        // If first and second half are very similar, return just the first half
-        if firstHalf.trimmingCharacters(in: .whitespacesAndNewlines) ==
-            secondHalf.trimmingCharacters(in: .whitespacesAndNewlines) {
+        // Use a similarity check rather than exact match
+        if firstHalf == secondHalf {
             return firstHalf
         }
 
+        // Check for exact duplicate blocks separated by newlines
+        let lines = trimmed.components(separatedBy: "\n\n")
+        if lines.count >= 2 {
+            let uniqueLines = removeDuplicateBlocks(lines)
+            if uniqueLines.count < lines.count {
+                return uniqueLines.joined(separator: "\n\n")
+            }
+        }
+
         return trimmed
+    }
+
+    private func removeDuplicateBlocks(_ blocks: [String]) -> [String] {
+        var seen = Set<String>()
+        var result: [String] = []
+
+        for block in blocks {
+            let normalized = block.trimmingCharacters(in: .whitespacesAndNewlines)
+            if !normalized.isEmpty && !seen.contains(normalized) {
+                seen.insert(normalized)
+                result.append(block)
+            }
+        }
+
+        return result
     }
 }

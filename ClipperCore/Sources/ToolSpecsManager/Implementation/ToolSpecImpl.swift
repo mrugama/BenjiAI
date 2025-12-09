@@ -34,6 +34,15 @@ actor ToolSpecManagerActor {
         registeredTools[id]
     }
     
+    func getToolBySpecName(name: String) -> (any AssistantTool)? {
+        // First try direct id lookup
+        if let tool = registeredTools[name] {
+            return tool
+        }
+        // Then search by specification name
+        return registeredTools.values.first { $0.specification.name == name }
+    }
+    
     func getRegisteredTools() -> [String: any AssistantTool] {
         registeredTools
     }
@@ -245,7 +254,8 @@ final class ToolSpecManagerImpl: ToolSpecManager, @unchecked Sendable {
     // MARK: - Tool Execution
     
     func executeToolFunction(name: String, parameters: [String: Any]) async -> ToolFunctionResult {
-        guard let tool = await actor.getTool(id: name) else {
+        // Look up tool by specification name (what LLM calls) or by id
+        guard let tool = await actor.getToolBySpecName(name: name) else {
             return .failure(error: "Unknown tool function: \(name)")
         }
         
