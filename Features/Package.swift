@@ -19,7 +19,7 @@ let package = Package(
         .target(
             name: "Coordinator",
             dependencies: [
-                "HomePage",
+                "ChatUI",
                 "SetupUI",
                 "LoadingUI",
                 "SettingsPage",
@@ -30,14 +30,12 @@ let package = Package(
             plugins: [
                 .plugin(name: "SwiftLintBuildToolPlugin", package: "SwiftLint")
             ]
-        )
-        ,
+        ),
         .target(
-            name: "HomePage",
+            name: "ChatUI",
             dependencies: [
                 "SharedUIKit",
-                "ToolSpecPage",
-                "SettingsPage",
+                "UserPreferences",
                 .product(name: "ClipperCoreKit", package: "ClipperCore"),
                 .product(name: "MarkdownUI", package: "swift-markdown-ui")
             ],

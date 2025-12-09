@@ -17,25 +17,27 @@ public extension Color {
 
     // MARK: - Severance palette
     /// Colors inspired by the Severance TV show aesthetic
-    static let severanceBackground = Color(hex: "#0A0E14")
-    /// Terminal green glow
-    static let severanceGreen = Color(hex: "#00FF9C")
-    /// Soft cyan accent
-    static let severanceCyan = Color(hex: "#00D4AA")
-    /// Muted teal
-    static let severanceTeal = Color(hex: "#1A3A3A")
+    static let severanceBackground = Color(hex: "#0A0E12")
+    /// Terminal green glow - brighter for visibility
+    static let severanceGreen = Color(hex: "#4AFF9F")
+    /// Soft cyan accent - brighter
+    static let severanceCyan = Color(hex: "#6EE7D8")
+    /// Muted teal for user messages - lighter for contrast
+    static let severanceTeal = Color(hex: "#1F4A4A")
     /// Amber warning/highlight
-    static let severanceAmber = Color(hex: "#FFB000")
-    /// Soft white text
-    static let severanceText = Color(hex: "#E8E8E8")
-    /// Muted gray text
-    static let severanceMuted = Color(hex: "#6B7280")
-    /// Card background
-    static let severanceCard = Color(hex: "#111820")
-    /// Border/divider color
-    static let severanceBorder = Color(hex: "#1F2937")
+    static let severanceAmber = Color(hex: "#FFD54F")
+    /// Primary text - pure white for maximum readability
+    static let severanceText = Color(hex: "#FFFFFF")
+    /// Secondary text - lighter gray for better visibility
+    static let severanceMuted = Color(hex: "#B8C0CC")
+    /// Card background - more contrast from background
+    static let severanceCard = Color(hex: "#1A2128")
+    /// Border/divider color - more visible
+    static let severanceBorder = Color(hex: "#3D4752")
     /// Error/destructive red
-    static let severanceRed = Color(hex: "#FF4444")
+    static let severanceRed = Color(hex: "#FF7070")
+    /// Soft background for AI messages - distinct from user
+    static let severanceAIBubble = Color(hex: "#141A20")
 
     init(hex: String) {
         let hex = hex.trimmingCharacters(in: CharacterSet.alphanumerics.inverted)
