@@ -8,9 +8,9 @@ import UIKit
 @MainActor
 @Observable
 final class ChatViewModel {
-    var currentConversation: Conversation?
-    var streamingMessage: ChatMessage?
-    var lastUserMessage: ChatMessage?
+    var currentConversation: (any Conversation)?
+    var streamingMessage: (any ChatMessage)?
+    var lastUserMessage: (any ChatMessage)?
     var initialPrompt: String = ""
     var isWaitingForResponse = false
 
@@ -30,23 +30,25 @@ final class ChatViewModel {
               let clipperAssistant,
               !prompt.trimmingCharacters(in: .whitespacesAndNewlines).isEmpty else { return }
 
-        // Create or get current conversation
-        if currentConversation == nil {
-            let conversation = Conversation(persona: persona.rawValue)
-            modelContext.insert(conversation)
-            currentConversation = conversation
+        // Get or create conversation (concrete type for SwiftData)
+        let conversationImpl: ConversationImpl
+        if let existing = currentConversation as? ConversationImpl {
+            conversationImpl = existing
+        } else {
+            conversationImpl = ConversationImpl(persona: persona.rawValue)
+            modelContext.insert(conversationImpl)
+            currentConversation = conversationImpl
         }
 
-        // Add user message
-        let userMessage = ChatMessage(role: .user, content: prompt)
-        userMessage.conversation = currentConversation
+        // Add user message with concrete relationship
+        let userMessage = ChatMessageImpl(role: .user, content: prompt, conversation: conversationImpl)
         modelContext.insert(userMessage)
-        currentConversation?.messages.append(userMessage)
-        currentConversation?.updatedAt = Date()
+        conversationImpl.messagesImpl.append(userMessage)
+        conversationImpl.updatedAt = Date()
         lastUserMessage = userMessage
 
         // Reset streaming state
-        streamingMessage = ChatMessage(role: .assistant, content: "")
+        streamingMessage = ChatMessageImpl(role: .assistant, content: "")
         lastProcessedOutput = ""
         isWaitingForResponse = true
 
@@ -74,7 +76,7 @@ final class ChatViewModel {
 
         // Update or create streaming message
         if streamingMessage == nil {
-            streamingMessage = ChatMessage(role: .assistant, content: cleanedOutput)
+            streamingMessage = ChatMessageImpl(role: .assistant, content: cleanedOutput)
         } else {
             streamingMessage?.content = cleanedOutput
         }
@@ -90,7 +92,7 @@ final class ChatViewModel {
     func finalizeAssistantResponse(output: String) {
         guard let modelContext,
               isWaitingForResponse,
-              let conversation = currentConversation else {
+              let conversationImpl = currentConversation as? ConversationImpl else {
             resetStreamingState()
             return
         }
@@ -104,19 +106,18 @@ final class ChatViewModel {
         }
 
         // Check for duplicates - compare with last assistant message only
-        let existingAssistantMessages = conversation.messages.filter { $0.role == .assistant }
+        let existingAssistantMessages = conversationImpl.messagesImpl.filter { $0.role == .assistant }
         if let lastAssistant = existingAssistantMessages.last,
            lastAssistant.content == cleanContent {
             resetStreamingState()
             return
         }
 
-        // Save the final message
-        let assistantMessage = ChatMessage(role: .assistant, content: cleanContent)
-        assistantMessage.conversation = conversation
+        // Save the final message with concrete relationship
+        let assistantMessage = ChatMessageImpl(role: .assistant, content: cleanContent, conversation: conversationImpl)
         modelContext.insert(assistantMessage)
-        conversation.messages.append(assistantMessage)
-        conversation.updatedAt = Date()
+        conversationImpl.messagesImpl.append(assistantMessage)
+        conversationImpl.updatedAt = Date()
 
         try? modelContext.save()
 
@@ -130,14 +131,14 @@ final class ChatViewModel {
         lastProcessedOutput = ""
     }
 
-    func copyMessage(_ message: ChatMessage) {
+    func copyMessage(_ message: any ChatMessage) {
         UIPasteboard.general.string = message.content
 
         let generator = UIImpactFeedbackGenerator(style: .light)
         generator.impactOccurred()
     }
 
-    func shareMessage(_ message: ChatMessage) {
+    func shareMessage(_ message: any ChatMessage) {
         let activityVC = UIActivityViewController(
             activityItems: [message.content],
             applicationActivities: nil
@@ -153,48 +154,52 @@ final class ChatViewModel {
         }
     }
 
-    func deleteMessagePair(_ message: ChatMessage) {
+    func deleteMessagePair(_ message: any ChatMessage) {
         guard let modelContext,
-              let conversation = currentConversation else { return }
+              let conversationImpl = currentConversation as? ConversationImpl,
+              let messageImpl = message as? ChatMessageImpl else { return }
 
         if message.role == .assistant {
-            let sortedMessages = conversation.sortedMessages
+            let sortedMessages = conversationImpl.sortedMessages
 
             if let index = sortedMessages.firstIndex(where: { $0.id == message.id }),
                index > 0 {
                 let previousMessage = sortedMessages[index - 1]
-                if previousMessage.role == .user {
-                    modelContext.delete(previousMessage)
+                if previousMessage.role == .user,
+                   let prevImpl = previousMessage as? ChatMessageImpl {
+                    modelContext.delete(prevImpl)
                 }
             }
-            modelContext.delete(message)
+            modelContext.delete(messageImpl)
         } else {
-            let sortedMessages = conversation.sortedMessages
+            let sortedMessages = conversationImpl.sortedMessages
 
             if let index = sortedMessages.firstIndex(where: { $0.id == message.id }),
                index < sortedMessages.count - 1 {
                 let nextMessage = sortedMessages[index + 1]
-                if nextMessage.role == .assistant {
-                    modelContext.delete(nextMessage)
+                if nextMessage.role == .assistant,
+                   let nextImpl = nextMessage as? ChatMessageImpl {
+                    modelContext.delete(nextImpl)
                 }
             }
-            modelContext.delete(message)
+            modelContext.delete(messageImpl)
         }
 
-        if conversation.messages.count <= 2 {
+        if conversationImpl.messagesImpl.count <= 2 {
             currentConversation = nil
         }
 
         try? modelContext.save()
     }
 
-    func deleteConversation(_ conversation: Conversation) {
-        guard let modelContext else { return }
+    func deleteConversation(_ conversation: any Conversation) {
+        guard let modelContext,
+              let conversationImpl = conversation as? ConversationImpl else { return }
 
         if currentConversation?.id == conversation.id {
             currentConversation = nil
         }
-        modelContext.delete(conversation)
+        modelContext.delete(conversationImpl)
         try? modelContext.save()
     }
 

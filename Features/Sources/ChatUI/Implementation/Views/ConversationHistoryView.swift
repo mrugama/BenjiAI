@@ -5,9 +5,9 @@ import SharedUIKit
 struct ConversationHistoryView: View {
     @Environment(\.dismiss) private var dismiss
 
-    let conversations: [Conversation]
-    let onSelect: (Conversation) -> Void
-    let onDelete: (Conversation) -> Void
+    let conversations: [any Conversation]
+    let onSelect: (any Conversation) -> Void
+    let onDelete: (any Conversation) -> Void
 
     var body: some View {
         NavigationStack {
@@ -68,8 +68,10 @@ struct ConversationHistoryView: View {
         ScrollView(.vertical, showsIndicators: false) {
             LazyVStack(spacing: 12) {
                 ForEach(groupedConversations.keys.sorted().reversed(), id: \.self) { date in
+                    let items = groupedConversations[date] ?? []
                     Section {
-                        ForEach(groupedConversations[date] ?? []) { conversation in
+                        ForEach(items.indices, id: \.self) { index in
+                            let conversation = items[index]
                             ConversationRow(
                                 conversation: conversation,
                                 onTap: { onSelect(conversation) },
@@ -91,7 +93,7 @@ struct ConversationHistoryView: View {
 
     // MARK: - Helpers
 
-    private var groupedConversations: [Date: [Conversation]] {
+    private var groupedConversations: [Date: [any Conversation]] {
         Dictionary(grouping: conversations) { conversation in
             Calendar.current.startOfDay(for: conversation.updatedAt)
         }
@@ -112,7 +114,7 @@ struct ConversationHistoryView: View {
 
 /// A row displaying a conversation in the history
 struct ConversationRow: View {
-    let conversation: Conversation
+    let conversation: any Conversation
     let onTap: () -> Void
     let onDelete: () -> Void
 

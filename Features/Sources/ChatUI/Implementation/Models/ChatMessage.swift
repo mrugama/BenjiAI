@@ -1,46 +1,46 @@
 import Foundation
 import SwiftData
 
-/// Represents the role of a message sender
-public enum MessageRole: String, Codable, Sendable {
-    case user
-    case assistant
-}
-
 /// A single message in a conversation
 @Model
-public final class ChatMessage {
+final class ChatMessageImpl: ChatMessage {
     /// Unique identifier
-    public var id: UUID
+    var id: UUID
 
     /// The role (user or assistant)
-    public var roleRawValue: String
+    var roleRawValue: String
 
     /// The message content
-    public var content: String
+    var content: String
 
     /// When the message was created
-    public var timestamp: Date
+    var timestamp: Date
 
-    /// Parent conversation
-    public var conversation: Conversation?
+    /// Parent conversation (concrete type for SwiftData)
+    var conversationImpl: ConversationImpl?
 
-    public var role: MessageRole {
+    /// Protocol-conforming accessor
+    var conversation: (any Conversation)? {
+        get { conversationImpl }
+        set { conversationImpl = newValue as? ConversationImpl }
+    }
+
+    var role: MessageRole {
         get { MessageRole(rawValue: roleRawValue) ?? .user }
         set { roleRawValue = newValue.rawValue }
     }
 
-    public init(
+    init(
         id: UUID = UUID(),
         role: MessageRole,
         content: String,
         timestamp: Date = Date(),
-        conversation: Conversation? = nil
+        conversation: ConversationImpl? = nil
     ) {
         self.id = id
         self.roleRawValue = role.rawValue
         self.content = content
         self.timestamp = timestamp
-        self.conversation = conversation
+        self.conversationImpl = conversation
     }
 }

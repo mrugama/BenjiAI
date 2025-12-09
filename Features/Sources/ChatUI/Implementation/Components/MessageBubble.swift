@@ -5,7 +5,7 @@ import UIKit
 
 /// A message bubble for displaying chat messages
 struct MessageBubble: View {
-    let message: ChatMessage
+    let message: any ChatMessage
     let isStreaming: Bool
     let onCopy: () -> Void
     let onShare: () -> Void
@@ -14,7 +14,7 @@ struct MessageBubble: View {
     @State private var showActions = false
 
     init(
-        message: ChatMessage,
+        message: any ChatMessage,
         isStreaming: Bool = false,
         onCopy: @escaping () -> Void,
         onShare: @escaping () -> Void,

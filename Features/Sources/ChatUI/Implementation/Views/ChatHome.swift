@@ -20,8 +20,8 @@ struct ChatHome: View {
     @State private var showToolsSheet = false
     @State private var showConversationHistory = false
 
-    @Query(sort: \Conversation.updatedAt, order: .reverse)
-    private var conversations: [Conversation]
+    @Query(sort: \ConversationImpl.updatedAt, order: .reverse)
+    private var conversations: [ConversationImpl]
 
     private var currentPersona: AIPersona {
         preferencesService?.state.selectedPersona ?? .generic
@@ -177,11 +177,13 @@ struct ChatHome: View {
     }
 
     @ViewBuilder
-    private func conversationView(_ conversation: Conversation) -> some View {
+    private func conversationView(_ conversation: any Conversation) -> some View {
         ScrollViewReader { proxy in
             ScrollView(.vertical, showsIndicators: false) {
                 LazyVStack(spacing: 16) {
-                    ForEach(conversation.sortedMessages) { message in
+                    let messages = conversation.sortedMessages
+                    ForEach(messages.indices, id: \.self) { index in
+                        let message = messages[index]
                         MessageBubble(
                             message: message,
                             isStreaming: false,
@@ -264,7 +266,7 @@ struct ChatHome: View {
 
     // MARK: - Helpers
 
-    private func scrollToBottom(proxy: ScrollViewProxy, conversation: Conversation) {
+    private func scrollToBottom(proxy: ScrollViewProxy, conversation: any Conversation) {
         let target: AnyHashable
         if viewModel.isWaitingForResponse {
             if viewModel.streamingMessage != nil && !(viewModel.streamingMessage?.content.isEmpty ?? true) {

@@ -2,9 +2,10 @@ import Foundation
 import UserPreferences
 
 /// Dynamic example prompts for each AI persona
-public enum PersonaPrompts {
+enum PersonaPrompts {
+    // swiftlint:disable function_body_length
     /// Get example prompts for a specific persona
-    public static func prompts(for persona: AIPersona) -> [String] {
+    static func prompts(for persona: AIPersona) -> [String] {
         switch persona {
         case .generic:
             return [
@@ -87,15 +88,16 @@ public enum PersonaPrompts {
                 "Finding your writing voice?"
             ]
         }
+        // swiftlint:enable function_body_length
     }
 
     /// Get a random prompt for a persona
-    public static func randomPrompt(for persona: AIPersona) -> String {
+    static func randomPrompt(for persona: AIPersona) -> String {
         prompts(for: persona).randomElement() ?? "Ask me anything"
     }
 
     /// Get greeting text for a persona
-    public static func greeting(for persona: AIPersona) -> String {
+    static func greeting(for persona: AIPersona) -> String {
         switch persona {
         case .generic:
             return "How can I help you today?"
