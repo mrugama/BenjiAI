@@ -74,7 +74,7 @@ final class ConcreteClipperAssistant: ClipperAssistant, @unchecked Sendable {
         }
     }
     
-    func generate(prompt: String) {
+    func generate(prompt: String, conversationHistory: [(role: String, content: String)] = []) {
         generationTask = Task { @MainActor in
             guard !running, loadedLLM != nil else { return }
             running = true
@@ -82,20 +82,24 @@ final class ConcreteClipperAssistant: ClipperAssistant, @unchecked Sendable {
             currentToolIteration = 0
             guard let loadedLLM else { output = "No llm loaded"; return }
             
-            await generateWithToolSupport(prompt: prompt, loadedLLM: loadedLLM)
+            await generateWithToolSupport(prompt: prompt, conversationHistory: conversationHistory, loadedLLM: loadedLLM)
             running = false
         }
     }
     
-    private func generateWithToolSupport(prompt: String, loadedLLM: CAModel) async {
+    private func generateWithToolSupport(prompt: String, conversationHistory: [(role: String, content: String)], loadedLLM: CAModel) async {
         logger.info("Prompting model work on thread (isMainThread: \(Thread.current.isMainThread)): \(Thread.current.description)")
-        let conversationHistory = "## \(prompt) \n"
+        let outputHeader = "## \(prompt) \n"
+        
+        // Build chat history section
+        let chatHistorySection = buildChatHistorySection(from: conversationHistory)
         
         let fullPromptForTextAPI = """
         \(systemPrompt)
-
-        USER_QUERY:
+        \(chatHistorySection)
+        [NEW USER PROMPT]
         \(prompt)
+        [END NEW USER PROMPT]
         """
         
         MLXRandom.seed(UInt64(Date.timeIntervalSinceReferenceDate * 1000))
@@ -108,7 +112,7 @@ final class ConcreteClipperAssistant: ClipperAssistant, @unchecked Sendable {
                 prompt: .text(fullPromptForTextAPI),
                 tools: tools
             )
-            let currentHistory = conversationHistory
+            let currentOutputHeader = outputHeader
             try await loadedLLM.perform { (context: ModelContext) -> Void in
                 let lmInput = try await context.processor.prepare(input: userInput)
                 let stream = try MLXLMCommon.generate(
@@ -121,7 +125,7 @@ final class ConcreteClipperAssistant: ClipperAssistant, @unchecked Sendable {
                         text += chunk
                         let currentText = text
                         await MainActor.run {
-                            self.output = currentHistory + currentText
+                            self.output = currentOutputHeader + currentText
                         }
                     case .info(let info):
                         await MainActor.run {
@@ -134,24 +138,38 @@ final class ConcreteClipperAssistant: ClipperAssistant, @unchecked Sendable {
                 }
                 
                 // Check if the output contains tool calls and execute them
-                let finalText = await self.processToolCallsIfNeeded(text: text, conversationHistory: currentHistory)
+                let finalText = await self.processToolCallsIfNeeded(text: text, outputHeader: currentOutputHeader)
                 
                 await MainActor.run {
-                    self.output = currentHistory + finalText
+                    self.output = currentOutputHeader + finalText
                 }
             }
             
         } catch {
-            let errorHistory = conversationHistory + "\n\nFailed: \(error)"
+            let errorOutput = outputHeader + "\n\nFailed: \(error)"
             Task { @MainActor in
-                self.output = errorHistory
+                self.output = errorOutput
             }
         }
     }
     
+    /// Builds the chat history section from conversation history
+    private func buildChatHistorySection(from history: [(role: String, content: String)]) -> String {
+        guard !history.isEmpty else { return "" }
+        
+        var section = "[CHAT HISTORY]\n"
+        for message in history {
+            let roleLabel = message.role == "user" ? "USER" : "ASSISTANT"
+            section += "[\(roleLabel)]: \(message.content)\n\n"
+        }
+        section += "[END CHAT HISTORY]\n"
+        
+        return section
+    }
+    
     // MARK: - Tool Call Processing
     
-    private func processToolCallsIfNeeded(text: String, conversationHistory: String) async -> String {
+    private func processToolCallsIfNeeded(text: String, outputHeader: String) async -> String {
         let toolCalls = parseToolCalls(from: text)
         
         guard !toolCalls.isEmpty, currentToolIteration < maxToolIterations else {

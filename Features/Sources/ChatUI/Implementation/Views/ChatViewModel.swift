@@ -40,6 +40,9 @@ final class ChatViewModel {
             currentConversation = conversationImpl
         }
 
+        // Build conversation history from existing messages (before adding the new one)
+        let conversationHistory = buildConversationHistory(from: conversationImpl)
+
         // Add user message with concrete relationship
         let userMessage = ChatMessageImpl(role: .user, content: prompt, conversation: conversationImpl)
         modelContext.insert(userMessage)
@@ -52,13 +55,25 @@ final class ChatViewModel {
         lastProcessedOutput = ""
         isWaitingForResponse = true
 
-        // Trigger AI response
-        clipperAssistant.generate(prompt: prompt)
+        // Set the system prompt with current date/time
+        let systemPrompt = PersonaPrompts.systemPrompt(for: persona, currentDate: Date())
+        clipperAssistant.setSystemPrompt(systemPrompt)
+
+        // Trigger AI response with conversation history
+        clipperAssistant.generate(prompt: prompt, conversationHistory: conversationHistory)
 
         // Clear initial prompt
         initialPrompt = ""
 
         try? modelContext.save()
+    }
+
+    /// Builds the conversation history array from an existing conversation
+    private func buildConversationHistory(from conversation: ConversationImpl) -> [(role: String, content: String)] {
+        let sortedMessages = conversation.sortedMessages
+        return sortedMessages.map { message in
+            (role: message.role == .user ? "user" : "assistant", content: message.content)
+        }
     }
 
     func handleStreamingOutput(_ output: String, isRunning: Bool) {

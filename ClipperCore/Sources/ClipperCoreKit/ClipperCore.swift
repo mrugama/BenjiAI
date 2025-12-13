@@ -72,11 +72,14 @@ where Self: Sendable, Self: Observable {
     /// The `isLoading` property will be updated during the loading process.
     func load() async
     
-    /// Generates text based on the provided prompt.
+    /// Generates text based on the provided prompt and conversation history.
     ///
-    /// - Parameter prompt: The input text prompt to generate a response for.
+    /// - Parameters:
+    ///   - prompt: The new user prompt to generate a response for.
+    ///   - conversationHistory: An array of tuples containing previous messages as (role: String, content: String).
+    ///                          Role should be "user" or "assistant".
     /// - Note: This method will update the `output` and `running` properties as generation progresses.
-    func generate(prompt: String)
+    func generate(prompt: String, conversationHistory: [(role: String, content: String)])
     
     /// Selects a language model by its identifier.
     ///
